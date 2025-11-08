@@ -1,5 +1,6 @@
-import { Health } from "../shared/type/health.js";
+import { Health } from "../shared/type.health.js";
+import { healthUtil } from "../shared/util.health.js";
 
-export const health = (): Health => {
-  return { healthy: true };
+export const healthService = (): Health => {
+  return healthUtil();
 };

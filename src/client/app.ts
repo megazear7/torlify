@@ -1,6 +1,7 @@
 import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { Health } from "../shared/type/health";
+import { healthUtil } from "../shared/util.health.js";
+import { healthApi } from "./api.health.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
@@ -19,6 +20,7 @@ export class TorlifyApp extends LitElement {
 
   override async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    this.test = Health.parse(await (await fetch("/health")).json()).healthy ? "Healthy" : "Unhealthy";
+    console.log("Server healthy", (await healthApi()).healthy);
+    console.log("Client healthy", healthUtil().healthy);
   }
 }
