@@ -12,3 +12,4 @@ books/*
 !books/book.sample.json
 debug
 debug-document.xml
+books
