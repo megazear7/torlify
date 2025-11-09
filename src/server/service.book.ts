@@ -1,4 +1,4 @@
-import { Book, BookId } from "../shared/type.book.js";
+import { Book, BookId, BookMinimalInfo } from "../shared/type.book.js";
 import { promises as fs } from "fs";
 import { fileExists } from "./util.fs.js";
 import { RouteError } from "./util.route.js";
@@ -8,5 +8,17 @@ export const bookService = async (id: BookId): Promise<Book> => {
   const exists = await fileExists(path);
   if (!exists) throw new RouteError(404, `Book with id ${id} does not exist.`);
   const data = await fs.readFile(path, "utf-8");
-  return Book.parse(data);
+  const json = JSON.parse(data);
+  return Book.parse(json);
+};
+
+export const booksService = async (): Promise<BookMinimalInfo[]> => {
+  const paths = await fs.readdir("books");
+  return await Promise.all(paths.map(async (id) => {
+    const book = await bookService(BookId.parse(id));
+    return {
+      id: BookId.parse(id),
+      title: book.title,
+    };
+  }));
 };

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { page } from "./service.client.js";
+import { AbstractController } from "./main.controller.js";
 
-export const clientPath = "/{*any}";
+export class ClientController extends AbstractController {
+  readonly path = "/{*any}";
 
-export const clientController = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
-  res.send(page());
-};
+  async handler(_req: Request, res: Response): Promise<void> {
+    res.send(page());
+  }
+}

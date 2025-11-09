@@ -2,11 +2,11 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { healthUtil } from "../shared/util.health.js";
 import { healthApi } from "./api.health.js";
-import "./element.home-page.js";
-import "./element.book-page.js";
-import "./element.chapter-page.js";
-import "./element.part-page.js";
-import "./element.not-found-page.js";
+import "./page.home.js";
+import "./page.book.js";
+import "./page.chapter.js";
+import "./page.part.js";
+import "./page.not-found.js";
 import { RouteConfig, RouteName } from "../shared/type.routes.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 

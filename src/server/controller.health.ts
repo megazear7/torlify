@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { healthService } from "./service.health.js";
+import { AbstractController } from "./main.controller.js";
 
-export const healthPath = "/api/health";
+export class HealthController extends AbstractController {
+  readonly path = "/api/health";
 
-export const healthController = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
-  res.json(healthService());
-};
+  async handler(_req: Request, res: Response): Promise<void> {
+    res.json(healthService());
+  }
+}

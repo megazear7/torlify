@@ -1,26 +1,13 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { healthPath, healthController } from './controller.health.js';
-import { bookPath, bookController } from './controller.book.js';
-import { clientPath, clientController } from './controller.client.js';
+import express from 'express';
+import { HealthController } from './controller.health.js';
+import { BookController, BooksController } from './controller.book.js';
+import { ClientController } from './controller.client.js';
 
 const router = express.Router();
 
-export const wrapper = (controller: Function): (req: Request, res: Response, next: NextFunction) => void => {
-    return (
-        req: Request,
-        res: Response,
-        next: NextFunction,
-    ) => {
-        try {
-            return controller(req, res, next).catch((error: unknown) => next(error));
-        } catch (error) {
-            next(error);
-        }
-    }
-}
-
-router.get(healthPath, wrapper(healthController));
-router.get(bookPath, wrapper(bookController));
-router.all(clientPath, wrapper(clientController));
+new HealthController().register(router);
+new BookController().register(router);
+new BooksController().register(router);
+new ClientController().register(router);
 
 export { router };
