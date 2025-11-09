@@ -1,14 +1,20 @@
 import { provide } from '@lit/context';
 import { LitElement } from "lit";
 import { property } from "lit/decorators.js";
-import { BookContext, bookContext } from "./context.book.js";
-import { bookApi } from './api.book.js';
+import { BookContext, bookContext, BooksContext, booksContext } from "./context.book.js";
+import { booksApi } from './api.book.js';
 import { LoadingStatus } from '../shared/type.loading.js';
 import { parseRouteParams } from '../shared/util.route-params.js';
 import "./element.book-editor.js"
 
-export abstract class TorlifyAbstractBookPage extends LitElement {
-  params = parseRouteParams("/book/:bookId", window.location.pathname);
+export abstract class TorlifyAbstractNoBookPage extends LitElement {
+  params = parseRouteParams("/", window.location.pathname);
+
+  @provide({context: booksContext})
+  @property({attribute: false})
+  booksContext: BooksContext = {
+    status: LoadingStatus.enum.idle,
+  }
 
   @provide({context: bookContext})
   @property({attribute: false})
@@ -19,8 +25,8 @@ export abstract class TorlifyAbstractBookPage extends LitElement {
   override async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    this.bookContext = {
-        book: await bookApi(this.params.bookId),
+    this.booksContext = {
+        books: await booksApi(),
         status: LoadingStatus.enum.success,
     };
   }

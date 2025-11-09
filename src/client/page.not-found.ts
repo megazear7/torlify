@@ -15,8 +15,4 @@ export class TorlifyNotFoundPage extends LitElement {
       <p>Not Found Page!</p>
     `;
   }
-
-  override async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-  }
 }

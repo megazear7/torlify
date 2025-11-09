@@ -1,7 +1,5 @@
 import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { healthUtil } from "../shared/util.health.js";
-import { healthApi } from "./api.health.js";
 import "./page.home.js";
 import "./page.book.js";
 import "./page.chapter.js";
@@ -60,14 +58,6 @@ export class TorlifyApp extends LitElement {
     } else {
       return html`<torlify-not-found-page></torlify-not-found-page>`;
     }
-  }
-
-  override async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-
-    console.log("Server healthy", (await healthApi()).healthy);
-    console.log("Client healthy", healthUtil().healthy);
-    console.log("Page name", this.currentRoute?.name || "not_found");
   }
 
   determineRouteName(): RouteConfig | null {

@@ -3,7 +3,7 @@ import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'src/client/element.app.ts',
+  input: 'src/client/app.ts',
   output: {
     file: 'dist/client/bundle.js',
     format: 'esm',

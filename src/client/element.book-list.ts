@@ -19,17 +19,13 @@ export class TorlifyBookList extends LitElement {
   }
 
   override render(): TemplateResult {
-    console.log("Rendering book list with context:", this.booksContext);
     return html`
       <ul>
+        <li><a href="/">Home</a></li>
         ${this.booksContext.books?.map(book => html`
           <li><a href="/book/${book.id}">${book.title}</a></li>
         `) ?? html`<li>No books found</li>`}
       </ul>
     `;
-  }
-
-  override async connectedCallback(): Promise<void> {
-    super.connectedCallback();
   }
 }

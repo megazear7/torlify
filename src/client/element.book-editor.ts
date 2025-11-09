@@ -24,8 +24,4 @@ export class TorlifyBookEditor extends LitElement {
       ${this.bookContext.book ? html`<h2>${this.bookContext.book.title}</h2>` : html`<p>Loading book...</p>`}
     `;
   }
-
-  override async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-  }
 }

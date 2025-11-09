@@ -2,7 +2,8 @@ import { html, css, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { LoadingStatus } from '../shared/type.loading.js';
 import { parseRouteParams } from '../shared/util.route-params.js';
-import { TorlifyAbstractBookPage } from './page.abstract-book.js';
+import { TorlifyAbstractBookPage } from './abstract.book.js';
+import "./element.book-list.js";
 import "./element.book-editor.js"
 
 @customElement("torlify-book-page")
@@ -22,6 +23,7 @@ export class TorlifyBookPage extends TorlifyAbstractBookPage {
 
     return html`
       <p>Book Page!</p>
+      <torlify-book-list></torlify-book-list>
       <torlify-book-editor></torlify-book-editor>
     `;
   }
