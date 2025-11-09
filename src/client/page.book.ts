@@ -5,6 +5,7 @@ import { parseRouteParams } from '../shared/util.route-params.js';
 import { TorlifyAbstractBookPage } from './abstract.book.js';
 import "./element.book-list.js";
 import "./element.book-editor.js"
+import "./element.chapter-list.js"
 
 @customElement("torlify-book-page")
 export class TorlifyBookPage extends TorlifyAbstractBookPage {
@@ -25,6 +26,7 @@ export class TorlifyBookPage extends TorlifyAbstractBookPage {
       <p>Book Page!</p>
       <torlify-book-list></torlify-book-list>
       <torlify-book-editor></torlify-book-editor>
+      <torlify-chapter-list></torlify-chapter-list>
     `;
   }
 }

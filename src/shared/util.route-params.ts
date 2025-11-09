@@ -8,12 +8,13 @@ import { RouteParams } from './type.route-params.js';
  */
 export function parseRouteParams<T extends string>(
   pattern: T,
-  pathname: string
+  pathname: string,
+  fuzzyMatch = false,
 ): RouteParams<T> {
   const patternParts = pattern.split('/').filter(Boolean);
   const pathParts = pathname.split('/').filter(Boolean);
 
-  if (patternParts.length !== pathParts.length) {
+  if (patternParts.length !== pathParts.length && !fuzzyMatch) {
     throw new Error("Path does not match the pattern");
   }
 

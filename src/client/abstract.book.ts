@@ -8,7 +8,7 @@ import { parseRouteParams } from '../shared/util.route-params.js';
 import "./element.book-editor.js"
 
 export abstract class TorlifyAbstractBookPage extends LitElement {
-  params = parseRouteParams("/book/:bookId", window.location.pathname);
+  params = parseRouteParams("/book/:bookId", window.location.pathname, true);
 
   @provide({context: booksContext})
   @property({attribute: false})
