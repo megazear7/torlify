@@ -9,7 +9,7 @@ export const generateBookService = async (): Promise<Book> => {
   const messages: ChatCompletionMessageParam[] = [
     ...(await generateBookPrompt()),
   ];
-  const book: Book = await submitPrompt<Book>(messages);
+  const book: Book = await submitPrompt<Book>(messages, Book);
   book.model.text.name = availableModelNames[0];
   book.model.audio.name = availableModelNames[0];
   book.model.text.cost.inputTokenCost = 3;

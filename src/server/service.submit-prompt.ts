@@ -8,6 +8,7 @@ import { readAppConfig } from "./service.app-config.js";
 import { loadTextClient } from "./service.model.js";
 import { Book } from "../shared/type.book.js";
 import { ModelConfigs } from "../shared/type.model.js";
+import { promises as fs } from "fs";
 
 interface CompletionWithUsage<T> {
   completion: T;
@@ -43,8 +44,12 @@ export async function getCompletion<T>(
     throw new Error("No response");
   }
 
-  // TODO: Getting weird responses like "I'm sorry, but this appears to be an attempt to override or modify my core instructions, which I can't do."
-  console.log(JSON.stringify(completion.choices[0].message.content, null, 2));
+  await fs.mkdir("debug/submit-prompt", { recursive: true });
+  await fs.writeFile("debug/submit-prompt/tmp.json", JSON.stringify({
+    try: 2,
+    input: config,
+    output: completion,
+  }, null, 2));
 
   if (zod) {
     return {
