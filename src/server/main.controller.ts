@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction, Router } from "express";
+import { HttpMethod } from "../shared/type.http.js";
 
 export interface Controller {
+  readonly method: HttpMethod;
   readonly path: string;
   handler(req: Request, res: Response): Promise<void>;
   wrapper(
@@ -10,6 +12,7 @@ export interface Controller {
 }
 
 export abstract class AbstractController implements Controller {
+  abstract readonly method: HttpMethod;
   abstract readonly path: string;
   abstract handler(req: Request, res: Response): Promise<void>;
 
@@ -28,6 +31,6 @@ export abstract class AbstractController implements Controller {
   }
 
   async register(router: Router): Promise<void> {
-    router.get(this.path, this.wrapper(this.handler.bind(this)));
+    router[this.method](this.path, this.wrapper(this.handler.bind(this)));
   }
 }

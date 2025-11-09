@@ -25,6 +25,10 @@
  - Utilities must be imported and used in client and server code as needed.
  - Utilities must not rely on Browser or Node.js specific APIs so that they can be used in both environments.
 
+### Shared Prompts
+ - Prompts must be created a function in `src/shared/prompt.<prompt-name>.ts`.
+ - Each file must export a single function that returns a `Promise<ChatCompletionMessageParam[]>`.
+
 ## Client
 
 ### Client Pages
@@ -60,6 +64,12 @@
 
 ### Server Routes
  - Routes are defined in the controller but are registered in `src/server/main.router.ts`
+
+### Server utilities
+ - Utilities must be created at `src/server/util.<util-name>.ts`
+ - Utilities must be grouped by functionality.
+ - Utilities should only go under `src/server` if they rely on Node.js specific APIs.
+ - Wherever possibl, utilities should go under `src/shared` to be usable by both client and server code.
 
 ## Data Persistence
 

@@ -1,5 +1,5 @@
 import z from "zod";
-import { Cost, Usage } from "./type.prompt.js";
+import { ModelConfigs } from "./type.model.js";
 
 export const BookId = z
   .string()
@@ -259,33 +259,6 @@ export const Character = z.object({
 });
 export type Character = z.infer<typeof Character>;
 
-export const ModelTypeName = z
-  .string()
-  .min(3)
-  .describe(
-    "The model name. This should correspond to an environment variable ending with _MODEL_API_KEY (e.g., GROK_MODEL_API_KEY).",
-  );
-export type ModelTypeName = z.infer<typeof ModelTypeName>;
-
-export const ModelTypeConfig = z.object({
-  name: ModelTypeName,
-  endpoint: z.string().describe("The base URL for the model API"),
-  modelName: z.string().describe("The specific model name to use"),
-  deployment: z
-    .string()
-    .optional()
-    .describe("Azure deployment name (required for Azure models)"),
-  cost: Cost,
-  usage: Usage,
-});
-export type ModelTypeConfig = z.infer<typeof ModelTypeConfig>;
-
-export const BookModelConfigs = z.object({
-  text: ModelTypeConfig,
-  audio: ModelTypeConfig,
-});
-export type BookModelConfigs = z.infer<typeof BookModelConfigs>;
-
 export const LoadingMessageContent = z.string();
 export type LoadingMessageContent = z.infer<typeof LoadingMessageContent>;
 
@@ -307,7 +280,7 @@ export const Book = z.object({
   instructions: Instructions,
   pronunciation: Pronunciation.array(),
   characters: Character.array(),
-  model: BookModelConfigs,
+  model: ModelConfigs,
   loadingMessages: LoadingMessages,
 });
 export type Book = z.infer<typeof Book>;
