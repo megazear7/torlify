@@ -1,6 +1,6 @@
 import { provide } from '@lit/context';
 import { html, css, LitElement, TemplateResult } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { BookContext, bookContext } from "../client/context.book.js";
 import { bookApi } from './api.book.js';
 import { LoadingStatus } from '../shared/type.loading.js';
@@ -18,11 +18,16 @@ export class TorlifyBookPage extends LitElement {
   params = parseRouteParams("/book/:bookId", window.location.pathname);
 
   @provide({context: bookContext})
+  @property({attribute: false})
   bookContext: BookContext = {
     status: LoadingStatus.enum.idle,
   }
 
   override render(): TemplateResult {
+    if (this.bookContext.status === LoadingStatus.enum.error && !this.bookContext.book) {
+      return html`<p>Book not found.</p>`;
+    }
+
     return html`
       <p>Book Page!</p>
       <torlify-book-editor></torlify-book-editor>
