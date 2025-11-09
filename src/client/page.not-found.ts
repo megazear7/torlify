@@ -1,6 +1,6 @@
 import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
-import "./element.book-editor.js";
+import "./component.book-editor.js";
 
 @customElement("torlify-not-found-page")
 export class TorlifyNotFoundPage extends LitElement {

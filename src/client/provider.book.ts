@@ -10,7 +10,7 @@ import {
 import { bookApi, booksApi } from "./api.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
-import "./element.book-editor.js";
+import "./component.book-editor.js";
 
 export abstract class TorlifyBookProvider extends LitElement {
   params = parseRouteParams("/book/:bookId", window.location.pathname, true);
