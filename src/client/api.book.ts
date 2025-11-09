@@ -5,5 +5,7 @@ export async function bookApi(id: BookId): Promise<Book> {
 }
 
 export async function booksApi(): Promise<BookMinimalInfo[]> {
-  return BookMinimalInfo.array().parse(await (await fetch(`/api/books`)).json());
+  return BookMinimalInfo.array().parse(
+    await (await fetch(`/api/books`)).json(),
+  );
 }

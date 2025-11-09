@@ -9,7 +9,12 @@ process.on("uncaughtException", (error) => {
   console.error("Uncaught Exception:", error);
 });
 
-export const errorHandler = (err: Error, req: Request, res: Response, _next: NextFunction) => {
+export const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  _next: NextFunction, //eslint-disable-line @typescript-eslint/no-unused-vars
+): void => {
   if (err instanceof RouteError) {
     console.error(` -> Route error ${err.statusCode}:`, err.message);
     res.status(err.statusCode).json({ error: err.message });
@@ -25,6 +30,8 @@ export const errorHandler = (err: Error, req: Request, res: Response, _next: Nex
       res.status(500).json({ error: err.message });
     }
   } else {
-    res.status(500).send(`<html><body><h1>500 Internal Server Error</h1></body></html>`);
+    res
+      .status(500)
+      .send(`<html><body><h1>500 Internal Server Error</h1></body></html>`);
   }
 };

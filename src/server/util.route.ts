@@ -14,7 +14,7 @@ export class RouteError extends Error {
    */
   constructor(statusCode: number, message: string) {
     super(message);
-    this.name = 'RouteError';
+    this.name = "RouteError";
     this.statusCode = statusCode;
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)

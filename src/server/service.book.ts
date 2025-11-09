@@ -14,11 +14,13 @@ export const bookService = async (id: BookId): Promise<Book> => {
 
 export const booksService = async (): Promise<BookMinimalInfo[]> => {
   const paths = await fs.readdir("books");
-  return await Promise.all(paths.map(async (id) => {
-    const book = await bookService(BookId.parse(id));
-    return {
-      id: BookId.parse(id),
-      title: book.title,
-    };
-  }));
+  return await Promise.all(
+    paths.map(async (id) => {
+      const book = await bookService(BookId.parse(id));
+      return {
+        id: BookId.parse(id),
+        title: book.title,
+      };
+    }),
+  );
 };

@@ -1,6 +1,6 @@
 import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
-import "./element.book-editor.js"
+import "./element.book-editor.js";
 
 @customElement("torlify-not-found-page")
 export class TorlifyNotFoundPage extends LitElement {
@@ -11,8 +11,6 @@ export class TorlifyNotFoundPage extends LitElement {
   `;
 
   override render(): TemplateResult {
-    return html`
-      <p>Not Found Page!</p>
-    `;
+    return html` <p>Not Found Page!</p> `;
   }
 }

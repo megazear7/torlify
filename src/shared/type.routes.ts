@@ -8,7 +8,7 @@ export const RouteName = z.enum([
   "book",
   "chapter",
   "part",
-  "not_found"
+  "not_found",
 ]);
 export type RouteName = z.infer<typeof RouteName>;
 

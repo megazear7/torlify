@@ -1,7 +1,7 @@
-import express from 'express';
-import { HealthController } from './controller.health.js';
-import { BookController, BooksController } from './controller.book.js';
-import { ClientController } from './controller.client.js';
+import express from "express";
+import { HealthController } from "./controller.health.js";
+import { BookController, BooksController } from "./controller.book.js";
+import { ClientController } from "./controller.client.js";
 
 const router = express.Router();
 

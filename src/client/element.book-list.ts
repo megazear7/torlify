@@ -12,19 +12,22 @@ export class TorlifyBookList extends LitElement {
     }
   `;
 
-  @consume({context: booksContext, subscribe: true})
-  @property({attribute: false})
+  @consume({ context: booksContext, subscribe: true })
+  @property({ attribute: false })
   booksContext: BooksContext = {
     status: LoadingStatus.enum.idle,
-  }
+  };
 
   override render(): TemplateResult {
     return html`
+      <h3>Books</h3>
       <ul>
         <li><a href="/">Home</a></li>
-        ${this.booksContext.books?.map(book => html`
-          <li><a href="/book/${book.id}">${book.title}</a></li>
-        `) ?? html`<li>No books found</li>`}
+        ${this.booksContext.books?.map(
+          (book) => html`
+            <li><a href="/book/${book.id}">${book.title}</a></li>
+          `,
+        ) ?? html`<li>No books found</li>`}
       </ul>
     `;
   }

@@ -1,11 +1,11 @@
 import { html, css, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
-import { TorlifyAbstractNoBookPage } from "./abstract.no-book.js";
+import { TorlifyBookListProvider } from "./provider.book-list.js";
 import "./element.book-list.js";
 
 @customElement("torlify-home-page")
-export class TorlifyHomePage extends TorlifyAbstractNoBookPage {
+export class TorlifyHomePage extends TorlifyBookListProvider {
   static override styles = css`
     p {
       color: var(--color-1);
@@ -16,7 +16,7 @@ export class TorlifyHomePage extends TorlifyAbstractNoBookPage {
 
   override render(): TemplateResult {
     return html`
-      <p>Home Page!</p>
+      <p>Home</p>
       <torlify-book-list></torlify-book-list>
     `;
   }

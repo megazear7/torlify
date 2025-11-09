@@ -8,10 +8,9 @@ type RouteParam<T extends string> = T extends `:${infer P}` ? P : never;
 /**
  * Recursively extracts all parameter names from a route string
  */
-type ExtractParams<T extends string> =
-  T extends `${infer A}/${infer B}`
-    ? RouteParam<A> | ExtractParams<B>
-    : RouteParam<T>;
+type ExtractParams<T extends string> = T extends `${infer A}/${infer B}`
+  ? RouteParam<A> | ExtractParams<B>
+  : RouteParam<T>;
 
 /**
  * Creates a type with properties for each parameter found in the route string

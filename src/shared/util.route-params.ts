@@ -1,4 +1,4 @@
-import { RouteParams } from './type.route-params.js';
+import { RouteParams } from "./type.route-params.js";
 
 /**
  * Parses route parameters from a pathname based on a route pattern
@@ -11,8 +11,8 @@ export function parseRouteParams<T extends string>(
   pathname: string,
   fuzzyMatch = false,
 ): RouteParams<T> {
-  const patternParts = pattern.split('/').filter(Boolean);
-  const pathParts = pathname.split('/').filter(Boolean);
+  const patternParts = pattern.split("/").filter(Boolean);
+  const pathParts = pathname.split("/").filter(Boolean);
 
   if (patternParts.length !== pathParts.length && !fuzzyMatch) {
     throw new Error("Path does not match the pattern");
@@ -24,7 +24,7 @@ export function parseRouteParams<T extends string>(
     const patternPart = patternParts[i];
     const pathPart = pathParts[i];
 
-    if (patternPart.startsWith(':')) {
+    if (patternPart.startsWith(":")) {
       // This is a parameter
       const paramName = patternPart.slice(1);
       params[paramName] = pathPart;

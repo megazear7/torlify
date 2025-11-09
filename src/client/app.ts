@@ -35,23 +35,24 @@ export class TorlifyApp extends LitElement {
     },
   ];
 
-  @property({ type: String }) currentRoute: RouteConfig | null = this.determineRouteName();
+  @property({ type: String }) currentRoute: RouteConfig | null =
+    this.determineRouteName();
 
   override render(): TemplateResult {
     if (this.currentRoute) {
       switch (this.currentRoute.name) {
         case RouteName.enum.home:
           return html`<torlify-home-page></torlify-home-page>`;
-        
+
         case RouteName.enum.book:
           return html`<torlify-book-page></torlify-book-page>`;
-        
+
         case RouteName.enum.chapter:
           return html`<torlify-chapter-page></torlify-chapter-page>`;
-        
+
         case RouteName.enum.part:
           return html`<torlify-part-page></torlify-part-page>`;
-        
+
         default:
           return html`<torlify-not-found-page></torlify-not-found-page>`;
       }

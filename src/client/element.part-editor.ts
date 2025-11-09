@@ -1,28 +1,28 @@
 import { consume } from "@lit/context";
 import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { BookContext, bookContext } from "./context.book.js";
+import { PartContext, partContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 
-@customElement("torlify-book-editor")
-export class TorlifyBookEditor extends LitElement {
+@customElement("torlify-part-editor")
+export class TorlifyPartEditor extends LitElement {
   static override styles = css`
     p {
       color: var(--color-1);
     }
   `;
 
-  @consume({ context: bookContext, subscribe: true })
+  @consume({ context: partContext, subscribe: true })
   @property({ attribute: false })
-  public bookContext: BookContext = {
+  public partContext: PartContext = {
     status: LoadingStatus.enum.idle,
   };
 
   override render(): TemplateResult {
     return html`
-      ${this.bookContext.book
-        ? html`<h2>${this.bookContext.book.title}</h2>`
-        : html`<p>Loading book...</p>`}
+      ${this.partContext.part
+        ? html`<p>${this.partContext.part.text}</p>`
+        : html`<p>Loading part...</p>`}
     `;
   }
 }
