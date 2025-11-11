@@ -3,14 +3,11 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
+import { globalStyles } from "./styles.global.js";
 
 @customElement("torlify-chapter-list")
 export class TorlifyChapterList extends LitElement {
-  static override styles = css`
-    p {
-      color: var(--color-1);
-    }
-  `;
+  static override styles = [globalStyles, css``];
 
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })

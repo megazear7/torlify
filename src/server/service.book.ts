@@ -24,3 +24,8 @@ export const booksService = async (): Promise<BookMinimalInfo[]> => {
     }),
   );
 };
+
+export const saveBookService = async (book: Book): Promise<void> => {
+  const path = `data/books/${book.id}/index.json`;
+  await fs.writeFile(path, JSON.stringify(book, null, 2), "utf-8");
+};

@@ -1,4 +1,4 @@
-import { html, css, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import "./page.home.js";
 import "./page.book.js";
@@ -10,12 +10,6 @@ import { parseRouteParams } from "../shared/util.route-params.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
-  static override styles = css`
-    p {
-      color: var(--color-1);
-    }
-  `;
-
   routes: RouteConfig[] = [
     {
       name: RouteName.enum.home,

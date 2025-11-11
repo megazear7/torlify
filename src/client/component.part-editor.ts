@@ -3,14 +3,11 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { PartContext, partContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
+import { globalStyles } from "./styles.global.js";
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
-  static override styles = css`
-    p {
-      color: var(--color-1);
-    }
-  `;
+  static override styles = [globalStyles, css``];
 
   @consume({ context: partContext, subscribe: true })
   @property({ attribute: false })

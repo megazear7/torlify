@@ -19,12 +19,14 @@ html {
   --font-medium: 18px;
   --line-height: 1.6;
   --border-active: 2px solid var(--color-1);
+  --shadow-normal: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-active: 0 4px 12px rgba(0, 0, 0, 0.2);
   --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.3);
   --time-normal: 350ms;
   --transition-all: all var(--time-normal) ease-in-out;
   --font-family: "Inter", sans-serif;
   --content-width: 1280px;
+  --transform-hover: translateY(-2px);
 
   margin: 0;
   padding: 0;

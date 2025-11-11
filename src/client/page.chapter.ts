@@ -1,4 +1,4 @@
-import { html, css, TemplateResult } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { TorlifyChapterProvider } from "./provider.chapter.js";
@@ -10,12 +10,6 @@ import "./component.part-list.js";
 
 @customElement("torlify-chapter-page")
 export class TorlifyChapterPage extends TorlifyChapterProvider {
-  static override styles = css`
-    p {
-      color: var(--color-1);
-    }
-  `;
-
   override params = parseRouteParams(
     "/book/:bookId/chapter/:chapterId",
     window.location.pathname,

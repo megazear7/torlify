@@ -8,14 +8,11 @@ import {
   ChapterContext,
 } from "./context.book.js";
 import { consume } from "@lit/context";
+import { globalStyles } from "./styles.global.js";
 
 @customElement("torlify-part-list")
 export class TorlifyPartList extends LitElement {
-  static override styles = css`
-    p {
-      color: var(--color-1);
-    }
-  `;
+  static override styles = [globalStyles, css``];
 
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })

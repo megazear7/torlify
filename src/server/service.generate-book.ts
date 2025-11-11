@@ -2,17 +2,17 @@ import { ChatCompletionMessageParam } from "openai/resources";
 import { Book } from "../shared/type.book.js";
 import { submitPrompt } from "./service.submit-prompt.js";
 import { generateBookPrompt } from "./prompt.generate-book.js";
-import { modelNames } from "./service.model.js";
+import { readAppConfig } from "./service.app-config.js";
+import { saveBookService } from "./service.book.js";
 
 export const generateBookService = async (): Promise<Book> => {
-  const availableModelNames = await modelNames();
+  const appConfig = await readAppConfig();
   const messages: ChatCompletionMessageParam[] = [
     ...(await generateBookPrompt()),
   ];
   const book: Book = await submitPrompt<Book>(messages, Book);
-  book.model.text.name = availableModelNames[0];
-  book.model.audio.name = availableModelNames[0];
-  book.model.text.cost.inputTokenCost = 3;
-  book.model.text.cost.outputTokenCost = 15;
+  book.model.text = appConfig.model.text;
+  book.model.audio = appConfig.model.audio;
+  await saveBookService(book);
   return book;
 };

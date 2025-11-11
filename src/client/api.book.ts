@@ -9,3 +9,7 @@ export async function booksApi(): Promise<BookMinimalInfo[]> {
     await (await fetch(`/api/books`)).json(),
   );
 }
+
+export async function generateBookApi(): Promise<Book> {
+  return Book.parse(await (await fetch(`/api/book`, { method: "POST" })).json());
+}
