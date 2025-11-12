@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import { fileExists } from "./util.fs.js";
 import { RouteError } from "./util.route.js";
 
-export const bookService = async (id: BookId): Promise<Book> => {
+export const getBook = async (id: BookId): Promise<Book> => {
   const path = `data/books/${id}/index.json`;
   const exists = await fileExists(path);
   if (!exists) throw new RouteError(404, `Book with id ${id} does not exist.`);
@@ -12,11 +12,11 @@ export const bookService = async (id: BookId): Promise<Book> => {
   return Book.parse(json);
 };
 
-export const booksService = async (): Promise<BookMinimalInfo[]> => {
+export const getBooks = async (): Promise<BookMinimalInfo[]> => {
   const paths = await fs.readdir("data/books");
   return await Promise.all(
     paths.map(async (id) => {
-      const book = await bookService(BookId.parse(id));
+      const book = await getBook(BookId.parse(id));
       return {
         id: BookId.parse(id),
         title: book.title,
@@ -25,7 +25,7 @@ export const booksService = async (): Promise<BookMinimalInfo[]> => {
   );
 };
 
-export const saveBookService = async (book: Book): Promise<void> => {
+export const saveBook = async (book: Book): Promise<void> => {
   const path = `data/books/${book.id}/index.json`;
   await fs.writeFile(path, JSON.stringify(book, null, 2), "utf-8");
 };

@@ -45,11 +45,18 @@ export async function getCompletion<T>(
   }
 
   await fs.mkdir("debug/submit-prompt", { recursive: true });
-  await fs.writeFile("debug/submit-prompt/tmp.json", JSON.stringify({
-    try: 2,
-    input: config,
-    output: completion,
-  }, null, 2));
+  await fs.writeFile(
+    "debug/submit-prompt/tmp.json",
+    JSON.stringify(
+      {
+        try: 2,
+        input: config,
+        output: completion,
+      },
+      null,
+      2,
+    ),
+  );
 
   if (zod) {
     return {

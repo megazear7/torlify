@@ -8,12 +8,14 @@ html {
   --color-tertiary-text: #ffffff;
   --color-accent: rgb(255 111 97 / 80%);
   --color-warning: rgba(255, 97, 97, 0.8);
+  --color-grey-transparent: rgba(200, 200, 200, 0.5);
 
   --size-xxl: 48px;
   --size-xl: 32px;
   --size-large: 20px;
   --size-medium: 12px;
   --size-small: 8px;
+  --size-tiny: 4px;
   --radius-medium: 12px;
   --radius-large: 20px;
   --font-medium: 18px;

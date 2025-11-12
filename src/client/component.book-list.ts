@@ -5,6 +5,8 @@ import { BooksContext, booksContext } from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import "./component.modal.js";
+import { aiIcon, plusIcon } from "./icons.js";
+import { generateBookApi } from "./api.book.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -15,6 +17,40 @@ export class TorlifyBookList extends LitElement {
   booksContext: BooksContext = {
     status: LoadingStatus.enum.idle,
   };
+
+  @property({ type: Array })
+  sampleDescriptions: string[] = [
+    "A valiant knight scaled the tower to the true Princess. A dragon loomed, but the knights courage shone. With a swift strike...",
+    "The space warrior, clad in shimmering armor, battled through asteroid storms. His laser blade carved enemy drones. A distress signal flickered...",
+    "In a realm where magic thrived, a young sorcerer discovered an ancient spellbook. As he chanted the incantations, mystical energies swirled around him. Suddenly...",
+    "Sun blazed, waves crashed. She lounged on soft sand, sipping cool lemonade. Kids built castles, giggling. Evening brought a bonfire; marshmallows roasted...",
+    "Amidst towering skyscrapers, a detective pursued a cunning thief. Clues led through bustling markets and shadowy alleys. A rooftop chase ensued...",
+    "Beneath the ocean waves, a mermaid explored vibrant coral reefs. Schools of fish danced around her as she uncovered hidden treasures. Suddenly...",
+    "In a post-apocalyptic world, a lone survivor navigated desolate landscapes. Scavenging for supplies, he encountered other survivors. Together, they faced looming threats...",
+    "High in the mountains, a monk trained in ancient martial arts. Through discipline and meditation, he mastered his skills. One day, a rival clan challenged him...",
+    "On a distant planet, explorers uncovered alien ruins. Strange symbols glowed on the walls as they ventured deeper. Suddenly, an otherworldly presence awakened...",
+    "In a quaint village, a baker crafted magical pastries. Each treat brought joy and wonder to the townsfolk. One day, a mysterious traveler arrived...",
+    "A brilliant scientist invented a time machine. Testing it, she found herself in a prehistoric era. Dinosaurs roamed, and survival became paramount. Suddenly...",
+    "In a bustling city, a street artist painted vibrant murals. His art sparked conversations and inspired change. One evening, he unveiled his masterpiece...",
+    "Amidst a dense jungle, an adventurer sought a legendary temple. Guided by ancient maps, he faced wild creatures and treacherous terrain. Finally...",
+    "In a futuristic metropolis, a hacker fought against a corrupt corporation. Using advanced technology, she exposed secrets and rallied allies. A digital battle ensued...",
+    "On a remote island, a group of friends discovered a hidden cave. Inside, glowing crystals illuminated ancient drawings. As they explored, they uncovered a long-lost secret...",
+    "In a snowy wilderness, a mountaineer braved harsh conditions. Battling blizzards and icy cliffs, he sought the summit. Suddenly...",
+    "A young musician dreamed of stardom. Practicing tirelessly, she composed melodies that captivated hearts. One night, an unexpected opportunity arose...",
+    "In a magical forest, fairies danced under moonlight. Their laughter echoed as they weaved spells of enchantment. A curious human stumbled upon their realm...",
+    "Beneath the city streets, a secret society thrived. Members exchanged coded messages and plotted grand schemes. A new recruit uncovered a hidden agenda...",
+    "In a war-torn land, a courageous soldier led a rebellion. Rallying villagers and strategizing battles, hope flickered amidst despair. A decisive confrontation loomed...",
+    "A brilliant inventor created a robot companion. Together, they embarked on adventures, exploring uncharted territories. One day, they encountered a mysterious signal...",
+    "In a serene countryside, a gardener nurtured rare plants. Each bloom held unique properties, attracting curious visitors. One afternoon, a peculiar seed sprouted...",
+    "Amidst swirling galaxies, a starship captain navigated cosmic phenomena. Facing alien encounters and interstellar challenges, the crew forged unbreakable bonds. Suddenly...",
+    "In a hidden valley, mythical creatures roamed freely. A young explorer documented their behaviors, forging friendships. One day, a looming threat emerged...",
+    "On a distant moon, colonists struggled to survive. Harsh environments and scarce resources tested their resilience. A daring expedition sought new hope...",
+    "In a vibrant carnival, performers dazzled audiences with feats of skill. Acrobats soared, magicians mystified, and clowns entertained. Behind the scenes, a secret rivalry brewed...",
+    "A skilled archer defended her village from marauding invaders. With precision and agility, she thwarted attacks and inspired courage. A final showdown approached...",
+    "A roman soldier embarked on a quest to retrieve a sacred relic. Traversing treacherous terrains and facing mythical beasts, his resolve was tested. Finally...",
+    "A general strategized to unite warring factions. Through diplomacy and tactical brilliance, he forged alliances. A decisive battle loomed...",
+    "In a mystical land, a dragon rider soared through skies. Bonded with her dragon, they protected villages from threats. A legendary foe emerged...",
+  ];
 
   override render(): TemplateResult {
     return html`
@@ -27,12 +63,34 @@ export class TorlifyBookList extends LitElement {
           `,
         ) ?? html`<li>No books found</li>`}
         <li>
-          <torlify-modal>
-            <h2>Add New Book</h2>
-            <p>TODO: Add book form goes here.</p>
+          <torlify-modal @modal-submit="${this.handleCreateBook}">
+            <button slot="open-button">${plusIcon()} Book</button>
+            <div slot="body">
+              <h2>Add Book</h2>
+              <textarea
+                placeholder="${this.sampleDescription()}"
+                rows="5"
+              ></textarea>
+            </div>
+            <button slot="submit-button">${aiIcon()} Generate</button>
           </torlify-modal>
         </li>
       </ul>
     `;
+  }
+
+  async createBook(): Promise<void> {
+    // TODO: Pass in the description to the generate api
+    // TODO: Propogate up the state and refresh the book list properly
+    await generateBookApi();
+  }
+
+  private readonly handleCreateBook = (): void => {
+    this.createBook();
+  };
+
+  sampleDescription(): string {
+    const index = Math.floor(Math.random() * this.sampleDescriptions.length);
+    return this.sampleDescriptions[index];
   }
 }
