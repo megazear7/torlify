@@ -1,48 +1,43 @@
 import { Request, Response, NextFunction, Router } from "express";
-import { HttpMethod } from "../shared/type.http.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
+import { RequestOptions, Service } from "../shared/main.service.js";
 
-export interface RequestOptions<RequestBodyType, PathParams> {
-  request: Request;
-  response: Response;
-  bodyParams: RequestBodyType;
-  pathParams: PathParams;
-}
-
-export interface Controller<RequestBodyType, PathParams, ResponseContent> {
-  readonly method: HttpMethod;
-  readonly path: string;
+export interface Controller<RequestBodyType, PathParams extends Record<string, string>, ResponseContent> {
   handler(
     options: RequestOptions<RequestBodyType, PathParams>,
   ): Promise<ResponseContent>;
   wrapper(
-    controller: Function, // eslint-disable-line @typescript-eslint/no-unsafe-function-type
+    Controller: Function, // eslint-disable-line @typescript-eslint/no-unsafe-function-type
   ): (req: Request, res: Response, next: NextFunction) => Promise<void>;
   register(router: Router): void;
 }
 
 export abstract class AbstractController<
   RequestBodyType,
-  PathParams,
+  PathParams extends Record<string, string>,
   ResponseContent,
 > implements Controller<RequestBodyType, PathParams, ResponseContent>
 {
-  abstract readonly method: HttpMethod;
-  abstract readonly path: string;
   abstract handler(
     options: RequestOptions<RequestBodyType, PathParams>,
   ): Promise<ResponseContent>;
 
+  private readonly service: Service<RequestBodyType, PathParams, ResponseContent>;
+
+  constructor(
+    service: Service<RequestBodyType, PathParams, ResponseContent>,
+  ) {
+    this.service = service;
+  }
+
   wrapper(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const pathParams = parseRouteParams(this.path, req.path);
-        const body = req.body as RequestBodyType;
+        const pathParams = parseRouteParams(this.service.path, req.path);
+        const body = this.service.RequestBodyType.parse(req.body);
         const options: RequestOptions<RequestBodyType, PathParams> = {
-          request: req,
-          response: res,
           bodyParams: body,
-          pathParams: pathParams as PathParams,
+          pathParams: this.service.PathParams.parse(pathParams),
         };
         if (req.path.startsWith("/api/")) {
           console.log(`API Request: ${req.method} ${req.path}`);
@@ -58,6 +53,7 @@ export abstract class AbstractController<
   }
 
   async register(router: Router): Promise<void> {
-    router[this.method](this.path, this.wrapper());
+    console.log(`Registering route: ${this.service.method} ${this.service.path}`);
+    router[this.service.method](this.service.path, this.wrapper());
   }
 }

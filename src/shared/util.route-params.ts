@@ -5,6 +5,15 @@ import { RouteParams } from "./type.route-params.js";
  * @param pattern The route pattern like "/book/:bookId/chapter/:chapterId"
  * @param pathname The actual pathname like "/book/123/chapter/456"
  * @returns The parsed parameters or null if the pattern doesn't match
+ * 
+ * Example usage:
+ *
+ * const params = parseRouteParams("/book/:bookId/chapter/:chapterId", "/book/123/chapter/456");
+ * // params will be: { bookId: "123", chapterId: "456" } or null if no match
+ *
+ * // TypeScript will infer the correct type:
+ * // params.bookId // string
+ * // params.chapterId // string
  */
 export function parseRouteParams<T extends string>(
   pattern: T,
@@ -41,12 +50,27 @@ export function parseRouteParams<T extends string>(
 }
 
 /**
+ * Renders a pathname from route parameters
+ * @param pattern The route pattern like "/book/:bookId/chapter/:chapterId"
+ * @param params The route parameters to render
+ * @returns The rendered pathname or null if the pattern doesn't match
+ * 
  * Example usage:
  *
- * const params = parseRouteParams("/book/:bookId/chapter/:chapterId", "/book/123/chapter/456");
- * // params will be: { bookId: "123", chapterId: "456" } or null if no match
+ * const params = renderPathname("/book/:bookId/chapter/:chapterId", { bookId: "123", chapterId: "456" });
+ * // params will be: "/book/123/chapter/456"
  *
  * // TypeScript will infer the correct type:
  * // params.bookId // string
  * // params.chapterId // string
  */
+export function renderPathname(
+  pattern: string,
+  params: Record<string, string>,
+): string {
+  let pathname = pattern;
+  for (const [key, value] of Object.entries(params)) {
+    pathname = pathname.replace(`:${key}`, value);
+  }
+  return pathname;
+}

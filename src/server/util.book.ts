@@ -12,7 +12,7 @@ export const getBook = async (id: BookId): Promise<Book> => {
   return Book.parse(json);
 };
 
-export const getBooks = async (): Promise<BookMinimalInfoList> => {
+export const listBooks = async (): Promise<BookMinimalInfoList> => {
   const paths = await fs.readdir("data/books");
   return await Promise.all(
     paths.map(async (id) => {

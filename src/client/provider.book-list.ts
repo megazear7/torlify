@@ -7,10 +7,10 @@ import {
   BooksContext,
   booksContext,
 } from "./context.book.js";
-import { booksApi } from "./api.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import "./component.book-editor.js";
+import { listBooksService } from "../shared/service.list-books.js";
 
 export abstract class TorlifyBookListProvider extends LitElement {
   params = parseRouteParams("/", window.location.pathname, true);
@@ -31,7 +31,7 @@ export abstract class TorlifyBookListProvider extends LitElement {
     super.connectedCallback();
 
     this.booksContext = {
-      books: await booksApi(),
+      books: await listBooksService.fetch({ bodyParams: undefined, pathParams: {} }),
       status: LoadingStatus.enum.success,
     };
   }

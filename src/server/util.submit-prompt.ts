@@ -5,7 +5,7 @@ import {
 } from "openai/resources";
 import z, { ZodType } from "zod";
 import { readAppConfig } from "./service.app-config.js";
-import { loadTextClient } from "./service.model.js";
+import { loadTextClient } from "./util.model.js";
 import { Book } from "../shared/type.book.js";
 import { ModelConfigs } from "../shared/type.model.js";
 import { promises as fs } from "fs";

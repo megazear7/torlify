@@ -14,7 +14,7 @@ import { editInstructionsPrompt } from "./prompt.edit-instructions.js";
 import { writtenChaptersPrompt } from "./prompt.written-chapters.js";
 import { priorPartsPrompt } from "./prompt.prior-parts.js";
 import { makeChapterPartPrompt } from "./prompt.make-chapter-part.js";
-import { submitBookPrompt } from "./service.submit-prompt.js";
+import { submitBookPrompt } from "./util.submit-prompt.js";
 
 export const authorPart = async (
   book: Book,

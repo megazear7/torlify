@@ -1,6 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Book, ReferenceUse } from "../shared/type.book.js";
-import { loadFiles } from "../server/util.file.js";
+import { loadFiles } from "./util.file.js";
 import { MessageType } from "../shared/type.model.js";
 
 export const referencesPrompt = async (

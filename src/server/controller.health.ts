@@ -1,17 +1,16 @@
-import { healthService } from "./service.health.js";
-import { AbstractController } from "./main.controller.js";
-import { HttpMethod } from "../shared/type.http.js";
+import { NoBodyParams, NoPathParams } from "../shared/main.service.js";
+import { healthService } from "../shared/service.health.js";
 import { Health } from "../shared/type.health.js";
+import { AbstractController } from "./main.controller.js";
 
 export class HealthController extends AbstractController<
-  undefined,
-  undefined,
+  NoBodyParams,
+  NoPathParams,
   Health
 > {
-  readonly method = HttpMethod.enum.get;
-  readonly path = "/api/health";
-
   async handler(): Promise<Health> {
-    return healthService();
+    return { healthy: true };
   }
 }
+
+export const healthController = new HealthController(healthService);

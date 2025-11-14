@@ -6,12 +6,11 @@ import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import "./component.modal.js";
 import { aiIcon, plusIcon } from "./icons.js";
-import { generateBookApi } from "./api.book.js";
-import { GenerateBookParameters } from "../shared/type.request.generate-book.js";
 import "./component.modal.js";
 import "./component.loading-overlay.js";
 import { NavigationEvent } from "../shared/type.events.js";
 import { dispatch } from "./util.events.js";
+import { generateBookService } from "../shared/service.generate-book.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -77,10 +76,10 @@ export class TorlifyBookList extends LitElement {
       <ul>
         <li><a href="/">Home</a></li>
         ${this.booksContext.books?.map(
-          (book) => html`
+      (book) => html`
             <li><a href="/book/${book.id}">${book.title}</a></li>
           `,
-        ) ?? html`<li>No books found</li>`}
+    ) ?? html`<li>No books found</li>`}
         <li>
           <torlify-modal @modal-submit="${this.handleCreateBook}">
             <button slot="open-button">${plusIcon()} Book</button>
@@ -102,14 +101,6 @@ export class TorlifyBookList extends LitElement {
     `;
   }
 
-  async createBook(): Promise<void> {
-    const params: GenerateBookParameters = {
-      instructions: this.generateBookInstructions || this.sampleDescription,
-    };
-    const book = await generateBookApi(params);
-    dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
-  }
-
   private readonly handleGenerateBookInstructions = (event: Event): void => {
     const target = event.target as HTMLTextAreaElement;
     this.generateBookInstructions = target.value;
@@ -118,8 +109,14 @@ export class TorlifyBookList extends LitElement {
   private readonly handleCreateBook = async (): Promise<void> => {
     this.loading = true;
     try {
-      await this.createBook();
-    } catch {
+      const book = await generateBookService.fetch({
+        bodyParams: {
+          instructions: this.generateBookInstructions || this.sampleDescription,
+        },
+        pathParams: {},
+      });
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
+    } finally {
       // TODO Create a common error handling alert component
       this.loading = false;
     }

@@ -1,9 +1,9 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Book } from "../shared/type.book.js";
-import { submitPrompt } from "./service.submit-prompt.js";
+import { submitPrompt } from "./util.submit-prompt.js";
 import { generateBookPrompt } from "./prompt.generate-book.js";
 import { readAppConfig } from "./service.app-config.js";
-import { saveBook } from "./service.book.js";
+import { saveBook } from "./util.book.js";
 import { GenerateBookParameters } from "../shared/type.request.generate-book.js";
 
 export const generateBook = async (

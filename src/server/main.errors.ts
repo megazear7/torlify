@@ -16,9 +16,11 @@ export const errorHandler = (
   _next: NextFunction, //eslint-disable-line @typescript-eslint/no-unused-vars
 ): void => {
   if (err instanceof RouteError) {
-    console.error(` -> Route error ${err.statusCode}:`, err.message);
+    console.error(` -> Route error ${err.statusCode}: ${req.path}`, err.message);
     res.status(err.statusCode).json({ error: err.message });
     return;
+  } else {
+    console.error(`${req.method} ${req.path}`, err.message);
   }
 
   console.error(err.stack);
