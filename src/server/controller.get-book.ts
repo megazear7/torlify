@@ -11,7 +11,7 @@ export class GetBookController extends AbstractController<
 > {
   async handler({
     pathParams,
-  }: RequestOptions<undefined, GetBookPathParameters>): Promise<Book> {
+  }: RequestOptions<NoBodyParams, GetBookPathParameters>): Promise<Book> {
     return getBook(pathParams.bookId);
   }
 }

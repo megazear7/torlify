@@ -110,10 +110,7 @@ export class TorlifyBookList extends LitElement {
     this.loading = true;
     try {
       const book = await generateBookService.fetch({
-        bodyParams: {
-          instructions: this.generateBookInstructions || this.sampleDescription,
-        },
-        pathParams: {},
+        instructions: this.generateBookInstructions || this.sampleDescription,
       });
       dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
     } finally {

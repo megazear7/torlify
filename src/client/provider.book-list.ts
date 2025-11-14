@@ -31,7 +31,7 @@ export abstract class TorlifyBookListProvider extends LitElement {
     super.connectedCallback();
 
     this.booksContext = {
-      books: await listBooksService.fetch({ bodyParams: undefined, pathParams: {} }),
+      books: await listBooksService.fetch(),
       status: LoadingStatus.enum.success,
     };
   }

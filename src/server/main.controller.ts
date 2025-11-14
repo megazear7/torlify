@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, Router } from "express";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { RequestOptions, Service } from "../shared/main.service.js";
 
-export interface Controller<RequestBodyType, PathParams extends Record<string, string>, ResponseContent> {
+export interface Controller<RequestBodyType extends Record<string, any>, PathParams extends Record<string, string>, ResponseContent> {
   handler(
     options: RequestOptions<RequestBodyType, PathParams>,
   ): Promise<ResponseContent>;
@@ -13,7 +13,7 @@ export interface Controller<RequestBodyType, PathParams extends Record<string, s
 }
 
 export abstract class AbstractController<
-  RequestBodyType,
+  RequestBodyType extends Record<string, any>,
   PathParams extends Record<string, string>,
   ResponseContent,
 > implements Controller<RequestBodyType, PathParams, ResponseContent>
@@ -34,7 +34,7 @@ export abstract class AbstractController<
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const pathParams = parseRouteParams(this.service.path, req.path);
-        const body = this.service.RequestBodyType.parse(req.body);
+        const body = this.service.RequestBodyType.parse(req.body ? req.body : {});
         const options: RequestOptions<RequestBodyType, PathParams> = {
           bodyParams: body,
           pathParams: this.service.PathParams.parse(pathParams),

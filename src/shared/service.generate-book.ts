@@ -1,7 +1,12 @@
 import { AbstractService, NoPathParams, ServiceType } from "./main.service.js";
 import { HttpMethod } from "./type.http.js";
-import { GenerateBookParameters } from "./type.request.generate-book.js";
 import { Book } from "./type.book.js";
+import z from "zod";
+
+export const GenerateBookParameters = z.object({
+  instructions: z.string(),
+});
+export type GenerateBookParameters = z.infer<typeof GenerateBookParameters>;
 
 export class GenerateBookService extends AbstractService<
   GenerateBookParameters,

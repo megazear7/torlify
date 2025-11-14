@@ -1,3 +1,4 @@
+import z from "zod";
 import { RouteParams } from "./type.route-params.js";
 
 /**
@@ -66,11 +67,16 @@ export function parseRouteParams<T extends string>(
  */
 export function renderPathname(
   pattern: string,
-  params: Record<string, string>,
+  params: Record<string, any>,
 ): string {
   let pathname = pattern;
   for (const [key, value] of Object.entries(params)) {
-    pathname = pathname.replace(`:${key}`, value);
+    if (typeof value === "string" || typeof value === "number") {
+        const str = z.string().parse(value);
+        pathname = pathname.replace(`:${key}`, str);
+    } else {
+      throw new Error(`Invalid parameter value for ${key}: ${value}`);
+    }
   }
   return pathname;
 }

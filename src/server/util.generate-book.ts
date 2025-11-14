@@ -4,7 +4,7 @@ import { submitPrompt } from "./util.submit-prompt.js";
 import { generateBookPrompt } from "./prompt.generate-book.js";
 import { readAppConfig } from "./service.app-config.js";
 import { saveBook } from "./util.book.js";
-import { GenerateBookParameters } from "../shared/type.request.generate-book.js";
+import { GenerateBookParameters } from "../shared/service.generate-book.js";
 
 export const generateBook = async (
   params: GenerateBookParameters,
