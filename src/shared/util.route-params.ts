@@ -11,6 +11,9 @@ export function parseRouteParams<T extends string>(
   pathname: string,
   fuzzyMatch = false,
 ): RouteParams<T> {
+  if (pattern.includes("{")) {
+    return {} as RouteParams<T>;
+  }
   const patternParts = pattern.split("/").filter(Boolean);
   const pathParts = pathname.split("/").filter(Boolean);
 

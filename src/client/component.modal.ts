@@ -2,7 +2,8 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { globalStyles } from "./styles.global";
-import { stopProp } from "./util.events";
+import { dispatch, stopProp } from "./util.events";
+import { ModelSubmitEvent } from "../shared/type.events";
 
 @customElement("torlify-modal")
 export class TorlifyModal extends LitElement {
@@ -48,11 +49,11 @@ export class TorlifyModal extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <slot name="open-button" @click="${this.handleOpen}"></slot>
-      <div class="${this.backdropClasses()}" @click="${this.handleClose}">
+      <slot name="open-button" @click="${() => this.open()}"></slot>
+      <div class="${this.backdropClasses()}" @click="${() => this.close()}">
         <div class="modal-content" @click="${stopProp}">
           <slot name="body"></slot>
-          <slot name="submit-button" @click="${this.handleSubmit}"></slot>
+          <slot name="submit-button" @click="${() => this.submit()}"></slot>
         </div>
       </div>
     `;
@@ -61,18 +62,6 @@ export class TorlifyModal extends LitElement {
   backdropClasses(): ReturnType<typeof classMap> {
     return classMap({ "modal-backdrop": true, visible: this.visible });
   }
-
-  private readonly handleOpen = (): void => {
-    this.open();
-  };
-
-  private readonly handleClose = (): void => {
-    this.close();
-  };
-
-  private readonly handleSubmit = (): void => {
-    this.submit();
-  };
 
   open(): void {
     this.visible = true;
@@ -84,12 +73,6 @@ export class TorlifyModal extends LitElement {
 
   submit(): void {
     this.visible = false;
-    this.dispatchEvent(
-      new CustomEvent("modal-submit", {
-        detail: {},
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    dispatch(this, ModelSubmitEvent());
   }
 }

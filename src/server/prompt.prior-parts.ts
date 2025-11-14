@@ -1,5 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Chapter, ChapterPartNumber } from "../shared/type.book.js";
+import { MessageType } from "../shared/type.model.js";
 
 export const priorPartsPrompt = async (
   chapter: Chapter,
@@ -9,7 +10,7 @@ export const priorPartsPrompt = async (
   return priorParts.length > 0
     ? [
         {
-          role: "user",
+          role: MessageType.enum.user,
           content: `
 Chapter ${chapter.number} ${priorParts.length > 1 ? `parts ${1} through ${priorParts.length + 1}` : `part 1:`}:
 

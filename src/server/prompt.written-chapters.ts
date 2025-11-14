@@ -1,5 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Book, Chapter } from "../shared/type.book.js";
+import { MessageType } from "../shared/type.model.js";
 
 export const writtenChaptersPrompt = async (
   book: Book,
@@ -13,7 +14,7 @@ export const writtenChaptersPrompt = async (
         chapter.number != chapterBeingWritten.number,
     )
     .map((chapter) => ({
-      role: "user",
+      role: MessageType.enum.user,
       content: `
 Chapter ${chapter.number}: ${chapter.title}
 

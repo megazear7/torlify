@@ -4,11 +4,14 @@ import { submitPrompt } from "./service.submit-prompt.js";
 import { generateBookPrompt } from "./prompt.generate-book.js";
 import { readAppConfig } from "./service.app-config.js";
 import { saveBook } from "./service.book.js";
+import { GenerateBookParameters } from "../shared/type.request.generate-book.js";
 
-export const generateBook = async (): Promise<Book> => {
+export const generateBook = async (
+  params: GenerateBookParameters,
+): Promise<Book> => {
   const appConfig = await readAppConfig();
   const messages: ChatCompletionMessageParam[] = [
-    ...(await generateBookPrompt()),
+    ...(await generateBookPrompt(params)),
   ];
   const book: Book = await submitPrompt<Book>(messages, Book);
   book.model.text = appConfig.model.text;

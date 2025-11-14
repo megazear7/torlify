@@ -1,13 +1,17 @@
-import { Request, Response } from "express";
 import { healthService } from "./service.health.js";
 import { AbstractController } from "./main.controller.js";
 import { HttpMethod } from "../shared/type.http.js";
+import { Health } from "../shared/type.health.js";
 
-export class HealthController extends AbstractController {
+export class HealthController extends AbstractController<
+  undefined,
+  undefined,
+  Health
+> {
   readonly method = HttpMethod.enum.get;
   readonly path = "/api/health";
 
-  async handler(_req: Request, res: Response): Promise<void> {
-    res.json(healthService());
+  async handler(): Promise<Health> {
+    return healthService();
   }
 }

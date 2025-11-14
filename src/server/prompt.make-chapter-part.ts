@@ -1,5 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Chapter, ChapterPartDescription } from "../shared/type.book.js";
+import { MessageType } from "../shared/type.model.js";
 
 export const makeChapterPartPrompt = async (
   chapter: Chapter,
@@ -22,11 +23,11 @@ export const makeChapterPartPrompt = async (
 
   return [
     {
-      role: "user",
+      role: MessageType.enum.user,
       content: `Part ${part} description: ${partDescription}`,
     },
     {
-      role: "user",
+      role: MessageType.enum.user,
       content: `
 Write part ${part} of chapter ${chapter.number} based on the above description${part > 1 ? " and the existing parts that were provided previously. The text should be a continuous flow from the prevous part." : ""}.
 ${referenceMsg}Do not include the chapter or part title at the beginning or any other information.

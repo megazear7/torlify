@@ -1,35 +1,50 @@
-import { Request, Response } from "express";
 import { getBook, getBooks } from "./service.book.js";
-import { parseRouteParams } from "../shared/util.route-params.js";
-import { AbstractController } from "./main.controller.js";
+import { AbstractController, RequestOptions } from "./main.controller.js";
 import { HttpMethod } from "../shared/type.http.js";
 import { generateBook } from "./service.generate-book.js";
+import { GenerateBookParameters } from "../shared/type.request.generate-book.js";
+import { GetBookPathParameters } from "../shared/type.request.get-book.js";
+import { Book, BookMinimalInfoList } from "../shared/type.book.js";
 
-export class BooksController extends AbstractController {
+export class BooksController extends AbstractController<
+  undefined,
+  undefined,
+  BookMinimalInfoList
+> {
   readonly method = HttpMethod.enum.get;
   readonly path = "/api/books";
 
-  async handler(_req: Request, res: Response): Promise<void> {
-    res.json(await getBooks());
+  async handler(): Promise<BookMinimalInfoList> {
+    return await getBooks();
   }
 }
 
-export class BookController extends AbstractController {
+export class BookController extends AbstractController<
+  undefined,
+  GetBookPathParameters,
+  Book
+> {
   readonly method = HttpMethod.enum.get;
   readonly path = "/api/book/:bookId";
 
-  async handler(req: Request, res: Response): Promise<void> {
-    const params = parseRouteParams(this.path, req.path);
-    const book = await getBook(params.bookId);
-    res.json(book);
+  async handler({
+    pathParams,
+  }: RequestOptions<undefined, GetBookPathParameters>): Promise<Book> {
+    return await getBook(pathParams.bookId);
   }
 }
 
-export class GenerateEmptyBookController extends AbstractController {
+export class GenerateEmptyBookController extends AbstractController<
+  GenerateBookParameters,
+  undefined,
+  Book
+> {
   readonly method = HttpMethod.enum.post;
   readonly path = "/api/book/generate";
 
-  async handler(_req: Request, res: Response): Promise<void> {
-    res.json(await generateBook());
+  async handler({
+    bodyParams,
+  }: RequestOptions<GenerateBookParameters, undefined>): Promise<Book> {
+    return await generateBook(bodyParams);
   }
 }

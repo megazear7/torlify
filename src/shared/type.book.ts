@@ -19,6 +19,9 @@ export const BookMinimalInfo = z.object({
 });
 export type BookMinimalInfo = z.infer<typeof BookMinimalInfo>;
 
+export const BookMinimalInfoList = BookMinimalInfo.array();
+export type BookMinimalInfoList = z.infer<typeof BookMinimalInfoList>;
+
 export const ReferenceUse = z.enum(["outlining", "writing", "editing", "plot"]);
 export type ReferenceUse = z.infer<typeof ReferenceUse>;
 
@@ -284,3 +287,6 @@ export const Book = z.object({
   loadingMessages: LoadingMessages,
 });
 export type Book = z.infer<typeof Book>;
+
+export const Books = Book.array();
+export type Books = z.infer<typeof Books>;

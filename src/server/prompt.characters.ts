@@ -1,5 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Book } from "../shared/type.book.js";
+import { MessageType } from "../shared/type.model.js";
 
 export const charactersPrompt = async (
   book: Book,
@@ -7,7 +8,7 @@ export const charactersPrompt = async (
   return book.characters && book.characters.length > 0
     ? [
         {
-          role: "user",
+          role: MessageType.enum.user,
           content: `
 Characters in this book:
 

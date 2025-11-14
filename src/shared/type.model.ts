@@ -1,6 +1,9 @@
 import z from "zod";
 import { Cost, Usage } from "./type.prompt.js";
 
+export const MessageType = z.enum(["system", "user", "assistant"]);
+export type MessageType = z.infer<typeof MessageType>;
+
 export const ModelTypeName = z
   .string()
   .min(3)

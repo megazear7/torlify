@@ -7,6 +7,11 @@ import { globalStyles } from "./styles.global.js";
 import "./component.modal.js";
 import { aiIcon, plusIcon } from "./icons.js";
 import { generateBookApi } from "./api.book.js";
+import { GenerateBookParameters } from "../shared/type.request.generate-book.js";
+import "./component.modal.js";
+import "./component.loading-overlay.js";
+import { NavigationEvent } from "../shared/type.events.js";
+import { dispatch } from "./util.events.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -17,6 +22,15 @@ export class TorlifyBookList extends LitElement {
   booksContext: BooksContext = {
     status: LoadingStatus.enum.idle,
   };
+
+  @property({ type: String })
+  generateBookInstructions = "";
+
+  @property({ type: String })
+  sampleDescription: string = "";
+
+  @property({ type: String })
+  loading: boolean = false;
 
   @property({ type: Array })
   sampleDescriptions: string[] = [
@@ -52,6 +66,11 @@ export class TorlifyBookList extends LitElement {
     "In a mystical land, a dragon rider soared through skies. Bonded with her dragon, they protected villages from threats. A legendary foe emerged...",
   ];
 
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.chooseSampleDescription();
+  }
+
   override render(): TemplateResult {
     return html`
       <h3>Books</h3>
@@ -68,7 +87,9 @@ export class TorlifyBookList extends LitElement {
             <div slot="body">
               <h2>Add Book</h2>
               <textarea
-                placeholder="${this.sampleDescription()}"
+                .value="${this.generateBookInstructions}"
+                @input="${this.handleGenerateBookInstructions}"
+                placeholder="${this.sampleDescription}"
                 rows="5"
               ></textarea>
             </div>
@@ -76,21 +97,36 @@ export class TorlifyBookList extends LitElement {
           </torlify-modal>
         </li>
       </ul>
+
+      <torlify-loading-overlay .visible="${this.loading}"></torlify-loading-overlay>
     `;
   }
 
   async createBook(): Promise<void> {
-    // TODO: Pass in the description to the generate api
-    // TODO: Propogate up the state and refresh the book list properly
-    await generateBookApi();
+    const params: GenerateBookParameters = {
+      instructions: this.generateBookInstructions || this.sampleDescription,
+    };
+    const book = await generateBookApi(params);
+    dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
   }
 
-  private readonly handleCreateBook = (): void => {
-    this.createBook();
+  private readonly handleGenerateBookInstructions = (event: Event): void => {
+    const target = event.target as HTMLTextAreaElement;
+    this.generateBookInstructions = target.value;
   };
 
-  sampleDescription(): string {
+  private readonly handleCreateBook = async (): Promise<void> => {
+    this.loading = true;
+    try {
+      await this.createBook();
+    } catch {
+      // TODO Create a common error handling alert component
+      this.loading = false;
+    }
+  };
+
+  chooseSampleDescription(): void {
     const index = Math.floor(Math.random() * this.sampleDescriptions.length);
-    return this.sampleDescriptions[index];
+    this.sampleDescription = this.sampleDescriptions[index];
   }
 }
