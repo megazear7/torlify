@@ -16,7 +16,6 @@ export class GenerateBookController extends AbstractController<
   async handler({
     bodyParams,
   }: RequestOptions<GenerateBookParameters, NoPathParams>): Promise<Book> {
-    console.log("Generating book with parameters:", bodyParams);
     const appConfig = await readAppConfig();
     const messages: ChatCompletionMessageParam[] = [
       ...(await generateBookPrompt(bodyParams)),
