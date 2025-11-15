@@ -17,7 +17,7 @@ export interface Controller<
 }
 
 export abstract class AbstractController<
-  RequestBodyType extends Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  RequestBodyType extends Record<string, any>,
   PathParams extends Record<string, string>,
   ResponseContent,
 > implements Controller<RequestBodyType, PathParams, ResponseContent>

@@ -17,22 +17,3 @@ export const RouteConfig = z.object({
   path: RoutePath,
 });
 export type RouteConfig = z.infer<typeof RouteConfig>;
-
-export const routes = [
-  {
-    name: RouteName.enum.home,
-    path: "/",
-  },
-  {
-    name: RouteName.enum.book,
-    path: "/book/:bookId",
-  },
-  {
-    name: RouteName.enum.chapter,
-    path: "/book/:bookId/chapter/:chapterId",
-  },
-  {
-    name: RouteName.enum.part,
-    path: "/book/:bookId/chapter/:chapterId/part/:partId",
-  },
-];

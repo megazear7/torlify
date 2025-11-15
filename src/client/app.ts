@@ -7,6 +7,7 @@ import "./page.part.js";
 import "./page.not-found.js";
 import { RouteConfig, RouteName } from "../shared/type.routes.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
+import { routes } from "../shared/service.client.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
