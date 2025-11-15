@@ -12,12 +12,12 @@ export const ModelSubmitEventData = z.object({
 export type ModelSubmitEventData = z.infer<typeof ModelSubmitEventData>;
 
 export const ModelSubmitEvent = (): ModelSubmitEventData => ({
-    name: TorlifyEventName.enum.ModelSubmit,
-    detail: {},
+  name: TorlifyEventName.enum.ModelSubmit,
+  detail: {},
 });
 
 export const NavigationEventDetail = z.object({
-    path: z.string().describe("The path to navigate to."),
+  path: z.string().describe("The path to navigate to."),
 });
 export type NavigationEventDetail = z.infer<typeof NavigationEventDetail>;
 
@@ -27,9 +27,11 @@ export const NavigationEventData = z.object({
 });
 export type NavigationEventData = z.infer<typeof NavigationEventData>;
 
-export const NavigationEvent = (detail: NavigationEventDetail): NavigationEventData => ({
-    name: TorlifyEventName.enum.Navigation,
-    detail,
+export const NavigationEvent = (
+  detail: NavigationEventDetail,
+): NavigationEventData => ({
+  name: TorlifyEventName.enum.Navigation,
+  detail,
 });
 
 export const TorlifyEvent = z.union([

@@ -6,7 +6,7 @@ import { RouteParams } from "./type.route-params.js";
  * @param pattern The route pattern like "/book/:bookId/chapter/:chapterId"
  * @param pathname The actual pathname like "/book/123/chapter/456"
  * @returns The parsed parameters or null if the pattern doesn't match
- * 
+ *
  * Example usage:
  *
  * const params = parseRouteParams("/book/:bookId/chapter/:chapterId", "/book/123/chapter/456");
@@ -55,7 +55,7 @@ export function parseRouteParams<T extends string>(
  * @param pattern The route pattern like "/book/:bookId/chapter/:chapterId"
  * @param params The route parameters to render
  * @returns The rendered pathname or null if the pattern doesn't match
- * 
+ *
  * Example usage:
  *
  * const params = renderPathname("/book/:bookId/chapter/:chapterId", { bookId: "123", chapterId: "456" });
@@ -67,13 +67,13 @@ export function parseRouteParams<T extends string>(
  */
 export function renderPathname(
   pattern: string,
-  params: Record<string, any>,
+  params: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
 ): string {
   let pathname = pattern;
   for (const [key, value] of Object.entries(params)) {
     if (typeof value === "string" || typeof value === "number") {
-        const str = z.string().parse(value);
-        pathname = pathname.replace(`:${key}`, str);
+      const str = z.string().parse(value);
+      pathname = pathname.replace(`:${key}`, str);
     } else {
       throw new Error(`Invalid parameter value for ${key}: ${value}`);
     }

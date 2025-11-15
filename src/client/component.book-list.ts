@@ -76,10 +76,10 @@ export class TorlifyBookList extends LitElement {
       <ul>
         <li><a href="/">Home</a></li>
         ${this.booksContext.books?.map(
-      (book) => html`
+          (book) => html`
             <li><a href="/book/${book.id}">${book.title}</a></li>
           `,
-    ) ?? html`<li>No books found</li>`}
+        ) ?? html`<li>No books found</li>`}
         <li>
           <torlify-modal @ModelSubmit="${this.handleCreateBook}">
             <button slot="open-button">${plusIcon()} Book</button>
@@ -97,7 +97,9 @@ export class TorlifyBookList extends LitElement {
         </li>
       </ul>
 
-      <torlify-loading-overlay .visible="${this.loading}"></torlify-loading-overlay>
+      <torlify-loading-overlay
+        .visible="${this.loading}"
+      ></torlify-loading-overlay>
     `;
   }
 

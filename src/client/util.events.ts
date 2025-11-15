@@ -5,11 +5,11 @@ export const stopProp = (event: Event): void => {
 };
 
 export const dispatch = (element: HTMLElement, event: TorlifyEvent): void => {
-    element.dispatchEvent(
-      new CustomEvent(event.name, {
-        detail: event.detail,
-        bubbles: true,
-        composed: true,
-      }),
-    );
-}
+  element.dispatchEvent(
+    new CustomEvent(event.name, {
+      detail: event.detail,
+      bubbles: true,
+      composed: true,
+    }),
+  );
+};

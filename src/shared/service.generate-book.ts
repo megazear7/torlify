@@ -18,4 +18,8 @@ export class GenerateBookService extends AbstractService<
   readonly path = "/api/book/generate";
 }
 
-export const generateBookService = new GenerateBookService(GenerateBookParameters, NoPathParams, Book);
+export const generateBookService = new GenerateBookService(
+  GenerateBookParameters,
+  NoPathParams,
+  Book,
+);

@@ -1,4 +1,4 @@
-export const page = () => `
+export const page = (): string => `
     <!DOCTYPE html>
     <html>
     <head>
