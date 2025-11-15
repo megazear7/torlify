@@ -5,16 +5,17 @@ import { BooksContext, booksContext } from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import "./component.modal.js";
-import { aiIcon, plusIcon } from "./icons.js";
+import { aiIcon, homeIcon } from "./icons.js";
 import "./component.modal.js";
 import "./component.loading-overlay.js";
 import { NavigationEvent } from "../shared/type.events.js";
 import { dispatch } from "./util.events.js";
 import { generateBookService } from "../shared/service.generate-book.js";
+import { pillStyles } from "./styles.pill.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
-  static override styles = [globalStyles, css``];
+  static override styles = [globalStyles, pillStyles, css``];
 
   @consume({ context: booksContext, subscribe: true })
   @property({ attribute: false })
@@ -72,9 +73,8 @@ export class TorlifyBookList extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <h3>Books</h3>
-      <ul>
-        <li><a href="/">Home</a></li>
+      <ul class="pill">
+        <li><a href="/">${homeIcon}</a></li>
         ${this.booksContext.books?.map(
           (book) => html`
             <li><a href="/book/${book.id}">${book.title}</a></li>
@@ -82,7 +82,7 @@ export class TorlifyBookList extends LitElement {
         ) ?? html`<li>No books found</li>`}
         <li>
           <torlify-modal @ModelSubmit="${this.handleCreateBook}">
-            <button slot="open-button">${plusIcon()} Book</button>
+            <button slot="open-button">${aiIcon} Book</button>
             <div slot="body">
               <h2>Add Book</h2>
               <textarea
@@ -92,7 +92,7 @@ export class TorlifyBookList extends LitElement {
                 rows="5"
               ></textarea>
             </div>
-            <button slot="submit-button">${aiIcon()} Generate</button>
+            <button slot="submit-button">${aiIcon} Generate</button>
           </torlify-modal>
         </li>
       </ul>

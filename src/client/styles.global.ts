@@ -9,7 +9,7 @@ export const globalStyles = css`
     display: flex;
     align-items: center;
     gap: var(--size-tiny);
-    background: var(--color-1);
+    background: var(--color-secondary-surface);
     color: var(--color-secondary-text);
     outline: none;
     border: none;
