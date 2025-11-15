@@ -18,7 +18,7 @@ export interface RequestOptions<RequestBodyType extends Record<string, any>, Pat
 
 export interface Service<RequestBodyType extends Record<string, any>, PathParams extends Record<string, any>, ResponseContent> {
   readonly method: HttpMethod;
-  readonly path: string;
+  readonly path: string | string[];
   readonly RequestBodyType: ZodType<RequestBodyType>;
   readonly PathParams: ZodType<PathParams>;
   readonly ResponseContent: ZodType<ResponseContent>;
@@ -30,7 +30,7 @@ export abstract class AbstractService<
   ResponseContent,
 > implements Service<RequestBodyType, PathParams, ResponseContent> {
   abstract readonly method: HttpMethod;
-  abstract readonly path: string;
+  abstract readonly path: string | string[];
   abstract readonly type: ServiceType;
 
   readonly RequestBodyType: ZodType<RequestBodyType>;
@@ -48,6 +48,10 @@ export abstract class AbstractService<
   }
 
   async fetch(params?: RequestBodyType | PathParams): Promise<ResponseContent> {
+    if (Array.isArray(this.path)) {
+      throw new Error("Cannot fetch from multiple paths. Specify a single path.");
+    }
+
     const requestConfig: RequestInit = {
       method: this.method.toUpperCase()
     };

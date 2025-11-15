@@ -4,6 +4,7 @@ import { loggingMiddleware } from "./main.logging.js";
 import { errorHandler } from "./main.errors.js";
 import { env } from "./main.env.js";
 import "./main.errors.js";
+import { notFound } from "./main.not-found.js";
 
 const server = express();
 
@@ -13,6 +14,7 @@ server.use(express.static("dist/shared"));
 server.use(express.static("src/static"));
 server.use(loggingMiddleware);
 server.use(router);
+server.use(notFound);
 server.use(errorHandler);
 
 server.listen(env.APP_PORT, () =>

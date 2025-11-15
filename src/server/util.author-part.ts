@@ -38,6 +38,5 @@ export const authorPart = async (
     messages,
     BookChapterPartText,
   );
-  console.log(part);
-  throw new Error("Not implemented yet");
+  throw new Error("Not implemented yet: " + JSON.stringify(part));
 };

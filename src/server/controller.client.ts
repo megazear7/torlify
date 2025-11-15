@@ -1,6 +1,7 @@
 import { NoBodyParams, NoPathParams } from "../shared/main.service.js";
 import { clientService } from "../shared/service.client.js";
 import { AbstractController } from "./main.controller.js";
+import { page } from "./main.page.js";
 
 export class ClientController extends AbstractController<
   NoBodyParams,
@@ -8,20 +9,7 @@ export class ClientController extends AbstractController<
   string
 > {
   async handler(): Promise<string> {
-    return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Book Maker New</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <link rel="stylesheet" href="/app.css" />
-          <script type="module" src="/bundle.js"></script>
-        </head>
-        <body>
-          <torlify-app></torlify-app>
-        </body>
-      </html>
-    `;
+    return page();
   }
 }
 

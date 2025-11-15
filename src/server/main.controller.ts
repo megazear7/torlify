@@ -16,8 +16,7 @@ export abstract class AbstractController<
   RequestBodyType extends Record<string, any>,
   PathParams extends Record<string, string>,
   ResponseContent,
-> implements Controller<RequestBodyType, PathParams, ResponseContent>
-{
+> implements Controller<RequestBodyType, PathParams, ResponseContent> {
   abstract handler(
     options: RequestOptions<RequestBodyType, PathParams>,
   ): Promise<ResponseContent>;
@@ -33,18 +32,21 @@ export abstract class AbstractController<
   wrapper(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const pathParams = parseRouteParams(this.service.path, req.path);
-        const body = this.service.RequestBodyType.parse(req.body ? req.body : {});
-        const options: RequestOptions<RequestBodyType, PathParams> = {
-          bodyParams: body,
-          pathParams: this.service.PathParams.parse(pathParams),
-        };
         if (req.path.startsWith("/api/")) {
+          if (Array.isArray(this.service.path)) {
+            throw new Error("Cannot handle multiple paths in a single api controller.");
+          }
+          const pathParams = parseRouteParams(this.service.path, req.path);
+          const body = this.service.RequestBodyType.parse(req.body ? req.body : {});
+          const options: RequestOptions<RequestBodyType, PathParams> = {
+            bodyParams: body,
+            pathParams: this.service.PathParams.parse(pathParams),
+          };
           console.log(`API Request: ${req.method} ${req.path}`);
           res.json(await this.handler(options));
         } else {
           console.log(`Page Request: ${req.method} ${req.path}`);
-          res.send(await this.handler(options));
+          res.send(await this.handler({} as RequestOptions<RequestBodyType, PathParams>));
         }
       } catch (error) {
         next(error);
@@ -53,7 +55,17 @@ export abstract class AbstractController<
   }
 
   async register(router: Router): Promise<void> {
-    console.log(`Registering route: ${this.service.method} ${this.service.path}`);
-    router[this.service.method](this.service.path, this.wrapper());
+    if (Array.isArray(this.service.path)) {
+      for (const path of this.service.path) {
+        await this.registerSinglePath(router, path);
+      }
+    } else {
+      await this.registerSinglePath(router, this.service.path);
+    }
+  }
+
+  private async registerSinglePath(router: Router, path: string): Promise<void> {
+    console.log(`Registering route: ${this.service.method} ${path}`);
+    router[this.service.method](path, this.wrapper());
   }
 }
