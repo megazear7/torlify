@@ -9,7 +9,15 @@ export const getBook = async (id: BookId): Promise<Book> => {
   if (!exists) throw new RouteError(404, `Book with id ${id} does not exist.`);
   const data = await fs.readFile(path, "utf-8");
   const json = JSON.parse(data);
-  return Book.parse(json);
+  const book = Book.parse(json);
+  for (const chapter of book.chapters) {
+    if (!chapter.parts || chapter.parts.length === 0) {
+      for (let i = 0; i < (chapter.minParts || 1); i++) {
+        chapter.parts.push({ text: "" });
+      }
+    }
+  }
+  return book;
 };
 
 export const listBooks = async (): Promise<BookMinimalInfoList> => {

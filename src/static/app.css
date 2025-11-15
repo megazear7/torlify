@@ -3,6 +3,7 @@ html {
   --color-2: #9b59b6;
   --color-primary-surface: #2c2f33;
   --color-primary-text: #e0e6ed;
+  --color-primary-text-dark: #666;
   --color-secondary-surface: #3a3f47;
   --color-secondary-text: #ffffff;
   --color-tertiary-text: #ffffff;
@@ -16,9 +17,11 @@ html {
   --size-medium: 12px;
   --size-small: 8px;
   --size-tiny: 4px;
+  --size-nano: 2px;
   --radius-medium: 12px;
   --radius-large: 20px;
   --font-medium: 18px;
+  --font-small: 14px;
   --line-height: 1.6;
   --border-active: 2px solid var(--color-1);
   --shadow-normal: 0 4px 12px rgba(0, 0, 0, 0.1);
