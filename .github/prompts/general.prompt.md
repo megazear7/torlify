@@ -53,6 +53,12 @@
  - Components must get data by consuming context provided in the provider.
  - Components that are general purpose can have attributes to customize their behavior.
 
+### Client styles
+ - All styles must use css variables and avoid hardcoded values such as colors and sizes.
+ - CSS variables must be defined in `static/app.css`.
+ - Global styles which need to be available in all pages and components must be created at `src/client/styles.global.ts`.
+ - Component specific styles must be created within the component file using the `static styles` property.
+
 ## Server
 
 ### Server Controllers

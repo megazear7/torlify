@@ -50,4 +50,9 @@ export const globalStyles = css`
   textarea::placeholder {
     color: var(--color-grey-transparent);
   }
+
+  .container {
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
 `;

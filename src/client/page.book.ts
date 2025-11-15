@@ -6,10 +6,13 @@ import { TorlifyBookProvider } from "./provider.book.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
 import "./component.chapter-list.js";
+import { globalStyles } from "./styles.global.js";
 
 @customElement("torlify-book-page")
 export class TorlifyBookPage extends TorlifyBookProvider {
   override params = parseRouteParams("/book/:bookId", window.location.pathname);
+
+  static override styles = [globalStyles];
 
   override render(): TemplateResult {
     if (
@@ -20,9 +23,11 @@ export class TorlifyBookPage extends TorlifyBookProvider {
     }
 
     return html`
-      <torlify-book-list></torlify-book-list>
-      <torlify-book-editor></torlify-book-editor>
-      <torlify-chapter-list></torlify-chapter-list>
+      <div class="container">
+        <torlify-book-list></torlify-book-list>
+        <torlify-book-editor></torlify-book-editor>
+        <torlify-chapter-list></torlify-chapter-list>
+      </div>
     `;
   }
 }

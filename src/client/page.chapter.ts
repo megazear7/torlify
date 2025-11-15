@@ -7,6 +7,7 @@ import "./component.book-editor.js";
 import "./component.chapter-list.js";
 import "./component.chapter-editor.js";
 import "./component.part-list.js";
+import { globalStyles } from "./styles.global.js";
 
 @customElement("torlify-chapter-page")
 export class TorlifyChapterPage extends TorlifyChapterProvider {
@@ -15,13 +16,17 @@ export class TorlifyChapterPage extends TorlifyChapterProvider {
     window.location.pathname,
   );
 
+  static override styles = [globalStyles];
+
   override render(): TemplateResult {
     return html`
-      <torlify-book-list></torlify-book-list>
-      <torlify-book-editor></torlify-book-editor>
-      <torlify-chapter-list></torlify-chapter-list>
-      <torlify-chapter-editor></torlify-chapter-editor>
-      <torlify-part-list></torlify-part-list>
+      <div class="container">
+        <torlify-book-list></torlify-book-list>
+        <torlify-book-editor></torlify-book-editor>
+        <torlify-chapter-list></torlify-chapter-list>
+        <torlify-chapter-editor></torlify-chapter-editor>
+        <torlify-part-list></torlify-part-list>
+      </div>
     `;
   }
 }
