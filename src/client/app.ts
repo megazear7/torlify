@@ -10,24 +10,7 @@ import { parseRouteParams } from "../shared/util.route-params.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
-  routes: RouteConfig[] = [
-    {
-      name: RouteName.enum.home,
-      path: "/",
-    },
-    {
-      name: RouteName.enum.book,
-      path: "/book/:bookId",
-    },
-    {
-      name: RouteName.enum.chapter,
-      path: "/book/:bookId/chapter/:chapterId",
-    },
-    {
-      name: RouteName.enum.part,
-      path: "/book/:bookId/chapter/:chapterId/part/:partId",
-    },
-  ];
+  routes: RouteConfig[] = routes;
 
   @property({ type: String }) currentRoute: RouteConfig | null =
     this.determineRouteName();
