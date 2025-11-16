@@ -12,7 +12,7 @@ import { globalStyles } from "./styles.global.js";
 
 @customElement("torlify-part-page")
 export class TorlifyPartPage extends TorlifyPartProvider {
-  override params = parseRouteParams(
+  params = parseRouteParams(
     "/book/:bookId/chapter/:chapterId/part/:partId",
     window.location.pathname,
   );
@@ -23,8 +23,8 @@ export class TorlifyPartPage extends TorlifyPartProvider {
     return html`
       <div class="container">
         <torlify-book-list></torlify-book-list>
-        <torlify-book-editor></torlify-book-editor>
         <torlify-chapter-list></torlify-chapter-list>
+        <torlify-book-editor></torlify-book-editor>
         <torlify-chapter-editor></torlify-chapter-editor>
         <torlify-part-list></torlify-part-list>
         <torlify-part-editor></torlify-part-editor>

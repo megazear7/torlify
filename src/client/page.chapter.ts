@@ -11,7 +11,7 @@ import { globalStyles } from "./styles.global.js";
 
 @customElement("torlify-chapter-page")
 export class TorlifyChapterPage extends TorlifyChapterProvider {
-  override params = parseRouteParams(
+  params = parseRouteParams(
     "/book/:bookId/chapter/:chapterId",
     window.location.pathname,
   );
@@ -22,8 +22,8 @@ export class TorlifyChapterPage extends TorlifyChapterProvider {
     return html`
       <div class="container">
         <torlify-book-list></torlify-book-list>
-        <torlify-book-editor></torlify-book-editor>
         <torlify-chapter-list></torlify-chapter-list>
+        <torlify-book-editor></torlify-book-editor>
         <torlify-chapter-editor></torlify-chapter-editor>
         <torlify-part-list></torlify-part-list>
       </div>

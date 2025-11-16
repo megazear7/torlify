@@ -18,7 +18,17 @@ export class TorlifyBookEditor extends LitElement {
   override render(): TemplateResult {
     return html`
       ${this.bookContext.book
-        ? html`<h2>${this.bookContext.book.title}</h2>`
+        ? html`
+          <div class="secondary-surface">
+            <h2>${this.bookContext.book.title}</h2>
+            <h4>Overview</h4>
+            <p>${this.bookContext.book.overview}</p>
+            <h4>Edit Instructions</h4>
+            <p>${this.bookContext.book.instructions.edit}</p>
+            <h4>Audio Instructions</h4>
+            <p>${this.bookContext.book.instructions.audio}</p>
+          </div>
+        `
         : html`<p>Loading book...</p>`}
     `;
   }
