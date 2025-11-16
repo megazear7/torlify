@@ -1,4 +1,4 @@
-import { html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import "./page.home.js";
 import "./page.book.js";
@@ -16,8 +16,8 @@ import { TorlifyToast } from "./component.toast.js";
 export class TorlifyApp extends LitElement {
   routes: RouteConfig[] = routes;
 
-  @property({ type: String }) currentRoute: RouteConfig | null =
-    this.determineRouteName();
+  @property({ type: String })
+  currentRoute: RouteConfig | null = this.determineRouteName();
 
   @property({ type: String }) toastMessage = "";
   @property({ type: String }) toastType:
@@ -103,16 +103,20 @@ export class TorlifyApp extends LitElement {
       const path = url.pathname;
       window.history.pushState({}, "", path);
       this.currentRoute = this.determineRouteName();
-      const tagName = `torlify-${this.currentRoute!.name.replace(/_/g, "-")}-page`;
-      const pageElement = this.shadowRoot?.querySelector(tagName);
-      const provider = pageElement as TorlifyAbstractProvider;
-      if (provider && provider.load && typeof provider.load === "function") {
-        await provider.load();
-        provider.requestUpdate();
-      } else {
-        console.warn("Provider or load method not found for", tagName);
-      }
       this.requestUpdate();
+    }
+  }
+
+  protected override update(changedProperties: PropertyValues): void {
+    super.update(changedProperties);
+    const tagName = `torlify-${this.currentRoute!.name.replace(/_/g, "-")}-page`;
+    const pageElement = this.shadowRoot?.querySelector(tagName);
+    const provider = pageElement as TorlifyAbstractProvider;
+    if (provider && provider.load && typeof provider.load === "function") {
+      provider.load().then(() => provider.requestUpdate());
+    } else {
+      this.toast.show("Failed to load page data.", "error");
+      console.warn("Provider or load method not found for", tagName);
     }
   }
 
