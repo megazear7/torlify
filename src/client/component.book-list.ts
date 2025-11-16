@@ -8,10 +8,10 @@ import "./component.modal.js";
 import { aiIcon, homeIcon } from "./icons.js";
 import "./component.modal.js";
 import "./component.loading-overlay.js";
-import { NavigationEvent } from "../shared/type.events.js";
 import { dispatch } from "./util.events.js";
 import { generateBookService } from "../shared/service.generate-book.js";
 import { pillStyles } from "./styles.pill.js";
+import { NavigationEvent } from "./event.navigation.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {

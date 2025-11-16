@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { globalStyles } from "./styles.global";
 import { dispatch, stopProp } from "./util.events";
-import { ModelSubmitEvent } from "../shared/type.events";
+import { ModelSubmitEvent } from "./event.modal-submit.js";
 
 @customElement("torlify-modal")
 export class TorlifyModal extends LitElement {

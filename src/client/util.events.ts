@@ -1,4 +1,12 @@
-import { TorlifyEvent } from "../shared/type.events.js";
+import z from "zod";
+import { ModelSubmitEventData } from "./event.modal-submit.js";
+import { NavigationEventData } from "./event.navigation.js";
+
+export const TorlifyEvent = z.union([
+  ModelSubmitEventData,
+  NavigationEventData,
+]);
+export type TorlifyEvent = z.infer<typeof TorlifyEvent>;
 
 export const stopProp = (event: Event): void => {
   event.stopPropagation();

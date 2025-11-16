@@ -59,6 +59,11 @@
  - Global styles which need to be available in all pages and components must be created at `src/client/styles.global.ts`.
  - Component specific styles must be created within the component file using the `static styles` property.
 
+### Client Events
+ - Events must have a corresponding types and function defined in `src/client/event.<event-name>.ts`.
+ - Event must be imported by `src/client/util.events.ts` and added to the `TorlifyEvent` type.
+ - Events must be dispatched with `dispatch(this, ExampleEvent());`
+
 ## Server
 
 ### Server Controllers
