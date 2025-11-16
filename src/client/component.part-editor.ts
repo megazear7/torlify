@@ -18,7 +18,11 @@ export class TorlifyPartEditor extends LitElement {
   override render(): TemplateResult {
     return html`
       ${this.partContext.part
-        ? html`<p>${this.partContext.part.text}</p>`
+        ? html`
+            <div class="secondary-surface">
+              <p>${this.partContext.part.text}</p>
+            </div>
+          `
         : html`<p>Loading part...</p>`}
     `;
   }

@@ -1,16 +1,19 @@
 import { css } from "lit";
 
 export const pillStyles = css`
-ul.pill {
+  ul.pill {
     display: flex;
     flex-wrap: wrap;
     gap: var(--size-medium);
-    margin: var(--size-large) 0 0 0;
+    margin: var(--size-xl) 0 0 0;
     padding: 0;
     list-style: none;
-}
+  }
 
-ul.pill > li {
+  ul.pill > li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex: 0 0 auto;
     background: var(--color-secondary-surface);
     color: var(--color-secondary-text);
@@ -21,9 +24,9 @@ ul.pill > li {
     box-shadow: var(--shadow-active);
     position: relative;
     overflow: hidden;
-}
+  }
 
-ul.pill > li::after {
+  ul.pill > li::after {
     content: "";
     position: absolute;
     left: 0;
@@ -35,39 +38,40 @@ ul.pill > li::after {
     transition: var(--transition-all);
     border-radius: var(--radius-large);
     z-index: 0;
-}
+  }
 
-ul.pill > li:hover::after {
+  ul.pill > li > * {
+    z-index: 1;
+  }
+
+  ul.pill > li:hover::after {
     opacity: 1;
-}
+  }
 
-ul.pill > li:hover {
+  ul.pill > li:hover {
     background: var(--color-2);
     color: var(--color-tertiary-text);
     box-shadow: var(--shadow-hover);
-    transform: translateY(-2px);
-}
+  }
 
-ul.pill > li > a, ul.pill > li > button {
+  ul.pill > li > * {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: inherit;
     text-decoration: none;
     padding: var(--size-medium) var(--size-large);
-    display: block;
     position: relative;
     z-index: 1;
     transition: var(--transition-all);
-}
+  }
 
-ul.pill > li > button {
+  ul.pill > li > * {
     border: none;
     background: transparent;
     cursor: pointer;
     font-size: inherit;
     font-family: inherit;
     font-weight: inherit;
-}
-
-ul.pill > li:hover > torlify-modal > button {
-    background: var(--color-2);
-}
+  }
 `;

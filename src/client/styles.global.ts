@@ -1,18 +1,31 @@
 import { css } from "lit";
 
 export const globalStyles = css`
+  svg {
+    width: var(--size-large);
+    height: var(--size-large);
+  }
+
   a {
     color: var(--color-1);
   }
 
   button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
     display: flex;
     align-items: center;
-    gap: var(--size-tiny);
+    justify-content: center;
+    gap: var(--size-small);
+  }
+
+  button.standard-button {
     background: var(--color-secondary-surface);
     color: var(--color-secondary-text);
     outline: none;
-    border: none;
     padding: var(--size-large) var(--size-xl);
     border-radius: var(--radius-large);
     font-size: var(--font-medium);
@@ -22,14 +35,19 @@ export const globalStyles = css`
     transition: var(--transition-all);
   }
 
-  button:hover {
+  button.standard-button:hover {
     background: var(--color-2);
     box-shadow: var(--shadow-hover);
     transform: var(--transform-hover);
   }
 
+  torlify-modal button.standard-button {
+    background: var(--color-secondary-light);
+  }
+
   textarea {
     width: 100%;
+    box-sizing: border-box;
     padding: var(--size-medium);
     border: 1px solid var(--color-grey-transparent);
     border-radius: var(--radius-medium);
@@ -54,5 +72,19 @@ export const globalStyles = css`
   .container {
     max-width: var(--content-width);
     margin: 0 auto;
+  }
+
+  .secondary-surface {
+    background-color: var(--color-secondary-surface);
+    color: var(--color-secondary-text);
+    border-radius: var(--radius-medium);
+    padding: var(--size-large) var(--size-xl);
+    margin-top: var(--size-xl);
+    box-shadow: var(--shadow-normal);
+    transition: var(--transition-shadow);
+  }
+
+  .secondary-surface:hover {
+    box-shadow: var(--shadow-hover);
   }
 `;

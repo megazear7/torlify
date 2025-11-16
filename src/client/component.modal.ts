@@ -41,6 +41,12 @@ export class TorlifyModal extends LitElement {
       .modal-backdrop.visible {
         display: flex;
       }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: var(--size-medium);
+      }
     `,
   ];
 
@@ -56,10 +62,12 @@ export class TorlifyModal extends LitElement {
       >
         <div class="modal-content" @click="${stopProp}">
           <slot name="body"></slot>
-          <slot
-            name="submit-button"
-            @click="${(): void => this.submit()}"
-          ></slot>
+          <div class="modal-footer">
+            <slot
+              name="submit-button"
+              @click="${(): void => this.submit()}"
+            ></slot>
+          </div>
         </div>
       </div>
     `;

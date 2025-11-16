@@ -92,7 +92,9 @@ export class TorlifyBookList extends LitElement {
                 rows="5"
               ></textarea>
             </div>
-            <button slot="submit-button">${aiIcon} Generate</button>
+            <button class="standard-button" slot="submit-button">
+              ${aiIcon} Generate
+            </button>
           </torlify-modal>
         </li>
       </ul>

@@ -18,7 +18,12 @@ export class TorlifyChapterEditor extends LitElement {
   override render(): TemplateResult {
     return html`
       ${this.chapterContext.chapter
-        ? html`<h3>${this.chapterContext.chapter.title}</h3>`
+        ? html`
+            <div class="secondary-surface">
+              <h4>Chapter ${this.chapterContext.chapter.number}</h4>
+              <h2>${this.chapterContext.chapter.title}</h2>
+            </div>
+          `
         : html`<p>Loading chapter...</p>`}
     `;
   }

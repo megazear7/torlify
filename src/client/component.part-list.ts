@@ -9,10 +9,11 @@ import {
 } from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
+import { pillStyles } from "./styles.pill.js";
 
 @customElement("torlify-part-list")
 export class TorlifyPartList extends LitElement {
-  static override styles = [globalStyles, css``];
+  static override styles = [globalStyles, pillStyles, css``];
 
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })
@@ -28,8 +29,7 @@ export class TorlifyPartList extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <h3>Parts</h3>
-      <ul>
+      <ul class="pill">
         ${this.chapterContext.chapter?.parts.map(
           (_, index) => html`
             <li>

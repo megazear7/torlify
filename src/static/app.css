@@ -5,6 +5,7 @@ html {
   --color-primary-text: #e0e6ed;
   --color-primary-text-dark: #666;
   --color-secondary-surface: #3a3f47;
+  --color-secondary-light: #4b4f57;
   --color-secondary-text: #ffffff;
   --color-tertiary-text: #ffffff;
   --color-accent: rgb(255 111 97 / 80%);
@@ -29,6 +30,7 @@ html {
   --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.3);
   --time-normal: 350ms;
   --transition-all: all var(--time-normal) ease-in-out;
+  --transition-shadow: box-shadow var(--time-normal) ease-in-out;
   --font-family: "Inter", sans-serif;
   --content-width: 1280px;
   --transform-hover: translateY(-2px);
