@@ -84,7 +84,7 @@ export class TorlifyBookList extends LitElement {
         ) ?? html`<li>No books found</li>`}
         <li>
           <torlify-modal @ModelSubmit="${this.handleCreateBook}">
-            <button slot="open-button">${aiIcon} Book</button>
+            <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
               <h2>Add Book</h2>
               <textarea
