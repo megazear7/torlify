@@ -95,7 +95,6 @@ export class TorlifyBookList extends LitElement {
                 .value="${this.generateBookInstructions}"
                 @input="${this.handleGenerateBookInstructions}"
                 placeholder="${this.sampleDescription}"
-                rows="5"
               ></torlify-auto-textarea>
             </div>
             <button class="standard-button" slot="submit-button">
