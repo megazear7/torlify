@@ -33,8 +33,11 @@ export class TorlifyApp extends LitElement {
     document.addEventListener("click", this.navigate.bind(this));
     document.addEventListener("Warning", (event: Event) => {
       const customEvent = event as CustomEvent;
-      console.log(this.toast);
       this.toast.show(customEvent.detail.message, "warning");
+    });
+    document.addEventListener("Success", (event: Event) => {
+      const customEvent = event as CustomEvent;
+      this.toast.show(customEvent.detail.message, "success");
     });
   }
 
