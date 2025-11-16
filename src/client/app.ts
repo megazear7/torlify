@@ -1,14 +1,16 @@
 import { html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import "./page.home.js";
 import "./page.book.js";
 import "./page.chapter.js";
 import "./page.part.js";
 import "./page.not-found.js";
+import "./component.toast.js";
 import { RouteConfig, RouteName } from "../shared/type.routes.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { routes } from "../shared/service.client.js";
 import { TorlifyAbstractProvider } from "./provider.abstract.js";
+import { TorlifyToast } from "./component.toast.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
@@ -17,32 +19,52 @@ export class TorlifyApp extends LitElement {
   @property({ type: String }) currentRoute: RouteConfig | null =
     this.determineRouteName();
 
+  @property({ type: String }) toastMessage = "";
+  @property({ type: String }) toastType:
+    | "error"
+    | "warning"
+    | "success"
+    | "info" = "info";
+  @property({ type: Boolean }) toastVisible = false;
+  @query("torlify-toast") toast!: TorlifyToast;
+
   override connectedCallback(): void {
     super.connectedCallback();
     document.addEventListener("click", this.navigate.bind(this));
+    document.addEventListener("Warning", (event: Event) => {
+      const customEvent = event as CustomEvent;
+      console.log(this.toast);
+      this.toast.show(customEvent.detail.message, "warning");
+    });
   }
 
   override render(): TemplateResult {
-    if (this.currentRoute) {
-      switch (this.currentRoute.name) {
-        case RouteName.enum.home:
-          return html`<torlify-home-page></torlify-home-page>`;
+    const pageContent = this.currentRoute
+      ? ((): TemplateResult => {
+          switch (this.currentRoute!.name) {
+            case RouteName.enum.home:
+              return html`<torlify-home-page></torlify-home-page>`;
+            case RouteName.enum.book:
+              return html`<torlify-book-page></torlify-book-page>`;
+            case RouteName.enum.chapter:
+              return html`<torlify-chapter-page></torlify-chapter-page>`;
+            case RouteName.enum.part:
+              return html`<torlify-part-page></torlify-part-page>`;
+            default:
+              return html`<torlify-not-found-page></torlify-not-found-page>`;
+          }
+        })()
+      : html`<torlify-not-found-page></torlify-not-found-page>`;
 
-        case RouteName.enum.book:
-          return html`<torlify-book-page></torlify-book-page>`;
-
-        case RouteName.enum.chapter:
-          return html`<torlify-chapter-page></torlify-chapter-page>`;
-
-        case RouteName.enum.part:
-          return html`<torlify-part-page></torlify-part-page>`;
-
-        default:
-          return html`<torlify-not-found-page></torlify-not-found-page>`;
-      }
-    } else {
-      return html`<torlify-not-found-page></torlify-not-found-page>`;
-    }
+    return html`
+      ${pageContent}
+      <torlify-toast
+        .message="${this.toastMessage}"
+        .type="${this.toastType}"
+        .visible="${this.toastVisible}"
+        @close="${this.handleToastClose}"
+      ></torlify-toast>
+    `;
   }
 
   determineRouteName(): RouteConfig | null {
@@ -89,5 +111,10 @@ export class TorlifyApp extends LitElement {
       }
       this.requestUpdate();
     }
+  }
+
+  private handleToastClose(): void {
+    this.toastVisible = false;
+    this.requestUpdate();
   }
 }

@@ -12,6 +12,7 @@ import { dispatch } from "./util.events.js";
 import { generateBookService } from "../shared/service.generate-book.js";
 import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
+import { WarningEvent } from "./event.warning.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -117,8 +118,9 @@ export class TorlifyBookList extends LitElement {
         instructions: this.generateBookInstructions || this.sampleDescription,
       });
       dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
+    } catch {
+      dispatch(this, WarningEvent("Failed to create book. Please try again."));
     } finally {
-      // TODO Create a common error handling alert component
       this.loading = false;
     }
   };

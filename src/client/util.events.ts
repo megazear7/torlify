@@ -1,10 +1,12 @@
 import z from "zod";
 import { ModelSubmitEventData } from "./event.modal-submit.js";
 import { NavigationEventData } from "./event.navigation.js";
+import { WarningEventData } from "./event.warning.js";
 
 export const TorlifyEvent = z.union([
   ModelSubmitEventData,
   NavigationEventData,
+  WarningEventData,
 ]);
 export type TorlifyEvent = z.infer<typeof TorlifyEvent>;
 

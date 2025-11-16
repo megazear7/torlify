@@ -8,8 +8,9 @@ html {
   --color-secondary-light: #4b4f57;
   --color-secondary-text: #ffffff;
   --color-tertiary-text: #ffffff;
-  --color-accent: rgb(255 111 97 / 80%);
-  --color-warning: rgba(255, 97, 97, 0.8);
+  --color-error: #ff6b6b;
+  --color-warning: #ffb347;
+  --color-success: #77dd77;
   --color-grey-transparent: rgba(200, 200, 200, 0.5);
 
   --size-xxl: 48px;
