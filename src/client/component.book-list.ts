@@ -1,4 +1,4 @@
-import { html, css, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { BooksContext, booksContext } from "./context.book.js";
@@ -14,10 +14,11 @@ import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { WarningEvent } from "./event.warning.js";
 import { SuccessEvent } from "./event.success.js";
+import { BookId } from "../shared/type.book.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
-  static override styles = [globalStyles, pillStyles, css``];
+  static override styles = [globalStyles, pillStyles];
 
   @consume({ context: booksContext, subscribe: true })
   @property({ attribute: false })
@@ -33,6 +34,9 @@ export class TorlifyBookList extends LitElement {
 
   @property({ type: String })
   loading: boolean = false;
+
+  @property({ type: String })
+  activeBookId: BookId = "";
 
   @property({ type: Array })
   sampleDescriptions: string[] = [
@@ -79,7 +83,7 @@ export class TorlifyBookList extends LitElement {
         <li><a href="/">${homeIcon}</a></li>
         ${this.booksContext.books?.map(
           (book) => html`
-            <li><a href="/book/${book.id}">${book.title}</a></li>
+            <li class="${this.activeBookId === book.id ? 'active' : ''}"><a href="/book/${book.id}">${book.title}</a></li>
           `,
         ) ?? html`<li>No books found</li>`}
         <li>
@@ -87,12 +91,12 @@ export class TorlifyBookList extends LitElement {
             <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
               <h2>Add Book</h2>
-              <textarea
+              <torlify-auto-textarea
                 .value="${this.generateBookInstructions}"
                 @input="${this.handleGenerateBookInstructions}"
                 placeholder="${this.sampleDescription}"
                 rows="5"
-              ></textarea>
+              ></torlify-auto-textarea>
             </div>
             <button class="standard-button" slot="submit-button">
               ${aiIcon} Generate

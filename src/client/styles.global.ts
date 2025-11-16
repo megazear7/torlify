@@ -1,7 +1,7 @@
 import { css } from "lit";
 
 export const globalStyles = css`
-  h1, input.h1 {
+  h1, input.h1, textarea.h1 {
     font-size: calc(var(--font-medium) * 2);
     font-weight: 700;
     margin: var(--size-xl) 0 var(--size-medium) 0;
@@ -9,27 +9,27 @@ export const globalStyles = css`
     letter-spacing: -0.5px;
   }
 
-  h2, input.h2 {
+  h2, input.h2, textarea.h2 {
     font-size: calc(var(--font-medium) * 1.6);
     font-weight: 600;
     margin: var(--size-medium) 0 var(--size-small) 0;
     color: var(--color-primary-text);
   }
 
-  h3, input.h3 {
+  h3, input.h3, textarea.h3 {
     font-size: calc(var(--font-medium) * 1.4);
     font-weight: 500;
     margin: var(--size-medium) 0 var(--size-small) 0;
   }
 
-  h4, input.h4 {
+  h4, input.h4, textarea.h4 {
     font-size: calc(var(--font-medium) * 1.2);
     font-style: italic;
     margin: var(--size-large) 0 0 0;
     color: var(--color-accent);
   }
 
-  h5, input.h5 {
+  h5, input.h5, textarea.h5 {
     font-size: calc(var(--font-medium) * 0.85);
     font-style: italic;
     margin: var(--size-small) 0 0 0;
@@ -79,30 +79,6 @@ export const globalStyles = css`
 
   torlify-modal button.standard-button {
     background: var(--color-secondary-light);
-  }
-
-  textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: var(--size-medium);
-    border: 1px solid var(--color-grey-transparent);
-    border-radius: var(--radius-medium);
-    background: transparent;
-    color: var(--color-secondary-text);
-    font-family: var(--font-family);
-    font-size: var(--font-medium);
-    transition: var(--transition-all);
-    margin-bottom: var(--size-large);
-  }
-
-  textarea:focus {
-    outline: none;
-    border-color: var(--color-1);
-    box-shadow: var(--shadow-active);
-  }
-
-  textarea::placeholder {
-    color: var(--color-grey-transparent);
   }
 
   .container {

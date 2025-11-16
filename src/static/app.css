@@ -12,7 +12,7 @@ html {
   --color-error: #ff6b6b;
   --color-warning: #ffb347;
   --color-success: #77dd77;
-  --color-grey-transparent: rgba(200, 200, 200, 0.5);
+  --color-grey-transparent: rgba(200, 200, 200, 0.3);
 
   --size-xxl: 48px;
   --size-xl: 32px;

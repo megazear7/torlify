@@ -40,6 +40,11 @@ export const pillStyles = css`
     z-index: 0;
   }
 
+  ul.pill > li.active {
+    background-color: var(--color-1);
+    color: var(--color-secondary-text);
+  }
+
   ul.pill > li > * {
     z-index: 1;
   }

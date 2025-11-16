@@ -1,13 +1,14 @@
 import { consume } from "@lit/context";
-import { html, css, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { chapterContext, ChapterContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
+import "./component.auto-textarea.js";
 
 @customElement("torlify-chapter-editor")
 export class TorlifyChapterEditor extends LitElement {
-  static override styles = [globalStyles, css``];
+  static override styles = [globalStyles];
 
   @consume({ context: chapterContext, subscribe: true })
   @property({ attribute: false })
@@ -21,7 +22,11 @@ export class TorlifyChapterEditor extends LitElement {
         ? html`
             <div class="secondary-surface">
               <h4>Chapter ${this.chapterContext.chapter.number}</h4>
-              <h2>${this.chapterContext.chapter.title}</h2>
+              <torlify-auto-textarea
+                cssClass="h2"
+                .value="${this.chapterContext.chapter.title}"
+                @input="${(e: CustomEvent) => (this.chapterContext.chapter!.title = e.detail.value)}"
+              ></torlify-auto-textarea>
             </div>
           `
         : html`<p>Loading chapter...</p>`}
