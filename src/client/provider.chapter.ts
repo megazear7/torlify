@@ -7,12 +7,6 @@ import "./component.book-editor.js";
 import { TorlifyBookProvider } from "./provider.book.js";
 
 export abstract class TorlifyChapterProvider extends TorlifyBookProvider {
-  override params = parseRouteParams(
-    "/book/:bookId/chapter/:chapterId",
-    window.location.pathname,
-    true,
-  );
-
   @provide({ context: chapterContext })
   @property({ attribute: false })
   chapterContext: ChapterContext = {
@@ -21,10 +15,19 @@ export abstract class TorlifyChapterProvider extends TorlifyBookProvider {
 
   override async connectedCallback(): Promise<void> {
     await super.connectedCallback();
+    await this.load();
+  }
 
+  override async load(): Promise<void> {
+    await super.load();
+    const params = parseRouteParams(
+      "/book/:bookId/chapter/:chapterId",
+      window.location.pathname,
+      true,
+    );
     this.chapterContext = {
       chapter:
-        this.bookContext.book?.chapters[Number(this.params.chapterId) - 1] ||
+        this.bookContext.book?.chapters[Number(params.chapterId) - 1] ||
         undefined,
       status: LoadingStatus.enum.success,
     };

@@ -6,12 +6,6 @@ import { TorlifyChapterProvider } from "./provider.chapter.js";
 import { PartContext, partContext } from "./context.book.js";
 
 export abstract class TorlifyPartProvider extends TorlifyChapterProvider {
-  override params = parseRouteParams(
-    "/book/:bookId/chapter/:chapterId/part/:partId",
-    window.location.pathname,
-    true,
-  );
-
   @provide({ context: partContext })
   @property({ attribute: false })
   partContext: PartContext = {
@@ -20,10 +14,19 @@ export abstract class TorlifyPartProvider extends TorlifyChapterProvider {
 
   override async connectedCallback(): Promise<void> {
     await super.connectedCallback();
+    await this.load();
+  }
 
+  override async load(): Promise<void> {
+    await super.load();
+    const params = parseRouteParams(
+      "/book/:bookId/chapter/:chapterId/part/:partId",
+      window.location.pathname,
+      true,
+    );
     this.partContext = {
       part:
-        this.chapterContext.chapter?.parts[Number(this.params.partId) - 1] ||
+        this.chapterContext.chapter?.parts[Number(params.partId) - 1] ||
         undefined,
       status: LoadingStatus.enum.success,
     };

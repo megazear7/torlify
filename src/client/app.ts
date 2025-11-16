@@ -8,6 +8,7 @@ import "./page.not-found.js";
 import { RouteConfig, RouteName } from "../shared/type.routes.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { routes } from "../shared/service.client.js";
+import { TorlifyAbstractProvider } from "./provider.abstract.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
@@ -15,6 +16,11 @@ export class TorlifyApp extends LitElement {
 
   @property({ type: String }) currentRoute: RouteConfig | null =
     this.determineRouteName();
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    document.addEventListener("click", this.navigate.bind(this));
+  }
 
   override render(): TemplateResult {
     if (this.currentRoute) {
@@ -54,5 +60,34 @@ export class TorlifyApp extends LitElement {
     }
 
     return null;
+  }
+
+  async navigate(event: Event): Promise<void> {
+    let target: HTMLAnchorElement | null = null;
+    for (const el of event.composedPath()) {
+      if (el instanceof HTMLElement && el.tagName === "A") {
+        target = el as HTMLAnchorElement;
+        break;
+      }
+    }
+
+    if (target && target.href && !target.hasAttribute("download")) {
+      event.preventDefault();
+      sessionStorage.setItem("previousUrl", "");
+      const url = new URL(target.href);
+      const path = url.pathname;
+      window.history.pushState({}, "", path);
+      this.currentRoute = this.determineRouteName();
+      const tagName = `torlify-${this.currentRoute!.name.replace(/_/g, "-")}-page`;
+      const pageElement = this.shadowRoot?.querySelector(tagName);
+      const provider = pageElement as TorlifyAbstractProvider;
+      if (provider && provider.load && typeof provider.load === "function") {
+        await provider.load();
+        provider.requestUpdate();
+      } else {
+        console.warn("Provider or load method not found for", tagName);
+      }
+      this.requestUpdate();
+    }
   }
 }
