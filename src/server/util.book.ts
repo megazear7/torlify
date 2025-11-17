@@ -13,7 +13,10 @@ export const getBook = async (id: BookId): Promise<Book> => {
   for (const chapter of book.chapters) {
     if (!chapter.parts || chapter.parts.length === 0) {
       for (let i = 0; i < (chapter.minParts || 1); i++) {
-        chapter.parts.push({ text: "" });
+        chapter.parts.push({
+          text: "",
+          number: 1
+        });
       }
     }
   }
