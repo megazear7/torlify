@@ -25,7 +25,8 @@ export class TorlifyChapterEditor extends LitElement {
               <torlify-auto-textarea
                 cssClass="h2"
                 .value="${this.chapterContext.chapter.title}"
-                @input="${(e: CustomEvent) => (this.chapterContext.chapter!.title = e.detail.value)}"
+                @input="${(e: CustomEvent): void =>
+                  (this.chapterContext.chapter!.title = e.detail.value)}"
               ></torlify-auto-textarea>
             </div>
           `

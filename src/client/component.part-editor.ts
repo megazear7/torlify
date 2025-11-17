@@ -23,7 +23,8 @@ export class TorlifyPartEditor extends LitElement {
             <div class="secondary-surface">
               <torlify-auto-textarea
                 .value="${this.partContext.part.text}"
-                @input="${(e: CustomEvent) => (this.partContext.part!.text = e.detail.value)}"
+                @input="${(e: CustomEvent): void =>
+                  (this.partContext.part!.text = e.detail.value)}"
               ></torlify-auto-textarea>
             </div>
           `

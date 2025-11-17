@@ -1,4 +1,4 @@
-import { html, css, LitElement } from "lit";
+import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 
@@ -7,39 +7,39 @@ export class TorlifyAutoTextarea extends LitElement {
   static override styles = [
     globalStyles,
     css`
-        textarea {
-            width: 100%;
-            box-sizing: border-box;
-            padding: var(--size-large);
-            border: 1px solid var(--color-grey-transparent);
-            border-radius: var(--radius-medium);
-            background: transparent;
-            color: var(--color-secondary-text);
-            min-height: var(--font-medium);
-            font-family: var(--font-family);
-            font-size: var(--font-medium);
-            line-height: 1.6;
-            transition: var(--transition-all);
-            margin-bottom: var(--size-large);
-            resize: none;
-            overflow-y: hidden;
-        }
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: var(--size-large);
+        border: 1px solid var(--color-grey-transparent);
+        border-radius: var(--radius-medium);
+        background: transparent;
+        color: var(--color-secondary-text);
+        min-height: var(--font-medium);
+        font-family: var(--font-family);
+        font-size: var(--font-medium);
+        line-height: 1.6;
+        transition: var(--transition-all);
+        margin-bottom: var(--size-large);
+        resize: none;
+        overflow-y: hidden;
+      }
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--color-1);
-            box-shadow: var(--shadow-active);
-        }
+      textarea:focus {
+        outline: none;
+        border-color: var(--color-1);
+        box-shadow: var(--shadow-active);
+      }
 
-        textarea::placeholder {
-            color: var(--color-grey-transparent);
-        }
+      textarea::placeholder {
+        color: var(--color-grey-transparent);
+      }
 
-        textarea.h2 {
-            padding: var(--size-xl) var(--size-large);
-            margin: 0;
-            line-height: 0;
-        }
+      textarea.h2 {
+        padding: var(--size-xl) var(--size-large);
+        margin: 0;
+        line-height: 0;
+      }
     `,
   ];
 
@@ -55,15 +55,15 @@ export class TorlifyAutoTextarea extends LitElement {
   @query("textarea")
   private textarea!: HTMLTextAreaElement;
 
-  override firstUpdated() {
+  override firstUpdated(): void {
     this.adjustHeight();
   }
 
-  override updated() {
+  override updated(): void {
     this.adjustHeight();
   }
 
-  override render() {
+  override render(): TemplateResult {
     return html`
       <textarea
         class="${this.cssClass}"
@@ -80,20 +80,24 @@ export class TorlifyAutoTextarea extends LitElement {
     this.value = this.value || this.placeholder;
   }
 
-  private handleInput(event: Event) {
+  private handleInput(event: Event): void {
     const target = event.target as HTMLTextAreaElement;
     this.value = target.value;
     this.adjustHeight();
-    this.dispatchEvent(new CustomEvent("input", { detail: { value: this.value } }));
+    this.dispatchEvent(
+      new CustomEvent("input", { detail: { value: this.value } }),
+    );
   }
 
-  private handleChange(event: Event) {
+  private handleChange(event: Event): void {
     const target = event.target as HTMLTextAreaElement;
     this.value = target.value;
-    this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
+    this.dispatchEvent(
+      new CustomEvent("change", { detail: { value: this.value } }),
+    );
   }
 
-  private adjustHeight() {
+  private adjustHeight(): void {
     if (this.textarea && !this.cssClass) {
       this.textarea.style.height = "auto";
       this.textarea.style.height = `${this.textarea.scrollHeight}px`;

@@ -50,7 +50,7 @@ export class TorlifyLoadingOverlay extends LitElement {
       }
 
       .loader::before {
-        content: '';
+        content: "";
         position: absolute;
         top: -6px;
         left: -6px;
@@ -64,7 +64,7 @@ export class TorlifyLoadingOverlay extends LitElement {
       }
 
       .loader::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 10px;
         left: 10px;
@@ -76,18 +76,33 @@ export class TorlifyLoadingOverlay extends LitElement {
       }
 
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
 
       @keyframes spin-reverse {
-        0% { transform: rotate(360deg); }
-        100% { transform: rotate(0deg); }
+        0% {
+          transform: rotate(360deg);
+        }
+        100% {
+          transform: rotate(0deg);
+        }
       }
 
       @keyframes pulse {
-        0%, 100% { opacity: 0.3; transform: scale(0.8); }
-        50% { opacity: 1; transform: scale(1.2); }
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scale(0.8);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
       }
 
       .loading-text {
@@ -100,8 +115,14 @@ export class TorlifyLoadingOverlay extends LitElement {
       }
 
       @keyframes text-glow {
-        0% { text-shadow: 0 0 10px var(--color-1); }
-        100% { text-shadow: 0 0 20px var(--color-2), 0 0 30px var(--color-1); }
+        0% {
+          text-shadow: 0 0 10px var(--color-1);
+        }
+        100% {
+          text-shadow:
+            0 0 20px var(--color-2),
+            0 0 30px var(--color-1);
+        }
       }
 
       .particles {
@@ -135,8 +156,15 @@ export class TorlifyLoadingOverlay extends LitElement {
       }
 
       @keyframes float {
-        0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-        50% { transform: translateY(50vh) rotate(180deg); opacity: 1; }
+        0%,
+        100% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        50% {
+          transform: translateY(50vh) rotate(180deg);
+          opacity: 1;
+        }
       }
     `,
   ];
@@ -150,9 +178,16 @@ export class TorlifyLoadingOverlay extends LitElement {
         <div class="loader-container">
           <div class="loader"></div>
           <div class="particles">
-            ${Array.from({ length: 20 }, () => html`
-              <div class="particle" style="left: ${Math.random() * 100}%; animation-delay: ${Math.random() * 3}s;"></div>
-            `)}
+            ${Array.from(
+              { length: 20 },
+              () => html`
+                <div
+                  class="particle"
+                  style="left: ${Math.random() *
+                  100}%; animation-delay: ${Math.random() * 3}s;"
+                ></div>
+              `,
+            )}
           </div>
         </div>
         <div class="loading-text">Loading...</div>

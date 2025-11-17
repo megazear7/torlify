@@ -40,8 +40,13 @@ export class TorlifyPartList extends LitElement {
       <ul class="pill">
         ${this.chapterContext.chapter?.parts.map(
           (_, index) => html`
-            <li class="${this.partContext.part?.number === index + 1 ? 'active' : ''}">
-              <a href="/book/${this.bookContext.book?.id}/chapter/${this
+            <li
+              class="${this.partContext.part?.number === index + 1
+                ? "active"
+                : ""}"
+            >
+              <a
+                href="/book/${this.bookContext.book?.id}/chapter/${this
                   .chapterContext.chapter?.number}/part/${index + 1}"
                 >Part ${index + 1}</a
               >

@@ -1,5 +1,5 @@
 import { html, TemplateResult } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, query } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { TorlifyPartProvider } from "./provider.part.js";
 import "./component.book-list.js";
@@ -9,6 +9,7 @@ import "./component.chapter-editor.js";
 import "./component.part-list.js";
 import "./component.part-editor.js";
 import { globalStyles } from "./styles.global.js";
+import { TorlifyPartList } from "./component.part-list.js";
 
 @customElement("torlify-part-page")
 export class TorlifyPartPage extends TorlifyPartProvider {
@@ -16,6 +17,9 @@ export class TorlifyPartPage extends TorlifyPartProvider {
     "/book/:bookId/chapter/:chapterId/part/:partId",
     window.location.pathname,
   );
+
+  @query("torlify-part-list")
+  partListElement!: TorlifyPartList;
 
   static override styles = [globalStyles];
 
@@ -30,5 +34,10 @@ export class TorlifyPartPage extends TorlifyPartProvider {
         <torlify-part-editor></torlify-part-editor>
       </div>
     `;
+  }
+
+  override async load(): Promise<void> {
+    await super.load();
+    this.partListElement.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }

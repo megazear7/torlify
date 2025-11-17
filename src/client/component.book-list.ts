@@ -1,7 +1,12 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import { bookContext, BookContext, BooksContext, booksContext } from "./context.book.js";
+import {
+  bookContext,
+  BookContext,
+  BooksContext,
+  booksContext,
+} from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import "./component.modal.js";
@@ -85,7 +90,11 @@ export class TorlifyBookList extends LitElement {
         <li><a href="/">${homeIcon}</a></li>
         ${this.booksContext.books?.map(
           (book) => html`
-            <li class="${this.bookContext.book?.id === book.id ? 'active' : ''}"><a href="/book/${book.id}">${book.title}</a></li>
+            <li
+              class="${this.bookContext.book?.id === book.id ? "active" : ""}"
+            >
+              <a href="/book/${book.id}">${book.title}</a>
+            </li>
           `,
         ) ?? html`<li>No books found</li>`}
         <li>
