@@ -94,7 +94,22 @@ export type ChapterPartDescription = z.infer<typeof ChapterPartDescription>;
 export const ChapterOutline = ChapterPartDescription.array();
 export type ChapterOutline = z.infer<typeof ChapterOutline>;
 
+export const ChapterPartLength = z
+  .number()
+  .min(0)
+  .describe(
+    "The the number of words of each part for the chapter. It should be short enough for the audio conversion to accurately transcribe the audio but long enough to be a significant portion of the chapter. A suggested number is 600.",
+  );
+export type ChapterPartLength = z.infer<typeof ChapterPartLength>;
+
+export const ChapterPartNumber = z
+  .number()
+  .min(1)
+  .describe("The chapter part number starting from 1");
+export type ChapterPartNumber = z.infer<typeof ChapterPartNumber>;
+
 export const ChapterPart = z.object({
+  number: ChapterPartNumber,
   text: BookChapterPartText,
   audio: BookChapterPartAudio.optional(),
 });
@@ -168,20 +183,6 @@ export const ChapterMaxParts = z
   .max(6)
   .describe("The maximum number of parts for the chapter");
 export type ChapterMaxParts = z.infer<typeof ChapterMaxParts>;
-
-export const ChapterPartLength = z
-  .number()
-  .min(0)
-  .describe(
-    "The the number of words of each part for the chapter. It should be short enough for the audio conversion to accurately transcribe the audio but long enough to be a significant portion of the chapter. A suggested number is 600.",
-  );
-export type ChapterPartLength = z.infer<typeof ChapterPartLength>;
-
-export const ChapterPartNumber = z
-  .number()
-  .min(1)
-  .describe("The chapter part number starting from 1");
-export type ChapterPartNumber = z.infer<typeof ChapterPartNumber>;
 
 export const ChapterNumber = z
   .number()

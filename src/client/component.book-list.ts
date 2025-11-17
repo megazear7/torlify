@@ -1,7 +1,7 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import { BooksContext, booksContext } from "./context.book.js";
+import { bookContext, BookContext, BooksContext, booksContext } from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import "./component.modal.js";
@@ -14,7 +14,6 @@ import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { WarningEvent } from "./event.warning.js";
 import { SuccessEvent } from "./event.success.js";
-import { BookId } from "../shared/type.book.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -26,6 +25,12 @@ export class TorlifyBookList extends LitElement {
     status: LoadingStatus.enum.idle,
   };
 
+  @consume({ context: bookContext, subscribe: true })
+  @property({ attribute: false })
+  bookContext: BookContext = {
+    status: LoadingStatus.enum.idle,
+  };
+
   @property({ type: String })
   generateBookInstructions = "";
 
@@ -34,9 +39,6 @@ export class TorlifyBookList extends LitElement {
 
   @property({ type: String })
   loading: boolean = false;
-
-  @property({ type: String })
-  activeBookId: BookId = "";
 
   @property({ type: Array })
   sampleDescriptions: string[] = [
@@ -83,7 +85,7 @@ export class TorlifyBookList extends LitElement {
         <li><a href="/">${homeIcon}</a></li>
         ${this.booksContext.books?.map(
           (book) => html`
-            <li class="${this.activeBookId === book.id ? 'active' : ''}"><a href="/book/${book.id}">${book.title}</a></li>
+            <li class="${this.bookContext.book?.id === book.id ? 'active' : ''}"><a href="/book/${book.id}">${book.title}</a></li>
           `,
         ) ?? html`<li>No books found</li>`}
         <li>

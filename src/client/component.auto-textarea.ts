@@ -1,4 +1,4 @@
-import { html, css, LitElement, PropertyValues } from "lit";
+import { html, css, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 

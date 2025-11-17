@@ -6,6 +6,8 @@ import {
   BookContext,
   chapterContext,
   ChapterContext,
+  PartContext,
+  partContext,
 } from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
@@ -27,15 +29,18 @@ export class TorlifyPartList extends LitElement {
     status: LoadingStatus.enum.idle,
   };
 
-  @property({ type: Number })
-  selectedPart: number | null = null;
+  @consume({ context: partContext, subscribe: true })
+  @property({ attribute: false })
+  partContext: PartContext = {
+    status: LoadingStatus.enum.idle,
+  };
 
   override render(): TemplateResult {
     return html`
       <ul class="pill">
         ${this.chapterContext.chapter?.parts.map(
           (_, index) => html`
-            <li class="${this.selectedPart === index + 1 ? 'active' : ''}">
+            <li class="${this.partContext.part?.number === index + 1 ? 'active' : ''}">
               <a href="/book/${this.bookContext.book?.id}/chapter/${this
                   .chapterContext.chapter?.number}/part/${index + 1}"
                 >Part ${index + 1}</a

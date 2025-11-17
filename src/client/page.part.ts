@@ -22,11 +22,11 @@ export class TorlifyPartPage extends TorlifyPartProvider {
   override render(): TemplateResult {
     return html`
       <div class="container">
-        <torlify-book-list activeBookId="${this.params.bookId}"></torlify-book-list>
+        <torlify-book-list></torlify-book-list>
         <torlify-chapter-list></torlify-chapter-list>
         <torlify-book-editor></torlify-book-editor>
         <torlify-chapter-editor></torlify-chapter-editor>
-        <torlify-part-list selectedPart="${this.params.partId}"></torlify-part-list>
+        <torlify-part-list></torlify-part-list>
         <torlify-part-editor></torlify-part-editor>
       </div>
     `;
