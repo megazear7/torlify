@@ -6,6 +6,15 @@ import { parseRouteParams } from "../shared/util.route-params.js";
 import "./component.book-editor.js";
 import { getBookService } from "../shared/service.get-book.js";
 import { TorlifyBookListProvider } from "./provider.book-list.js";
+import { BookPartial } from "../shared/type.book.js";
+import { updateBookService } from "../shared/service.update-book.js";
+import {
+  UpdateBookEventDetail,
+  UpdateBookEventName,
+} from "./event.update-book.js";
+import { ONE_SECOND_IN_MS } from "../shared/util.time.js";
+import { dispatch } from "./util.events.js";
+import { SaveEvent } from "./event.save.js";
 
 export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
   @provide({ context: bookContext })
@@ -14,9 +23,22 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
     status: LoadingStatus.enum.idle,
   };
 
+  private secondsBeforeAutoSaving = 5;
+  private updateTimeoutId?: number;
+  private updateRegistrationTime?: number;
+
   override async connectedCallback(): Promise<void> {
     super.connectedCallback();
     this.load();
+    this.addEventListener(UpdateBookEventName.value, this.handleUpdateBook);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeEventListener(UpdateBookEventName.value, this.handleUpdateBook);
+    if (this.updateTimeoutId) {
+      window.clearTimeout(this.updateTimeoutId);
+    }
   }
 
   override async load(): Promise<void> {
@@ -30,5 +52,43 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
       book: await getBookService.fetch({ bookId: params.bookId }),
       status: LoadingStatus.enum.success,
     };
+  }
+
+  private handleUpdateBook(event: Event): void {
+    this.updateBook(UpdateBookEventDetail.parse((event as CustomEvent).detail));
+  }
+
+  private async updateBook(book: BookPartial): Promise<void> {
+    // After 10 seconds, update the book even if the user is still typing.
+    if (
+      this.updateTimeoutId &&
+      this.updateRegistrationTime &&
+      Date.now() - this.updateRegistrationTime >
+        ONE_SECOND_IN_MS * this.secondsBeforeAutoSaving
+    ) {
+      this.updateBookSendRequest(book);
+    }
+
+    // If the user is typing, reset the timeout.
+    if (this.updateTimeoutId) {
+      window.clearTimeout(this.updateTimeoutId);
+    }
+
+    // After 1 second the book will be updated if ther user stops typing.
+    if (!this.updateRegistrationTime) this.updateRegistrationTime = Date.now();
+    this.updateTimeoutId = window.setTimeout(async () => {
+      this.updateBookSendRequest(book);
+      this.updateTimeoutId = undefined;
+    }, 1000) as number;
+  }
+
+  private async updateBookSendRequest(book: BookPartial): Promise<void> {
+    this.updateRegistrationTime = undefined;
+    const updatedBook = await updateBookService.fetch({
+      book,
+      name: this.bookContext.book!.id,
+    });
+    this.bookContext = { ...this.bookContext, book: updatedBook };
+    dispatch(this, SaveEvent());
   }
 }

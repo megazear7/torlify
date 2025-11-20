@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const SuccessEventName = z.literal("Success");
+export type SuccessEventName = z.infer<typeof SuccessEventName>;
 
 export const SuccessEventDetail = z.object({
   message: z.string().describe("The success message."),

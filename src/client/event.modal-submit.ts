@@ -1,6 +1,7 @@
 import z from "zod";
 
 export const ModelSubmitEventName = z.literal("ModelSubmit");
+export type ModelSubmitEventName = z.infer<typeof ModelSubmitEventName>;
 
 export const ModelSubmitEventDetail = z.object({});
 export type ModelSubmitEventDetail = z.infer<typeof ModelSubmitEventDetail>;

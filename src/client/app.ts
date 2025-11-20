@@ -1,16 +1,19 @@
 import { html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { RouteConfig, RouteName } from "../shared/type.routes.js";
+import { parseRouteParams } from "../shared/util.route-params.js";
+import { routes } from "../shared/service.client.js";
+import { TorlifyAbstractProvider } from "./provider.abstract.js";
+import { TorlifyToast } from "./component.toast.js";
+import { TorlifySaveIndicator } from "./component.save-indicator.js";
 import "./page.home.js";
 import "./page.book.js";
 import "./page.chapter.js";
 import "./page.part.js";
 import "./page.not-found.js";
 import "./component.toast.js";
-import { RouteConfig, RouteName } from "../shared/type.routes.js";
-import { parseRouteParams } from "../shared/util.route-params.js";
-import { routes } from "../shared/service.client.js";
-import { TorlifyAbstractProvider } from "./provider.abstract.js";
-import { TorlifyToast } from "./component.toast.js";
+import "./component.save-indicator.js";
+import { SaveEventName } from "./event.save.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
@@ -27,6 +30,7 @@ export class TorlifyApp extends LitElement {
     | "info" = "info";
   @property({ type: Boolean }) toastVisible = false;
   @query("torlify-toast") toast!: TorlifyToast;
+  @query("torlify-save-indicator") saveIndicator!: TorlifySaveIndicator
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -39,24 +43,31 @@ export class TorlifyApp extends LitElement {
       const customEvent = event as CustomEvent;
       this.toast.show(customEvent.detail.message, "success");
     });
+
+    this.addEventListener(SaveEventName.value, this.handleSaveEvent);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeEventListener(SaveEventName.value, this.handleSaveEvent);
   }
 
   override render(): TemplateResult {
     const pageContent = this.currentRoute
       ? ((): TemplateResult => {
-          switch (this.currentRoute!.name) {
-            case RouteName.enum.home:
-              return html`<torlify-home-page></torlify-home-page>`;
-            case RouteName.enum.book:
-              return html`<torlify-book-page></torlify-book-page>`;
-            case RouteName.enum.chapter:
-              return html`<torlify-chapter-page></torlify-chapter-page>`;
-            case RouteName.enum.part:
-              return html`<torlify-part-page></torlify-part-page>`;
-            default:
-              return html`<torlify-not-found-page></torlify-not-found-page>`;
-          }
-        })()
+        switch (this.currentRoute!.name) {
+          case RouteName.enum.home:
+            return html`<torlify-home-page></torlify-home-page>`;
+          case RouteName.enum.book:
+            return html`<torlify-book-page></torlify-book-page>`;
+          case RouteName.enum.chapter:
+            return html`<torlify-chapter-page></torlify-chapter-page>`;
+          case RouteName.enum.part:
+            return html`<torlify-part-page></torlify-part-page>`;
+          default:
+            return html`<torlify-not-found-page></torlify-not-found-page>`;
+        }
+      })()
       : html`<torlify-not-found-page></torlify-not-found-page>`;
 
     return html`
@@ -124,5 +135,9 @@ export class TorlifyApp extends LitElement {
   private handleToastClose(): void {
     this.toastVisible = false;
     this.requestUpdate();
+  }
+
+  handleSaveEvent() {
+    this.saveIndicator.show();
   }
 }

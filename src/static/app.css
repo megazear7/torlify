@@ -11,7 +11,7 @@ html {
   --color-accent: #ff6f61;
   --color-error: #ff6b6b;
   --color-warning: #ffb347;
-  --color-success: #77dd77;
+  --color-success: rgb(56, 173, 56);
   --color-grey-transparent: rgba(200, 200, 200, 0.3);
 
   --size-xxl: 48px;
@@ -30,6 +30,7 @@ html {
   --shadow-normal: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-active: 0 4px 12px rgba(0, 0, 0, 0.2);
   --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.3);
+  --inverse-hover: 0 6px 20px rgba(255, 255, 255, 0.3);
   --time-normal: 350ms;
   --transition-all: all var(--time-normal) ease-in-out;
   --transition-shadow: box-shadow var(--time-normal) ease-in-out;
