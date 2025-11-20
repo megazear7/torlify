@@ -7,7 +7,7 @@
   "scripts": {
     "start": "run-s build serve",
     "serve": "run-p serve:api watch",
-    "serve:api": "nodemon dist/server/index.js",
+    "serve:api": "nodemon dist/server/index.js --ignore data --ignore debug",
     "watch": "run-p watch:tsc watch:rollup",
     "watch:rollup": "rollup -c --watch",
     "watch:tsc": "tsc --watch",

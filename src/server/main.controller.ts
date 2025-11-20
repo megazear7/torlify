@@ -57,7 +57,6 @@ export abstract class AbstractController<
             bodyParams: body,
             pathParams: this.service.PathParams.parse(pathParams),
           };
-          console.log(`API Request: ${req.method} ${req.path}`);
           res.json(await this.handler(options));
         } else {
           console.log(`Page Request: ${req.method} ${req.path}`);

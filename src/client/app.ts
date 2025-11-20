@@ -67,6 +67,7 @@ export class TorlifyApp extends LitElement {
         .visible="${this.toastVisible}"
         @close="${this.handleToastClose}"
       ></torlify-toast>
+      <torlify-save-indicator></torlify-save-indicator>
     `;
   }
 

@@ -6,6 +6,8 @@ import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { formatNumber } from "../shared/util.number.js";
 import "./component.auto-textarea.js";
+import { updateBookService } from "../shared/service.update-book.js";
+import { BookPartial } from "../shared/type.book.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -49,8 +51,7 @@ export class TorlifyBookEditor extends LitElement {
               <h4>Overview</h4>
               <torlify-auto-textarea
                 .value="${this.bookContext.book.overview}"
-                @input="${(e: CustomEvent): void =>
-                  (this.bookContext.book!.overview = e.detail.value)}"
+                @input="${this.updateOverview}"
               ></torlify-auto-textarea>
               <h4>Edit Instructions</h4>
               <torlify-auto-textarea
@@ -68,6 +69,53 @@ export class TorlifyBookEditor extends LitElement {
           `
         : html`<p>Loading book...</p>`}
     `;
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this.updateTimeoutId) {
+      window.clearTimeout(this.updateTimeoutId);
+    }
+  }
+
+  private updateTimeoutId?: number;
+  private updateRegistrationTime?: number;
+
+  private async updateOverview(event: CustomEvent): Promise<void> {
+    if (!event.detail) return;
+
+    // After 10 seconds, update the book even if the user is still typing.
+    if (
+      this.updateTimeoutId &&
+      this.updateRegistrationTime &&
+      Date.now() - this.updateRegistrationTime > 1000 * 10
+    ) {
+      console.log("update due to limit");
+      this.updateBook({ overview: event.detail.value });
+    }
+
+    // If the user is typing, reset the timeout.
+    if (this.updateTimeoutId) {
+      console.log("clear");
+      window.clearTimeout(this.updateTimeoutId);
+    }
+
+    // After 1 second the book will be updated if ther user stops typing.
+    if (!this.updateRegistrationTime) this.updateRegistrationTime = Date.now();
+    this.updateTimeoutId = window.setTimeout(async () => {
+      console.log("update due to timeout");
+      this.updateBook({ overview: event.detail.value });
+      this.updateTimeoutId = undefined;
+    }, 1000) as number;
+  }
+
+  async updateBook(book: BookPartial): Promise<void> {
+    this.updateRegistrationTime = undefined;
+    const updatedBook = await updateBookService.fetch({
+      book,
+      name: this.bookContext.book!.id,
+    });
+    this.bookContext = { ...this.bookContext, book: updatedBook };
   }
 
   get tokens(): number {

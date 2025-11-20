@@ -272,22 +272,27 @@ export type LoadingMessage = z.infer<typeof LoadingMessage>;
 export const LoadingMessages = LoadingMessage.array();
 export type LoadingMessages = z.infer<typeof LoadingMessages>;
 
-export const Book = z.object({
-  id: BookId,
-  title: BookTitle,
-  references: BookReference.array().describe(
-    "A list of reference files to use when writing the book.",
-  ),
-  overview: BookOverview,
-  details: BookDetails.optional(),
-  chapters: Chapter.array(),
-  instructions: Instructions,
-  pronunciation: Pronunciation.array(),
-  characters: Character.array(),
-  model: ModelConfigs,
-  loadingMessages: LoadingMessages,
-});
+export const Book = z
+  .object({
+    id: BookId,
+    title: BookTitle,
+    references: BookReference.array().describe(
+      "A list of reference files to use when writing the book.",
+    ),
+    overview: BookOverview,
+    details: BookDetails.optional(),
+    chapters: Chapter.array(),
+    instructions: Instructions,
+    pronunciation: Pronunciation.array(),
+    characters: Character.array(),
+    model: ModelConfigs,
+    loadingMessages: LoadingMessages,
+  })
+  .strict();
 export type Book = z.infer<typeof Book>;
+
+export const BookPartial = Book.partial();
+export type BookPartial = z.infer<typeof BookPartial>;
 
 export const Books = Book.array();
 export type Books = z.infer<typeof Books>;

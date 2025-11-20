@@ -69,7 +69,7 @@ export abstract class AbstractService<
     if (params) {
       const RequestBodyType = this.RequestBodyType as ZodObject;
       if (this.method !== HttpMethod.enum.get) {
-        const bodyParams = RequestBodyType.loose().parse(params);
+        const bodyParams = RequestBodyType.strip().parse(params);
         requestConfig.body = JSON.stringify(bodyParams);
         requestConfig.headers = {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ export abstract class AbstractService<
       }
 
       const PathParams = this.PathParams as ZodObject;
-      const pathParams = PathParams.loose().parse(params);
+      const pathParams = PathParams.strip().parse(params);
       path = renderPathname(this.path, pathParams);
     }
     const res = await fetch(path, requestConfig);
