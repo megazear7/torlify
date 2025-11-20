@@ -4,20 +4,23 @@ import { customElement, property } from "lit/decorators.js";
 import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
-import "./component.auto-textarea.js";
 import { formatNumber } from "../shared/util.number.js";
+import "./component.auto-textarea.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
-  static override styles = [globalStyles, css`
-    .stats {
-      display: flex;
-      gap: var(--size-large);
-      margin-top: var(--size-medium);
-      font-size: var(--font-small);
-      color: var(--color-secondary-text);
-    }
-  `];
+  static override styles = [
+    globalStyles,
+    css`
+      .stats {
+        display: flex;
+        gap: var(--size-large);
+        margin-top: var(--size-medium);
+        font-size: var(--font-small);
+        color: var(--color-secondary-text);
+      }
+    `,
+  ];
 
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })
@@ -78,22 +81,22 @@ export class TorlifyBookEditor extends LitElement {
   }
 
   get cost(): number {
-    const oneMillionth = 1/1000000;
+    const oneMillionth = 1 / 1000000;
     const textCompletionCost =
       (this.bookContext.book?.model.text.usage.completion_tokens || 0) *
-      this.bookContext.book?.model.text.cost.outputTokenCost! *
+      (this.bookContext.book?.model.text.cost.outputTokenCost || 0) *
       oneMillionth;
     const textPromptCost =
       (this.bookContext.book?.model.text.usage.prompt_tokens || 0) *
-      this.bookContext.book?.model.text.cost.inputTokenCost! *
+      (this.bookContext.book?.model.text.cost.inputTokenCost || 0) *
       oneMillionth;
     const audioCompletionCost =
       (this.bookContext.book?.model.audio.usage.completion_tokens || 0) *
-      this.bookContext.book?.model.audio.cost.outputTokenCost! *
+      (this.bookContext.book?.model.audio.cost.outputTokenCost || 0) *
       oneMillionth;
     const audioPromptCost =
       (this.bookContext.book?.model.audio.usage.prompt_tokens || 0) *
-      this.bookContext.book?.model.audio.cost.inputTokenCost! *
+      (this.bookContext.book?.model.audio.cost.inputTokenCost || 0) *
       oneMillionth;
 
     return (
@@ -105,14 +108,16 @@ export class TorlifyBookEditor extends LitElement {
   }
 
   get words(): number {
-    return this.bookContext.book?.chapters.reduce((acc, chapter) => {
-      const partWords = chapter.parts.reduce((partAcc, part) => {
-        const wordsInPart = part.text
-          ? part.text.trim().split(/\s+/).length
-          : 0;
-        return partAcc + wordsInPart;
-      }, 0);
-      return acc + partWords;
-    }, 0) || 0;
+    return (
+      this.bookContext.book?.chapters.reduce((acc, chapter) => {
+        const partWords = chapter.parts.reduce((partAcc, part) => {
+          const wordsInPart = part.text
+            ? part.text.trim().split(/\s+/).length
+            : 0;
+          return partAcc + wordsInPart;
+        }, 0);
+        return acc + partWords;
+      }, 0) || 0
+    );
   }
 }

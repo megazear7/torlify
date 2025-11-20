@@ -1,4 +1,4 @@
-import { html, LitElement, TemplateResult } from "lit";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import {
@@ -22,7 +22,15 @@ import { SuccessEvent } from "./event.success.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
-  static override styles = [globalStyles, pillStyles];
+  static override styles = [
+    globalStyles,
+    pillStyles,
+    css`
+      :host {
+        scroll-margin-top: var(--size-xl);
+      }
+    `,
+  ];
 
   @consume({ context: booksContext, subscribe: true })
   @property({ attribute: false })

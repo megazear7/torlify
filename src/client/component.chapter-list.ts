@@ -10,6 +10,10 @@ export class TorlifyChapterList extends LitElement {
   static override styles = [
     globalStyles,
     css`
+      :host {
+        scroll-margin-top: var(--size-xl);
+      }
+
       .chapter-list-container {
         display: flex;
       }

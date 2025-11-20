@@ -1,19 +1,16 @@
 import { html, TemplateResult } from "lit";
-import { customElement, query } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { TorlifyBookProvider } from "./provider.book.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
 import "./component.chapter-list.js";
+import "./component.bookmark-tabs.js";
 import { globalStyles } from "./styles.global.js";
-import { TorlifyChapterList } from "./component.chapter-list.js";
 
 @customElement("torlify-book-page")
 export class TorlifyBookPage extends TorlifyBookProvider {
   static override styles = [globalStyles];
-
-  @query("torlify-chapter-list")
-  chapterListElement!: TorlifyChapterList;
 
   override render(): TemplateResult {
     if (
@@ -24,6 +21,7 @@ export class TorlifyBookPage extends TorlifyBookProvider {
     }
 
     return html`
+      <torlify-bookmark-tabs></torlify-bookmark-tabs>
       <div class="container">
         <torlify-book-list></torlify-book-list>
         <torlify-chapter-list></torlify-chapter-list>
@@ -34,7 +32,7 @@ export class TorlifyBookPage extends TorlifyBookProvider {
 
   override async load(): Promise<void> {
     await super.load();
-    this.chapterListElement.scrollIntoView({
+    this.bookListElement.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
