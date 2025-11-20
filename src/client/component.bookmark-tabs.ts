@@ -52,7 +52,7 @@ export class TorlifyBookmarkTabs extends LitElement {
       }
 
       .bookmark-button:hover:not(:disabled) {
-        background-color: var(--color-secondary-light);
+        background-color: var(--color-secondary-bold);
         transform: var(--transform-hover);
         box-shadow: var(--shadow-hover);
       }

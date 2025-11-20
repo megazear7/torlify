@@ -5,8 +5,10 @@ html {
   --color-primary-text: #e0e6ed;
   --color-primary-text-dark: #666;
   --color-secondary-surface: #3a3f47;
-  --color-secondary-light: #4b4f57;
+  --color-secondary-surface-active: #40464f;
+  --color-secondary-bold: #4b4f57;
   --color-secondary-text: #ffffff;
+  --color-secondary-text-muted: #acacac;
   --color-tertiary-text: #ffffff;
   --color-accent: #ff6f61;
   --color-error: #ff6b6b;
@@ -25,6 +27,7 @@ html {
   --radius-large: 20px;
   --font-medium: 18px;
   --font-small: 14px;
+  --font-tiny: 12px;
   --line-height: 1.6;
   --border-active: 2px solid var(--color-1);
   --shadow-normal: 0 4px 12px rgba(0, 0, 0, 0.1);

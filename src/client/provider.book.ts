@@ -15,6 +15,10 @@ import {
 import { ONE_SECOND_IN_MS } from "../shared/util.time.js";
 import { dispatch } from "./util.events.js";
 import { SaveEvent } from "./event.save.js";
+import {
+  UpdateBookImmediateEventDetail,
+  UpdateBookImmediateEventName,
+} from "./event.update-book-immediate.js";
 
 export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
   @provide({ context: bookContext })
@@ -31,6 +35,10 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
     super.connectedCallback();
     this.load();
     this.addEventListener(UpdateBookEventName.value, this.handleUpdateBook);
+    this.addEventListener(
+      UpdateBookImmediateEventName.value,
+      this.handleUpdateBookImmediate,
+    );
   }
 
   override disconnectedCallback(): void {
@@ -55,10 +63,18 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
   }
 
   private handleUpdateBook(event: Event): void {
-    this.updateBook(UpdateBookEventDetail.parse((event as CustomEvent).detail));
+    this.updateBookDebounce(
+      UpdateBookEventDetail.parse((event as CustomEvent).detail),
+    );
   }
 
-  private async updateBook(book: BookPartial): Promise<void> {
+  private handleUpdateBookImmediate(event: Event): void {
+    this.updateBook(
+      UpdateBookImmediateEventDetail.parse((event as CustomEvent).detail),
+    );
+  }
+
+  private async updateBookDebounce(book: BookPartial): Promise<void> {
     // After 10 seconds, update the book even if the user is still typing.
     if (
       this.updateTimeoutId &&
@@ -66,7 +82,7 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
       Date.now() - this.updateRegistrationTime >
         ONE_SECOND_IN_MS * this.secondsBeforeAutoSaving
     ) {
-      this.updateBookSendRequest(book);
+      this.updateBook(book);
     }
 
     // If the user is typing, reset the timeout.
@@ -77,12 +93,12 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
     // After 1 second the book will be updated if ther user stops typing.
     if (!this.updateRegistrationTime) this.updateRegistrationTime = Date.now();
     this.updateTimeoutId = window.setTimeout(async () => {
-      this.updateBookSendRequest(book);
+      this.updateBook(book);
       this.updateTimeoutId = undefined;
     }, 1000) as number;
   }
 
-  private async updateBookSendRequest(book: BookPartial): Promise<void> {
+  private async updateBook(book: BookPartial): Promise<void> {
     this.updateRegistrationTime = undefined;
     const updatedBook = await updateBookService.fetch({
       book,

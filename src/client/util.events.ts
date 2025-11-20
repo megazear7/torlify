@@ -6,6 +6,7 @@ import { WarningEventData } from "./event.warning.js";
 import { SuccessEventData } from "./event.success.js";
 import { UpdateBookEventData } from "./event.update-book.js";
 import { SaveEventData } from "./event.save.js";
+import { UpdateBookImmediateEventData } from "./event.update-book-immediate.js";
 
 export const TorlifyEvent = z.union([
   ModelSubmitEventData,
@@ -14,6 +15,7 @@ export const TorlifyEvent = z.union([
   WarningEventData,
   SuccessEventData,
   UpdateBookEventData,
+  UpdateBookImmediateEventData,
   SaveEventData,
 ]);
 export type TorlifyEvent = z.infer<typeof TorlifyEvent>;

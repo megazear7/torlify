@@ -7,6 +7,6 @@ export const editInstructionsPrompt = async (
 ): Promise<ChatCompletionMessageParam[]> => [
   {
     role: MessageType.enum.user,
-    content: book.instructions.edit,
+    content: book.instructions.edit || "",
   },
 ];

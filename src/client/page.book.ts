@@ -2,11 +2,12 @@ import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { TorlifyBookProvider } from "./provider.book.js";
+import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
 import "./component.chapter-list.js";
 import "./component.bookmark-tabs.js";
-import { globalStyles } from "./styles.global.js";
+import "./component.pronunciations.js";
 
 @customElement("torlify-book-page")
 export class TorlifyBookPage extends TorlifyBookProvider {
@@ -26,6 +27,7 @@ export class TorlifyBookPage extends TorlifyBookProvider {
         <torlify-book-list></torlify-book-list>
         <torlify-chapter-list></torlify-chapter-list>
         <torlify-book-editor></torlify-book-editor>
+        <torlify-pronunciations></torlify-pronunciations>
       </div>
     `;
   }

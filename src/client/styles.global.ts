@@ -88,7 +88,7 @@ export const globalStyles = css`
   }
 
   torlify-modal button.standard-button {
-    background: var(--color-secondary-light);
+    background: var(--color-secondary-bold);
   }
 
   .container {

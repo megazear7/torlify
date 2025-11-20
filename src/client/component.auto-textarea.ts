@@ -29,6 +29,7 @@ export class TorlifyAutoTextarea extends LitElement {
         outline: none;
         border-color: var(--color-1);
         box-shadow: var(--shadow-active);
+        background: var(--color-secondary-surface-active);
       }
 
       textarea::placeholder {

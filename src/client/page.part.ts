@@ -2,13 +2,14 @@ import { css, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { TorlifyPartProvider } from "./provider.part.js";
+import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
 import "./component.chapter-list.js";
 import "./component.chapter-editor.js";
 import "./component.part-list.js";
 import "./component.part-editor.js";
-import { globalStyles } from "./styles.global.js";
+import "./component.pronunciations.js";
 
 @customElement("torlify-part-page")
 export class TorlifyPartPage extends TorlifyPartProvider {
@@ -33,6 +34,7 @@ export class TorlifyPartPage extends TorlifyPartProvider {
         <torlify-book-list></torlify-book-list>
         <torlify-chapter-list></torlify-chapter-list>
         <torlify-book-editor></torlify-book-editor>
+        <torlify-pronunciations></torlify-pronunciations>
         <torlify-chapter-editor></torlify-chapter-editor>
         <torlify-part-list></torlify-part-list>
         <torlify-part-editor></torlify-part-editor>
