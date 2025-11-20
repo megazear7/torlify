@@ -1,4 +1,4 @@
-import { html, TemplateResult } from "lit";
+import { css, html, TemplateResult } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { TorlifyChapterProvider } from "./provider.chapter.js";
@@ -17,7 +17,11 @@ export class TorlifyChapterPage extends TorlifyChapterProvider {
     window.location.pathname,
   );
 
-  static override styles = [globalStyles];
+  static override styles = [globalStyles, css`
+    torlify-part-list {
+      torlify-chapter-editor: var(--size-xl);
+    }
+  `];
 
   @query("torlify-chapter-editor")
   chapterEditorElement!: TorlifyChapterEditor;
@@ -25,9 +29,7 @@ export class TorlifyChapterPage extends TorlifyChapterProvider {
   override render(): TemplateResult {
     return html`
       <div class="container">
-        <torlify-book-list
-          activeBookId="${this.params.bookId}"
-        ></torlify-book-list>
+        <torlify-book-list></torlify-book-list>
         <torlify-chapter-list></torlify-chapter-list>
         <torlify-book-editor></torlify-book-editor>
         <torlify-chapter-editor></torlify-chapter-editor>

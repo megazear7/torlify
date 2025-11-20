@@ -1,4 +1,4 @@
-import { html, TemplateResult } from "lit";
+import { css, html, TemplateResult } from "lit";
 import { customElement, query } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { TorlifyPartProvider } from "./provider.part.js";
@@ -21,7 +21,11 @@ export class TorlifyPartPage extends TorlifyPartProvider {
   @query("torlify-part-list")
   partListElement!: TorlifyPartList;
 
-  static override styles = [globalStyles];
+  static override styles = [globalStyles, css`
+    torlify-part-list {
+      scroll-margin-top: var(--size-xl);
+    }
+  `];
 
   override render(): TemplateResult {
     return html`

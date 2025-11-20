@@ -25,9 +25,7 @@ export class TorlifyBookPage extends TorlifyBookProvider {
 
     return html`
       <div class="container">
-        <torlify-book-list
-          activeBookId="${this.bookContext.book?.id}"
-        ></torlify-book-list>
+        <torlify-book-list></torlify-book-list>
         <torlify-chapter-list></torlify-chapter-list>
         <torlify-book-editor></torlify-book-editor>
       </div>
