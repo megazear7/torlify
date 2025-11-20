@@ -222,8 +222,8 @@ export const AudioInstructions = z
 export type AudioInstructions = z.infer<typeof AudioInstructions>;
 
 export const Instructions = z.object({
-  edit: EditInstructions,
-  audio: AudioInstructions,
+  edit: EditInstructions.optional(),
+  audio: AudioInstructions.optional(),
 });
 export type Instructions = z.infer<typeof Instructions>;
 

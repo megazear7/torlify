@@ -95,9 +95,7 @@ export class TorlifySaveIndicator extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <div class="indicator ${this.visible ? 'visible' : ''}">
-        ${checkIcon}
-      </div>
+      <div class="indicator ${this.visible ? "visible" : ""}">${checkIcon}</div>
     `;
   }
 }

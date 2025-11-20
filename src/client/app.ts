@@ -30,7 +30,7 @@ export class TorlifyApp extends LitElement {
     | "info" = "info";
   @property({ type: Boolean }) toastVisible = false;
   @query("torlify-toast") toast!: TorlifyToast;
-  @query("torlify-save-indicator") saveIndicator!: TorlifySaveIndicator
+  @query("torlify-save-indicator") saveIndicator!: TorlifySaveIndicator;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -55,19 +55,19 @@ export class TorlifyApp extends LitElement {
   override render(): TemplateResult {
     const pageContent = this.currentRoute
       ? ((): TemplateResult => {
-        switch (this.currentRoute!.name) {
-          case RouteName.enum.home:
-            return html`<torlify-home-page></torlify-home-page>`;
-          case RouteName.enum.book:
-            return html`<torlify-book-page></torlify-book-page>`;
-          case RouteName.enum.chapter:
-            return html`<torlify-chapter-page></torlify-chapter-page>`;
-          case RouteName.enum.part:
-            return html`<torlify-part-page></torlify-part-page>`;
-          default:
-            return html`<torlify-not-found-page></torlify-not-found-page>`;
-        }
-      })()
+          switch (this.currentRoute!.name) {
+            case RouteName.enum.home:
+              return html`<torlify-home-page></torlify-home-page>`;
+            case RouteName.enum.book:
+              return html`<torlify-book-page></torlify-book-page>`;
+            case RouteName.enum.chapter:
+              return html`<torlify-chapter-page></torlify-chapter-page>`;
+            case RouteName.enum.part:
+              return html`<torlify-part-page></torlify-part-page>`;
+            default:
+              return html`<torlify-not-found-page></torlify-not-found-page>`;
+          }
+        })()
       : html`<torlify-not-found-page></torlify-not-found-page>`;
 
     return html`
@@ -137,7 +137,7 @@ export class TorlifyApp extends LitElement {
     this.requestUpdate();
   }
 
-  handleSaveEvent() {
+  private handleSaveEvent(): void {
     this.saveIndicator.show();
   }
 }

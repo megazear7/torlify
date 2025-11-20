@@ -8,6 +8,8 @@ import { formatNumber } from "../shared/util.number.js";
 import "./component.auto-textarea.js";
 import { dispatch } from "./util.events.js";
 import { UpdateBookEvent } from "./event.update-book.js";
+import { buildNestedObject } from "../shared/util.property.js";
+import { BookPartial } from "../shared/type.book.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -51,19 +53,17 @@ export class TorlifyBookEditor extends LitElement {
               <h4>Overview</h4>
               <torlify-auto-textarea
                 .value="${this.bookContext.book.overview}"
-                @input="${this.updateOverview}"
+                @input="${this.save("overview")}"
               ></torlify-auto-textarea>
               <h4>Edit Instructions</h4>
               <torlify-auto-textarea
                 .value="${this.bookContext.book.instructions.edit}"
-                @input="${(e: CustomEvent): void =>
-                  (this.bookContext.book!.instructions.edit = e.detail.value)}"
+                @input="${this.save("instructions.edit")}"
               ></torlify-auto-textarea>
               <h4>Audio Instructions</h4>
               <torlify-auto-textarea
                 .value="${this.bookContext.book.instructions.audio}"
-                @input="${(e: CustomEvent): void =>
-                  (this.bookContext.book!.instructions.audio = e.detail.value)}"
+                @input="${this.save("instructions.audio")}"
               ></torlify-auto-textarea>
             </div>
           `
@@ -71,8 +71,17 @@ export class TorlifyBookEditor extends LitElement {
     `;
   }
 
-  updateOverview(event: CustomEvent): void {
-    if (event.detail) dispatch(this, UpdateBookEvent({ overview: event.detail.value }));
+  save(prop: string): (event: CustomEvent) => void {
+    return (event: CustomEvent): void => {
+      if (event.detail.value) {
+        const updateData = buildNestedObject(
+          BookPartial,
+          prop,
+          event.detail.value,
+        );
+        dispatch(this, UpdateBookEvent(updateData));
+      }
+    };
   }
 
   get tokens(): number {

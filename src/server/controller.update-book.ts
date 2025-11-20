@@ -21,7 +21,14 @@ export class UpdateBookController extends AbstractController<
     UpdateBookPathParameters
   >): Promise<Book> {
     const existingBook = await getBook(pathParams.name);
-    const updatedBook = { ...existingBook, ...bodyParams.book };
+    const updatedBook = {
+      ...existingBook,
+      ...bodyParams.book,
+      instructions: {
+        ...existingBook.instructions,
+        ...bodyParams.book.instructions,
+      },
+    };
     await saveBook(updatedBook);
     return updatedBook;
   }
