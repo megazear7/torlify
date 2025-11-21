@@ -11,6 +11,7 @@ import { buildNestedObject } from "../shared/util.property.js";
 import { BookPartial } from "../shared/type.book.js";
 import { plusIcon, trashIcon, editIcon } from "./icons.js";
 import { TorlifyModal } from "./component.modal.js";
+import { uploadReferenceService } from "../shared/service.upload-reference.js";
 
 @customElement("torlify-references")
 export class TorlifyReferences extends LitElement {
@@ -225,6 +226,12 @@ export class TorlifyReferences extends LitElement {
       .checkbox-text {
         text-transform: capitalize;
       }
+
+      .file-info {
+        font-size: var(--font-small);
+        color: var(--color-secondary-text);
+        margin-top: var(--size-small);
+      }
     `,
   ];
 
@@ -235,9 +242,11 @@ export class TorlifyReferences extends LitElement {
   };
 
   @query("torlify-modal") modal!: TorlifyModal;
+  @query('input[type="file"]') fileInput!: HTMLInputElement;
 
   private editingIndex: number | null = null;
   private editingReference: BookReference | null = null;
+  private selectedFile: File | null = null;
 
   override render(): TemplateResult {
     const references = this.bookContext.book?.references || [];
@@ -304,7 +313,7 @@ export class TorlifyReferences extends LitElement {
         .title="${this.editingIndex !== null
           ? "Edit Reference"
           : "Add Reference"}"
-        @submit="${this.handleModalSubmit}"
+        @ModelSubmit="${this.handleModalSubmit}"
       >
         <div slot="body">${this.renderModalContent()}</div>
         <button slot="submit-button" class="standard-button">
@@ -315,29 +324,29 @@ export class TorlifyReferences extends LitElement {
   }
 
   private renderModalContent(): TemplateResult {
-    if (!this.editingReference) return html``;
-
     return html`
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">File Path</label>
+          <label class="form-label">Reference File</label>
           <input
             class="form-input"
-            type="text"
-            .value="${this.editingReference.file}"
-            @input="${(e: Event): string =>
-              (this.editingReference!.file = (
-                e.target as HTMLInputElement
-              ).value)}"
-            placeholder="Path to reference file"
+            type="file"
+            @change="${(e: Event): void =>
+              this.handleFileSelect(e.target as HTMLInputElement)}"
+            accept=".txt,.md,.pdf,.doc,.docx"
           />
+          ${this.editingReference?.file
+            ? html`<div class="file-info">
+                Selected: ${this.editingReference.file}
+              </div>`
+            : html`<div class="file-info">No file selected</div>`}
         </div>
 
         <div class="form-group">
           <label class="form-label">Instructions</label>
           <textarea
             class="form-textarea"
-            .value="${this.editingReference.instructions}"
+            .value="${this.editingReference?.instructions}"
             @input="${(e: Event): string =>
               (this.editingReference!.instructions = (
                 e.target as HTMLTextAreaElement
@@ -355,7 +364,7 @@ export class TorlifyReferences extends LitElement {
                 <label class="checkbox-label">
                   <input
                     type="checkbox"
-                    .checked="${this.editingReference!.whenToUse.includes(
+                    .checked="${this.editingReference?.whenToUse.includes(
                       option,
                     )}"
                     @change="${(e: Event): void =>
@@ -381,6 +390,10 @@ export class TorlifyReferences extends LitElement {
       instructions: "",
       whenToUse: [],
     };
+    this.selectedFile = null;
+    if (this.fileInput) {
+      this.fileInput.value = "";
+    }
     this.modal.open();
   }
 
@@ -388,6 +401,10 @@ export class TorlifyReferences extends LitElement {
     const references = this.bookContext.book?.references || [];
     this.editingIndex = index;
     this.editingReference = { ...references[index] };
+    this.selectedFile = null;
+    if (this.fileInput) {
+      this.fileInput.value = "";
+    }
     this.modal.open();
   }
 
@@ -418,11 +435,66 @@ export class TorlifyReferences extends LitElement {
     }
   }
 
-  private handleModalSubmit(): void {
-    // For now, just close the modal without doing anything
-    // The UI is in place as requested
+  private async handleModalSubmit(): Promise<void> {
+    console.log("A");
+    if (!this.editingReference || !this.selectedFile) {
+      this.modal.close();
+      this.editingIndex = null;
+      this.editingReference = null;
+      this.selectedFile = null;
+      return;
+    }
+    console.log("B");
+
+    try {
+      // Upload the file
+      const uploadResult = await uploadReferenceService.fetch({
+        book: this.bookContext.book!.id,
+        filename: this.selectedFile.name,
+        file: this.selectedFile,
+      });
+      console.log("C");
+
+      if (uploadResult.success) {
+        // Add/update the reference in the book
+        const currentReferences = this.bookContext.book?.references || [];
+        let newReferences: BookReference[];
+
+        if (this.editingIndex !== null) {
+          // Update existing reference
+          newReferences = currentReferences.map((ref, index) =>
+            index === this.editingIndex ? this.editingReference! : ref,
+          );
+        } else {
+          // Add new reference
+          newReferences = [...currentReferences, this.editingReference!];
+        }
+
+        const updateData = buildNestedObject(
+          BookPartial,
+          "references",
+          newReferences,
+        );
+        dispatch(this, UpdateBookEvent(updateData));
+      }
+    } catch (error) {
+      console.error("Failed to upload reference file:", error);
+      // TODO: Show error message to user
+    }
+
+    // Clean up
     this.modal.close();
     this.editingIndex = null;
     this.editingReference = null;
+    this.selectedFile = null;
+  }
+
+  private handleFileSelect(input: HTMLInputElement): void {
+    const file = input.files?.[0] || null;
+    this.selectedFile = file;
+    if (this.editingReference && file) {
+      this.editingReference.file = file.name;
+    }
+    this.requestUpdate();
   }
 }

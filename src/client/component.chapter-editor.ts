@@ -1,5 +1,5 @@
 import { consume } from "@lit/context";
-import { html, LitElement, TemplateResult } from "lit";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { chapterContext, ChapterContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
@@ -8,7 +8,14 @@ import "./component.auto-textarea.js";
 
 @customElement("torlify-chapter-editor")
 export class TorlifyChapterEditor extends LitElement {
-  static override styles = [globalStyles];
+  static override styles = [
+    globalStyles,
+    css`
+      :host {
+        scroll-margin-top: var(--size-xl);
+      }
+    `,
+  ];
 
   @consume({ context: chapterContext, subscribe: true })
   @property({ attribute: false })
