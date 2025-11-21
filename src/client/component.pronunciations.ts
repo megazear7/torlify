@@ -73,7 +73,7 @@ export class TorlifyPronunciations extends LitElement {
       }
 
       .pronunciation-item:hover {
-        box-shadow: var(--shadow-normal);
+        box-shadow: var(--shadow-hover);
       }
 
       .pronunciation-item.removing {
@@ -128,7 +128,7 @@ export class TorlifyPronunciations extends LitElement {
       .remove-button {
         background: none;
         border: none;
-        color: var(--color-error);
+        color: var(--color-primary-text);
         cursor: pointer;
         padding: var(--size-small);
         border-radius: 100%;

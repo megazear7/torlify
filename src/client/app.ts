@@ -6,6 +6,7 @@ import { routes } from "../shared/service.client.js";
 import { TorlifyAbstractProvider } from "./provider.abstract.js";
 import { TorlifyToast } from "./component.toast.js";
 import { TorlifySaveIndicator } from "./component.save-indicator.js";
+import { SaveEventName } from "./event.save.js";
 import "./page.home.js";
 import "./page.book.js";
 import "./page.chapter.js";
@@ -13,7 +14,6 @@ import "./page.part.js";
 import "./page.not-found.js";
 import "./component.toast.js";
 import "./component.save-indicator.js";
-import { SaveEventName } from "./event.save.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {

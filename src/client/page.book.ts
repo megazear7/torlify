@@ -8,6 +8,7 @@ import "./component.book-editor.js";
 import "./component.chapter-list.js";
 import "./component.bookmark-tabs.js";
 import "./component.pronunciations.js";
+import "./component.references.js";
 
 @customElement("torlify-book-page")
 export class TorlifyBookPage extends TorlifyBookProvider {
@@ -28,6 +29,7 @@ export class TorlifyBookPage extends TorlifyBookProvider {
         <torlify-chapter-list></torlify-chapter-list>
         <torlify-book-editor></torlify-book-editor>
         <torlify-pronunciations></torlify-pronunciations>
+        <torlify-references></torlify-references>
       </div>
     `;
   }
