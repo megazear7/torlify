@@ -12,12 +12,13 @@ import { BookPartial } from "../shared/type.book.js";
 import { plusIcon, trashIcon, editIcon } from "./icons.js";
 import { TorlifyModal } from "./component.modal.js";
 import { uploadReferenceService } from "../shared/service.upload-reference.js";
+import { WarningEvent } from "./event.warning.js";
 
 @customElement("torlify-references")
 export class TorlifyReferences extends LitElement {
-    static override styles = [
-        globalStyles,
-        css`
+  static override styles = [
+    globalStyles,
+    css`
       .references-container {
         margin-top: var(--size-xl);
       }
@@ -350,31 +351,31 @@ export class TorlifyReferences extends LitElement {
         }
       }
     `,
-    ];
+  ];
 
-    @consume({ context: bookContext, subscribe: true })
-    @property({ attribute: false })
-    public bookContext: BookContext = {
-        status: LoadingStatus.enum.idle,
-    };
+  @consume({ context: bookContext, subscribe: true })
+  @property({ attribute: false })
+  public bookContext: BookContext = {
+    status: LoadingStatus.enum.idle,
+  };
 
-    @property({ attribute: false })
-    public instructions: string = "";
+  @property({ attribute: false })
+  public instructions: string = "";
 
-    @property({ attribute: false })
-    public whenToUse: ReferenceUse[] = [];
+  @property({ attribute: false })
+  public whenToUse: ReferenceUse[] = [];
 
-    @query("torlify-modal") modal!: TorlifyModal;
-    @query('input[type="file"]') fileInput!: HTMLInputElement;
-    @query('.file-upload-area') uploadArea!: HTMLElement;
+  @query("torlify-modal") modal!: TorlifyModal;
+  @query('input[type="file"]') fileInput!: HTMLInputElement;
+  @query(".file-upload-area") uploadArea!: HTMLElement;
 
-    private editingIndex: number | null = null;
-    private selectedFile: File | null = null;
+  private editingIndex: number | null = null;
+  private selectedFile: File | null = null;
 
-    override render(): TemplateResult {
-        const references = this.bookContext.book?.references || [];
+  override render(): TemplateResult {
+    const references = this.bookContext.book?.references || [];
 
-        return html`
+    return html`
       <div class="references-container">
         <div class="references-header">
           <h4 class="references-title">References</h4>
@@ -384,15 +385,15 @@ export class TorlifyReferences extends LitElement {
         </div>
 
         ${references.length === 0
-                ? html`
+          ? html`
               <div class="empty-state">
                 No references added yet. Click "Add Reference" to get started.
               </div>
             `
-                : html`
+          : html`
               <div class="references-list">
                 ${references.map(
-                    (reference, index) => html`
+                  (reference, index) => html`
                     <div class="reference-item">
                       <div class="reference-info">
                         <div class="reference-file">${reference.file}</div>
@@ -402,7 +403,7 @@ export class TorlifyReferences extends LitElement {
                             : html`<div>No instructions provided</div>`}
                           <div class="reference-when-to-use">
                             ${reference.whenToUse.map(
-                                (use) => html`
+                              (use) => html`
                                 <span class="reference-tag">${use}</span>
                               `,
                             )}
@@ -434,8 +435,8 @@ export class TorlifyReferences extends LitElement {
 
       <torlify-modal
         .title="${this.editingIndex !== null
-                ? "Edit Reference"
-                : "Add Reference"}"
+          ? "Edit Reference"
+          : "Add Reference"}"
         @ModelSubmit="${this.handleModalSubmit}"
       >
         <div slot="body">${this.renderModalContent()}</div>
@@ -444,10 +445,10 @@ export class TorlifyReferences extends LitElement {
         </button>
       </torlify-modal>
     `;
-    }
+  }
 
-    private renderModalContent(): TemplateResult {
-        return html`
+  private renderModalContent(): TemplateResult {
+    return html`
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Reference File</label>
@@ -461,21 +462,24 @@ export class TorlifyReferences extends LitElement {
               id="file-input"
               class="file-input"
               type="file"
-              @change="${(e: Event) => this.handleFileSelect(e.target as HTMLInputElement)}"
+              @change="${(e: Event): void =>
+                this.handleFileSelect(e.target as HTMLInputElement)}"
               accept=".txt,.md,.pdf,.doc,.docx"
             />
             <label for="file-input" class="file-upload-label">
               <div class="file-upload-content">
                 ${this.selectedFile
-                ? html`
+                  ? html`
                       <div class="file-selected">
                         <div class="file-details">
                           <div class="file-name">${this.selectedFile.name}</div>
-                          <div class="file-size">${this.formatFileSize(this.selectedFile.size)}</div>
+                          <div class="file-size">
+                            ${this.formatFileSize(this.selectedFile.size)}
+                          </div>
                         </div>
                       </div>
                     `
-                : html`
+                  : html`
                       <div class="file-upload-placeholder">
                         <div class="upload-text">
                           <strong>Click to select</strong> or drag and drop
@@ -504,164 +508,207 @@ export class TorlifyReferences extends LitElement {
         <div class="form-group">
           <label class="form-label">When to Use</label>
           <div class="checkbox-group">
-            ${ReferenceUse.options.map((option) => html`
+            ${ReferenceUse.options.map(
+              (option) => html`
                 <label class="checkbox-label">
                   <input
                     type="checkbox"
                     .checked="${this.whenToUse.includes(option)}"
-                    @change="${() => this.toggleWhenToUse(option)}"
+                    @change="${(): void => this.toggleWhenToUse(option)}"
                   />
                   <span class="checkbox-text">${option}</span>
                 </label>
               `,
-                )}
+            )}
           </div>
         </div>
       </div>
     `;
+  }
+
+  toggleWhenToUse(option: ReferenceUse): void {
+    if (this.whenToUse.includes(option)) {
+      this.whenToUse = this.whenToUse.filter((use) => use !== option);
+    } else {
+      this.whenToUse = [...this.whenToUse, option];
     }
+  }
 
-    toggleWhenToUse(option: ReferenceUse): void {
-        if (this.whenToUse.includes(option)) {
-            this.whenToUse = this.whenToUse.filter((use) => use !== option);
-        } else {
-            this.whenToUse = [...this.whenToUse, option];
-        }
+  private handleInstructionsInput(e: Event): void {
+    this.instructions = (e.target as HTMLTextAreaElement).value;
+  }
+
+  private addReference(): void {
+    this.instructions = "";
+    this.whenToUse = [];
+    this.editingIndex = null;
+    this.selectedFile = null;
+    if (this.fileInput) {
+      this.fileInput.value = "";
     }
+    this.modal.open();
+  }
 
-    private handleInstructionsInput(e: Event): void {
-        this.instructions = (e.target as HTMLTextAreaElement).value;
+  private editReference(index: number): void {
+    this.instructions =
+      this.bookContext.book?.references[index]?.instructions || "";
+    this.whenToUse = this.bookContext.book?.references[index]?.whenToUse || [];
+    this.editingIndex = index;
+    this.selectedFile = null;
+    if (this.fileInput) {
+      this.fileInput.value = "";
     }
+    this.requestUpdate();
+    this.modal.open();
+  }
 
-    private addReference(): void {
-        this.instructions = "";
-        this.whenToUse = [];
-        this.editingIndex = null;
-        this.selectedFile = null;
-        if (this.fileInput) {
-            this.fileInput.value = "";
-        }
-        this.modal.open();
+  private removeReference(index: number): void {
+    const currentReferences = this.bookContext.book?.references || [];
+    const newReferences = currentReferences.filter((_, i) => i !== index);
+
+    const updateData = buildNestedObject(
+      BookPartial,
+      "references",
+      newReferences,
+    );
+    dispatch(this, UpdateBookEvent(updateData));
+  }
+
+  private updateReference(): void {
+    if (this.bookContext.book?.references[this.editingIndex!]) {
+      this.bookContext.book.references[this.editingIndex!] = {
+        instructions: this.instructions,
+        whenToUse: this.whenToUse,
+        file: this.bookContext.book?.references[this.editingIndex!].file,
+      };
+      dispatch(
+        this,
+        UpdateBookEvent({
+          references: this.bookContext.book?.references || [],
+        }),
+      );
     }
+  }
 
-    private editReference(index: number): void {
-        this.instructions = this.bookContext.book?.references[index]?.instructions || "";
-        this.whenToUse = this.bookContext.book?.references[index]?.whenToUse || [];
-        this.editingIndex = index;
-        this.selectedFile = null;
-        if (this.fileInput) {
-            this.fileInput.value = "";
-        }
-        this.requestUpdate();
-        this.modal.open();
+  private async handleModalSubmit(): Promise<void> {
+    if (this.editingIndex === null) {
+      this.handleModalSubmitCreate();
+    } else {
+      this.handleModalSubmitEdit();
     }
+  }
 
-    private removeReference(index: number): void {
-        const currentReferences = this.bookContext.book?.references || [];
-        const newReferences = currentReferences.filter((_, i) => i !== index);
+  private async handleModalSubmitCreate(): Promise<void> {
+    if (this.selectedFile) {
+      const uploadResult = await uploadReferenceService.fetch({
+        book: this.bookContext.book!.id,
+        filename: this.selectedFile.name,
+        file: this.selectedFile,
+      });
 
-        const updateData = buildNestedObject(
-            BookPartial,
-            "references",
-            newReferences,
+      console.log("Upload result:", uploadResult);
+
+      if (uploadResult.success) {
+        console.log("File uploaded successfully");
+        this.bookContext.book!.references.push({
+          instructions: this.instructions,
+          whenToUse: this.whenToUse,
+          file: this.selectedFile.name,
+        });
+        dispatch(
+          this,
+          UpdateBookEvent({
+            references: this.bookContext.book?.references || [],
+          }),
         );
-        dispatch(this, UpdateBookEvent(updateData));
+      }
+    } else {
+      dispatch(this, WarningEvent("Please select a file to upload."));
+    }
+  }
+
+  private async handleModalSubmitEdit(): Promise<void> {
+    if (this.selectedFile) {
+      const uploadResult = await uploadReferenceService.fetch({
+        book: this.bookContext.book!.id,
+        filename: this.selectedFile.name,
+        file: this.selectedFile,
+      });
+
+      if (uploadResult.success) {
+        this.updateReference();
+      }
+    } else {
+      this.updateReference();
     }
 
-    private updateReference() {
-        if (this.bookContext.book?.references[this.editingIndex!]) {
-            this.bookContext.book.references[this.editingIndex!] = {
-                instructions: this.instructions,
-                whenToUse: this.whenToUse,
-                file: this.bookContext.book?.references[this.editingIndex!].file,
-            };
-            dispatch(this, UpdateBookEvent({
-                references: this.bookContext.book?.references || []
-            }));
-        }
+    this.modal.close();
+    this.editingIndex = null;
+    this.selectedFile = null;
+    this.instructions = "";
+    this.whenToUse = [];
+  }
+
+  private handleFileSelect(input: HTMLInputElement): void {
+    const file = input.files?.[0] || null;
+    this.setSelectedFile(file);
+  }
+
+  private setSelectedFile(file: File | null): void {
+    this.selectedFile = file;
+    if (this.bookContext.book?.references[this.editingIndex!]) {
+      this.bookContext.book.references[this.editingIndex!].file = file
+        ? file.name
+        : "";
     }
+    this.requestUpdate();
+  }
 
-    private async handleModalSubmit(): Promise<void> {
-        // TODO: Handle add vs edit logic properly
-        if (!this.selectedFile) {
-            this.updateReference();
-        } else {
-            const uploadResult = await uploadReferenceService.fetch({
-                book: this.bookContext.book!.id,
-                filename: this.selectedFile.name,
-                file: this.selectedFile,
-            });
+  private formatFileSize(bytes: number): string {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  }
 
-            if (uploadResult.success) {
-                this.updateReference();
-            }
-        }
+  private handleDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.uploadArea?.classList.add("drag-over");
+  }
 
-        this.modal.close();
-        this.editingIndex = null;
-        this.selectedFile = null;
-        this.instructions = "";
-        this.whenToUse = [];
-    }
+  private handleDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.uploadArea?.classList.remove("drag-over");
+  }
 
-    private handleFileSelect(input: HTMLInputElement): void {
-        const file = input.files?.[0] || null;
+  private handleDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.uploadArea?.classList.remove("drag-over");
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      // Check if file type is accepted
+      const acceptedTypes = [".txt", ".md", ".pdf", ".doc", ".docx"];
+      const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
+
+      if (acceptedTypes.includes(fileExtension)) {
         this.setSelectedFile(file);
-    }
-
-    private setSelectedFile(file: File | null): void {
-        this.selectedFile = file;
-        if (this.bookContext.book?.references[this.editingIndex!]) {
-            this.bookContext.book.references[this.editingIndex!].file = file ? file.name : "";
+        // Update the file input as well
+        if (this.fileInput) {
+          // Create a new DataTransfer to set files
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          this.fileInput.files = dt.files;
         }
-        this.requestUpdate();
+      } else {
+        // TODO: Show error message for unsupported file type
+        console.warn("Unsupported file type:", fileExtension);
+      }
     }
-
-    private formatFileSize(bytes: number): string {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
-
-    private handleDragOver(event: DragEvent): void {
-        event.preventDefault();
-        event.stopPropagation();
-        this.uploadArea?.classList.add('drag-over');
-    }
-
-    private handleDragLeave(event: DragEvent): void {
-        event.preventDefault();
-        event.stopPropagation();
-        this.uploadArea?.classList.remove('drag-over');
-    }
-
-    private handleDrop(event: DragEvent): void {
-        event.preventDefault();
-        event.stopPropagation();
-        this.uploadArea?.classList.remove('drag-over');
-
-        const files = event.dataTransfer?.files;
-        if (files && files.length > 0) {
-            const file = files[0];
-            // Check if file type is accepted
-            const acceptedTypes = ['.txt', '.md', '.pdf', '.doc', '.docx'];
-            const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-
-            if (acceptedTypes.includes(fileExtension)) {
-                this.setSelectedFile(file);
-                // Update the file input as well
-                if (this.fileInput) {
-                    // Create a new DataTransfer to set files
-                    const dt = new DataTransfer();
-                    dt.items.add(file);
-                    this.fileInput.files = dt.files;
-                }
-            } else {
-                // TODO: Show error message for unsupported file type
-                console.warn('Unsupported file type:', fileExtension);
-            }
-        }
-    }
+  }
 }
