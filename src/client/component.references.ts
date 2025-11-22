@@ -4,7 +4,7 @@ import { customElement, property, query } from "lit/decorators.js";
 import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
-import { BookReference, ReferenceUse } from "../shared/type.book.js";
+import { ReferenceUse } from "../shared/type.book.js";
 import { dispatch } from "./util.events.js";
 import { UpdateBookEvent } from "./event.update-book.js";
 import { buildNestedObject } from "../shared/util.property.js";
@@ -15,9 +15,9 @@ import { uploadReferenceService } from "../shared/service.upload-reference.js";
 
 @customElement("torlify-references")
 export class TorlifyReferences extends LitElement {
-  static override styles = [
-    globalStyles,
-    css`
+    static override styles = [
+        globalStyles,
+        css`
       .references-container {
         margin-top: var(--size-xl);
       }
@@ -57,13 +57,13 @@ export class TorlifyReferences extends LitElement {
       .references-list {
         display: flex;
         flex-direction: column;
-        gap: var(--size-medium);
+        gap: var(--size-large);
       }
 
       .reference-item {
         background: var(--color-secondary-surface);
         border-radius: var(--radius-medium);
-        padding: var(--size-medium);
+        padding: var(--size-large);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -104,7 +104,6 @@ export class TorlifyReferences extends LitElement {
         background: var(--color-secondary-surface-active);
         padding: var(--size-small);
         border-radius: var(--radius-medium);
-        box-shadow: var(--shadow-normal);
         font-size: var(--font-tiny);
         font-weight: 500;
         text-transform: uppercase;
@@ -193,8 +192,9 @@ export class TorlifyReferences extends LitElement {
         border-radius: var(--radius-medium);
         background: var(--color-primary-surface);
         color: var(--color-primary-text);
-        resize: vertical;
+        resize: none;
         transition: var(--transition-all);
+        box-sizing: border-box;
       }
 
       .form-textarea:focus {
@@ -214,17 +214,29 @@ export class TorlifyReferences extends LitElement {
         align-items: center;
         gap: var(--size-small);
         cursor: pointer;
-        padding: var(--size-small);
         border-radius: var(--radius-small);
-        transition: var(--transition-all);
       }
 
       .checkbox-label:hover {
-        background: var(--color-secondary-surface-active);
       }
 
       .checkbox-text {
         text-transform: capitalize;
+        padding: var(--size-medium);
+        border-radius: var(--radius-medium);
+        transition: var(--transition-all);
+      }
+
+      .checkbox-text:hover {
+        background: var(--color-secondary-surface-active);
+      }
+
+      input[type="checkbox"] {
+        display: none;
+      }
+
+      input[type="checkbox"]:checked ~ .checkbox-text {
+        background-color: var(--color-1);
       }
 
       .file-info {
@@ -232,26 +244,137 @@ export class TorlifyReferences extends LitElement {
         color: var(--color-secondary-text);
         margin-top: var(--size-small);
       }
+
+      .file-upload-area {
+        position: relative;
+      }
+
+      .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .file-upload-label {
+        display: block;
+        cursor: pointer;
+        border: 2px dashed var(--color-border);
+        border-radius: var(--radius-medium);
+        background: var(--color-primary-surface);
+        transition: var(--transition-all);
+        overflow: hidden;
+      }
+
+      .file-upload-label:hover {
+        border-color: var(--color-accent);
+        background: var(--color-secondary-surface-active);
+      }
+
+      .file-upload-content {
+        padding: 0 var(--size-xl);
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .file-upload-placeholder {
+        text-align: center;
+        color: var(--color-secondary-text);
+        padding: var(--size-large);
+      }
+
+      .upload-text {
+        margin-bottom: var(--size-small);
+        font-size: var(--font-medium);
+      }
+
+      .upload-text strong {
+        color: var(--color-accent);
+      }
+
+      .upload-hint {
+        font-size: var(--font-small);
+        opacity: 0.8;
+      }
+
+      .file-selected {
+        display: flex;
+        align-items: center;
+        gap: var(--size-medium);
+        width: 100%;
+        border-radius: var(--radius-small);
+        padding: var(--size-medium);
+      }
+
+      .file-details {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .file-name {
+        font-weight: 500;
+        color: var(--color-primary-text);
+        word-break: break-all;
+        margin-bottom: 2px;
+      }
+
+      .file-size {
+        font-size: var(--font-small);
+        color: var(--color-secondary-text);
+      }
+
+      /* Drag and drop states */
+      .file-upload-area.drag-over .file-upload-label {
+        border-color: var(--color-success);
+        background: rgba(16, 185, 129, 0.1);
+        transform: scale(1.02);
+      }
+
+      @keyframes bounce {
+        0%,
+        20%,
+        50%,
+        80%,
+        100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-5px);
+        }
+        60% {
+          transform: translateY(-3px);
+        }
+      }
     `,
-  ];
+    ];
 
-  @consume({ context: bookContext, subscribe: true })
-  @property({ attribute: false })
-  public bookContext: BookContext = {
-    status: LoadingStatus.enum.idle,
-  };
+    @consume({ context: bookContext, subscribe: true })
+    @property({ attribute: false })
+    public bookContext: BookContext = {
+        status: LoadingStatus.enum.idle,
+    };
 
-  @query("torlify-modal") modal!: TorlifyModal;
-  @query('input[type="file"]') fileInput!: HTMLInputElement;
+    @property({ attribute: false })
+    public instructions: string = "";
 
-  private editingIndex: number | null = null;
-  private editingReference: BookReference | null = null;
-  private selectedFile: File | null = null;
+    @property({ attribute: false })
+    public whenToUse: ReferenceUse[] = [];
 
-  override render(): TemplateResult {
-    const references = this.bookContext.book?.references || [];
+    @query("torlify-modal") modal!: TorlifyModal;
+    @query('input[type="file"]') fileInput!: HTMLInputElement;
+    @query('.file-upload-area') uploadArea!: HTMLElement;
 
-    return html`
+    private editingIndex: number | null = null;
+    private selectedFile: File | null = null;
+
+    override render(): TemplateResult {
+        const references = this.bookContext.book?.references || [];
+
+        return html`
       <div class="references-container">
         <div class="references-header">
           <h4 class="references-title">References</h4>
@@ -261,15 +384,15 @@ export class TorlifyReferences extends LitElement {
         </div>
 
         ${references.length === 0
-          ? html`
+                ? html`
               <div class="empty-state">
                 No references added yet. Click "Add Reference" to get started.
               </div>
             `
-          : html`
+                : html`
               <div class="references-list">
                 ${references.map(
-                  (reference, index) => html`
+                    (reference, index) => html`
                     <div class="reference-item">
                       <div class="reference-info">
                         <div class="reference-file">${reference.file}</div>
@@ -279,7 +402,7 @@ export class TorlifyReferences extends LitElement {
                             : html`<div>No instructions provided</div>`}
                           <div class="reference-when-to-use">
                             ${reference.whenToUse.map(
-                              (use) => html`
+                                (use) => html`
                                 <span class="reference-tag">${use}</span>
                               `,
                             )}
@@ -311,8 +434,8 @@ export class TorlifyReferences extends LitElement {
 
       <torlify-modal
         .title="${this.editingIndex !== null
-          ? "Edit Reference"
-          : "Add Reference"}"
+                ? "Edit Reference"
+                : "Add Reference"}"
         @ModelSubmit="${this.handleModalSubmit}"
       >
         <div slot="body">${this.renderModalContent()}</div>
@@ -321,36 +444,58 @@ export class TorlifyReferences extends LitElement {
         </button>
       </torlify-modal>
     `;
-  }
+    }
 
-  private renderModalContent(): TemplateResult {
-    return html`
+    private renderModalContent(): TemplateResult {
+        return html`
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Reference File</label>
-          <input
-            class="form-input"
-            type="file"
-            @change="${(e: Event): void =>
-              this.handleFileSelect(e.target as HTMLInputElement)}"
-            accept=".txt,.md,.pdf,.doc,.docx"
-          />
-          ${this.editingReference?.file
-            ? html`<div class="file-info">
-                Selected: ${this.editingReference.file}
-              </div>`
-            : html`<div class="file-info">No file selected</div>`}
+          <div
+            class="file-upload-area"
+            @dragover="${this.handleDragOver}"
+            @dragleave="${this.handleDragLeave}"
+            @drop="${this.handleDrop}"
+          >
+            <input
+              id="file-input"
+              class="file-input"
+              type="file"
+              @change="${(e: Event) => this.handleFileSelect(e.target as HTMLInputElement)}"
+              accept=".txt,.md,.pdf,.doc,.docx"
+            />
+            <label for="file-input" class="file-upload-label">
+              <div class="file-upload-content">
+                ${this.selectedFile
+                ? html`
+                      <div class="file-selected">
+                        <div class="file-details">
+                          <div class="file-name">${this.selectedFile.name}</div>
+                          <div class="file-size">${this.formatFileSize(this.selectedFile.size)}</div>
+                        </div>
+                      </div>
+                    `
+                : html`
+                      <div class="file-upload-placeholder">
+                        <div class="upload-text">
+                          <strong>Click to select</strong> or drag and drop
+                        </div>
+                        <div class="upload-hint">
+                          Supports: TXT, MD, PDF, DOC, DOCX
+                        </div>
+                      </div>
+                    `}
+              </div>
+            </label>
+          </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Instructions</label>
           <textarea
             class="form-textarea"
-            .value="${this.editingReference?.instructions}"
-            @input="${(e: Event): string =>
-              (this.editingReference!.instructions = (
-                e.target as HTMLTextAreaElement
-              ).value)}"
+            .value="${this.instructions}"
+            @input="${this.handleInstructionsInput}"
             placeholder="Instructions for using this reference"
             rows="3"
           ></textarea>
@@ -359,142 +504,164 @@ export class TorlifyReferences extends LitElement {
         <div class="form-group">
           <label class="form-label">When to Use</label>
           <div class="checkbox-group">
-            ${ReferenceUse.options.map(
-              (option) => html`
+            ${ReferenceUse.options.map((option) => html`
                 <label class="checkbox-label">
                   <input
                     type="checkbox"
-                    .checked="${this.editingReference?.whenToUse.includes(
-                      option,
-                    )}"
-                    @change="${(e: Event): void =>
-                      this.toggleWhenToUse(
-                        option,
-                        (e.target as HTMLInputElement).checked,
-                      )}"
+                    .checked="${this.whenToUse.includes(option)}"
+                    @change="${() => this.toggleWhenToUse(option)}"
                   />
                   <span class="checkbox-text">${option}</span>
                 </label>
               `,
-            )}
+                )}
           </div>
         </div>
       </div>
     `;
-  }
-
-  private addReference(): void {
-    this.editingIndex = null;
-    this.editingReference = {
-      file: "",
-      instructions: "",
-      whenToUse: [],
-    };
-    this.selectedFile = null;
-    if (this.fileInput) {
-      this.fileInput.value = "";
     }
-    this.modal.open();
-  }
 
-  private editReference(index: number): void {
-    const references = this.bookContext.book?.references || [];
-    this.editingIndex = index;
-    this.editingReference = { ...references[index] };
-    this.selectedFile = null;
-    if (this.fileInput) {
-      this.fileInput.value = "";
-    }
-    this.modal.open();
-  }
-
-  private removeReference(index: number): void {
-    const currentReferences = this.bookContext.book?.references || [];
-    const newReferences = currentReferences.filter((_, i) => i !== index);
-
-    const updateData = buildNestedObject(
-      BookPartial,
-      "references",
-      newReferences,
-    );
-    dispatch(this, UpdateBookEvent(updateData));
-  }
-
-  private toggleWhenToUse(option: ReferenceUse, checked: boolean): void {
-    if (!this.editingReference) return;
-
-    if (checked) {
-      this.editingReference.whenToUse = [
-        ...this.editingReference.whenToUse,
-        option,
-      ];
-    } else {
-      this.editingReference.whenToUse = this.editingReference.whenToUse.filter(
-        (use) => use !== option,
-      );
-    }
-  }
-
-  private async handleModalSubmit(): Promise<void> {
-    console.log("A");
-    if (!this.editingReference || !this.selectedFile) {
-      this.modal.close();
-      this.editingIndex = null;
-      this.editingReference = null;
-      this.selectedFile = null;
-      return;
-    }
-    console.log("B");
-
-    try {
-      // Upload the file
-      const uploadResult = await uploadReferenceService.fetch({
-        book: this.bookContext.book!.id,
-        filename: this.selectedFile.name,
-        file: this.selectedFile,
-      });
-      console.log("C");
-
-      if (uploadResult.success) {
-        // Add/update the reference in the book
-        const currentReferences = this.bookContext.book?.references || [];
-        let newReferences: BookReference[];
-
-        if (this.editingIndex !== null) {
-          // Update existing reference
-          newReferences = currentReferences.map((ref, index) =>
-            index === this.editingIndex ? this.editingReference! : ref,
-          );
+    toggleWhenToUse(option: ReferenceUse): void {
+        if (this.whenToUse.includes(option)) {
+            this.whenToUse = this.whenToUse.filter((use) => use !== option);
         } else {
-          // Add new reference
-          newReferences = [...currentReferences, this.editingReference!];
+            this.whenToUse = [...this.whenToUse, option];
         }
+    }
+
+    private handleInstructionsInput(e: Event): void {
+        this.instructions = (e.target as HTMLTextAreaElement).value;
+    }
+
+    private addReference(): void {
+        this.instructions = "";
+        this.whenToUse = [];
+        this.editingIndex = null;
+        this.selectedFile = null;
+        if (this.fileInput) {
+            this.fileInput.value = "";
+        }
+        this.modal.open();
+    }
+
+    private editReference(index: number): void {
+        this.instructions = this.bookContext.book?.references[index]?.instructions || "";
+        this.whenToUse = this.bookContext.book?.references[index]?.whenToUse || [];
+        this.editingIndex = index;
+        this.selectedFile = null;
+        if (this.fileInput) {
+            this.fileInput.value = "";
+        }
+        this.requestUpdate();
+        this.modal.open();
+    }
+
+    private removeReference(index: number): void {
+        const currentReferences = this.bookContext.book?.references || [];
+        const newReferences = currentReferences.filter((_, i) => i !== index);
 
         const updateData = buildNestedObject(
-          BookPartial,
-          "references",
-          newReferences,
+            BookPartial,
+            "references",
+            newReferences,
         );
         dispatch(this, UpdateBookEvent(updateData));
-      }
-    } catch (error) {
-      console.error("Failed to upload reference file:", error);
-      // TODO: Show error message to user
     }
 
-    // Clean up
-    this.modal.close();
-    this.editingIndex = null;
-    this.editingReference = null;
-    this.selectedFile = null;
-  }
-
-  private handleFileSelect(input: HTMLInputElement): void {
-    const file = input.files?.[0] || null;
-    this.selectedFile = file;
-    if (this.editingReference && file) {
-      this.editingReference.file = file.name;
+    private updateReference() {
+        if (this.bookContext.book?.references[this.editingIndex!]) {
+            this.bookContext.book.references[this.editingIndex!] = {
+                instructions: this.instructions,
+                whenToUse: this.whenToUse,
+                file: this.bookContext.book?.references[this.editingIndex!].file,
+            };
+            dispatch(this, UpdateBookEvent({
+                references: this.bookContext.book?.references || []
+            }));
+        }
     }
-    this.requestUpdate();
-  }
+
+    private async handleModalSubmit(): Promise<void> {
+        // TODO: Handle add vs edit logic properly
+        if (!this.selectedFile) {
+            this.updateReference();
+        } else {
+            const uploadResult = await uploadReferenceService.fetch({
+                book: this.bookContext.book!.id,
+                filename: this.selectedFile.name,
+                file: this.selectedFile,
+            });
+
+            if (uploadResult.success) {
+                this.updateReference();
+            }
+        }
+
+        this.modal.close();
+        this.editingIndex = null;
+        this.selectedFile = null;
+        this.instructions = "";
+        this.whenToUse = [];
+    }
+
+    private handleFileSelect(input: HTMLInputElement): void {
+        const file = input.files?.[0] || null;
+        this.setSelectedFile(file);
+    }
+
+    private setSelectedFile(file: File | null): void {
+        this.selectedFile = file;
+        if (this.bookContext.book?.references[this.editingIndex!]) {
+            this.bookContext.book.references[this.editingIndex!].file = file ? file.name : "";
+        }
+        this.requestUpdate();
+    }
+
+    private formatFileSize(bytes: number): string {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    private handleDragOver(event: DragEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.uploadArea?.classList.add('drag-over');
+    }
+
+    private handleDragLeave(event: DragEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.uploadArea?.classList.remove('drag-over');
+    }
+
+    private handleDrop(event: DragEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.uploadArea?.classList.remove('drag-over');
+
+        const files = event.dataTransfer?.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            // Check if file type is accepted
+            const acceptedTypes = ['.txt', '.md', '.pdf', '.doc', '.docx'];
+            const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+
+            if (acceptedTypes.includes(fileExtension)) {
+                this.setSelectedFile(file);
+                // Update the file input as well
+                if (this.fileInput) {
+                    // Create a new DataTransfer to set files
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    this.fileInput.files = dt.files;
+                }
+            } else {
+                // TODO: Show error message for unsupported file type
+                console.warn('Unsupported file type:', fileExtension);
+            }
+        }
+    }
 }
