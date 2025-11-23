@@ -28,12 +28,6 @@ export class TorlifyPronunciations extends LitElement {
         margin-bottom: var(--size-medium);
       }
 
-      .pronunciations-title {
-        font-size: var(--font-medium);
-        font-weight: 600;
-        color: var(--color-primary-text);
-      }
-
       .add-button {
         background: var(--color-secondary-surface);
         color: var(--color-secondary-text);
@@ -56,7 +50,7 @@ export class TorlifyPronunciations extends LitElement {
       .pronunciations-list {
         display: flex;
         flex-direction: column;
-        gap: var(--size-medium);
+        gap: var(--size-large);
       }
 
       .pronunciation-item {
@@ -200,7 +194,7 @@ export class TorlifyPronunciations extends LitElement {
     return html`
       <div class="pronunciations-container">
         <div class="pronunciations-header">
-          <h4 class="pronunciations-title">Pronunciations</h4>
+          <h4>Pronunciations</h4>
           <button class="add-button" @click="${this.addPronunciation}">
             ${plusIcon} Add Pronunciation
           </button>

@@ -33,7 +33,7 @@ export const globalStyles = css`
   textarea.h4 {
     font-size: calc(var(--font-medium) * 1.2);
     font-style: italic;
-    margin: var(--size-large) 0 0 0;
+    margin: var(--size-medium) 0 var(--size-small) 0;
     color: var(--color-accent);
   }
 
@@ -43,6 +43,16 @@ export const globalStyles = css`
     font-size: calc(var(--font-medium) * 0.85);
     font-style: italic;
     margin: var(--size-small) 0 0 0;
+    color: var(--color-primary-text);
+    opacity: 0.85;
+  }
+
+  h6,
+  input.h6,
+  textarea.h6 {
+    font-size: calc(var(--font-medium) * 0.75);
+    text-transform: uppercase;
+    margin: var(--size-small) 0 var(--size-tiny) 0;
     color: var(--color-primary-text);
     opacity: 0.85;
   }

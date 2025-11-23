@@ -30,12 +30,6 @@ export class TorlifyReferences extends LitElement {
         margin-bottom: var(--size-medium);
       }
 
-      .references-title {
-        font-size: var(--font-medium);
-        font-weight: 600;
-        color: var(--color-primary-text);
-      }
-
       .add-button {
         background: var(--color-secondary-surface);
         color: var(--color-secondary-text);
@@ -151,7 +145,6 @@ export class TorlifyReferences extends LitElement {
         padding: var(--size-xl);
         background: var(--color-secondary-surface);
         border-radius: var(--radius-medium);
-        border: 2px dashed var(--color-border);
       }
 
       .modal-body {
@@ -219,9 +212,6 @@ export class TorlifyReferences extends LitElement {
         border-radius: var(--radius-small);
       }
 
-      .checkbox-label:hover {
-      }
-
       .checkbox-text {
         text-transform: capitalize;
         padding: var(--size-medium);
@@ -230,7 +220,7 @@ export class TorlifyReferences extends LitElement {
       }
 
       .checkbox-text:hover {
-        background: var(--color-secondary-surface-active);
+        background: var(--color-2);
       }
 
       input[type="checkbox"] {
@@ -249,6 +239,15 @@ export class TorlifyReferences extends LitElement {
 
       .file-upload-area {
         position: relative;
+        background: var(--color-primary-surface);
+        border-radius: var(--radius-medium);
+        transition: var(--transition-all);
+        border: 1px solid transparent;
+      }
+
+      .file-upload-area:hover {
+        border: 1px solid var(--color-1);
+        box-shadow: var(--shadow-hover);
       }
 
       .file-input {
@@ -258,21 +257,6 @@ export class TorlifyReferences extends LitElement {
         height: 100%;
         cursor: pointer;
         z-index: 2;
-      }
-
-      .file-upload-label {
-        display: block;
-        cursor: pointer;
-        border: 2px dashed var(--color-border);
-        border-radius: var(--radius-medium);
-        background: var(--color-primary-surface);
-        transition: var(--transition-all);
-        overflow: hidden;
-      }
-
-      .file-upload-label:hover {
-        border-color: var(--color-accent);
-        background: var(--color-secondary-surface-active);
       }
 
       .file-upload-content {
@@ -294,46 +278,13 @@ export class TorlifyReferences extends LitElement {
         font-size: var(--font-medium);
       }
 
-      .upload-text strong {
-        color: var(--color-accent);
-      }
-
       .upload-hint {
         font-size: var(--font-small);
         opacity: 0.8;
       }
 
       .file-selected {
-        display: flex;
-        align-items: center;
-        gap: var(--size-medium);
-        width: 100%;
-        border-radius: var(--radius-small);
-        padding: var(--size-medium);
-      }
-
-      .file-details {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .file-name {
-        font-weight: 500;
-        color: var(--color-primary-text);
-        word-break: break-all;
-        margin-bottom: 2px;
-      }
-
-      .file-size {
-        font-size: var(--font-small);
-        color: var(--color-secondary-text);
-      }
-
-      /* Drag and drop states */
-      .file-upload-area.drag-over .file-upload-label {
-        border-color: var(--color-success);
-        background: rgba(16, 185, 129, 0.1);
-        transform: scale(1.02);
+        width: 100%
       }
 
       @keyframes bounce {
@@ -379,18 +330,14 @@ export class TorlifyReferences extends LitElement {
     return html`
       <div class="references-container">
         <div class="references-header">
-          <h4 class="references-title">References</h4>
+          <h4>References</h4>
           <button class="add-button" @click="${this.addReference}">
             ${plusIcon} Add Reference
           </button>
         </div>
 
         ${references.length === 0
-          ? html`
-              <div class="empty-state">
-                No references added yet. Click "Add Reference" to get started.
-              </div>
-            `
+          ? html`<div class="empty-state">No references added yet</div>`
           : html`
               <div class="references-list">
                 ${references.map(
@@ -415,14 +362,12 @@ export class TorlifyReferences extends LitElement {
                         <button
                           class="action-button edit-button"
                           @click="${(): void => this.editReference(index)}"
-                          title="Edit reference"
                         >
                           ${editIcon}
                         </button>
                         <button
                           class="action-button remove-button"
                           @click="${(): void => this.removeReference(index)}"
-                          title="Remove reference"
                         >
                           ${trashIcon}
                         </button>
@@ -434,12 +379,7 @@ export class TorlifyReferences extends LitElement {
             `}
       </div>
 
-      <torlify-modal
-        .title="${this.editingIndex !== null
-          ? "Edit Reference"
-          : "Add Reference"}"
-        @ModelSubmit="${this.handleModalSubmit}"
-      >
+      <torlify-modal @ModelSubmit="${this.handleModalSubmit}">
         <div slot="body">${this.renderModalContent()}</div>
         <button slot="submit-button" class="standard-button">
           ${this.editingIndex !== null ? "Update Reference" : "Add Reference"}
@@ -453,12 +393,7 @@ export class TorlifyReferences extends LitElement {
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Reference File</label>
-          <div
-            class="file-upload-area"
-            @dragover="${this.handleDragOver}"
-            @dragleave="${this.handleDragLeave}"
-            @drop="${this.handleDrop}"
-          >
+          <div class="file-upload-area">
             <input
               id="file-input"
               class="file-input"
@@ -467,23 +402,19 @@ export class TorlifyReferences extends LitElement {
                 this.handleFileSelect(e.target as HTMLInputElement)}"
               accept=".txt,.md,.pdf,.doc,.docx"
             />
-            <label for="file-input" class="file-upload-label">
+            <label for="file-input">
               <div class="file-upload-content">
                 ${this.selectedFile
                   ? html`
                       <div class="file-selected">
-                        <div class="file-details">
-                          <div class="file-name">${this.selectedFile.name}</div>
-                          <div class="file-size">
-                            ${this.formatFileSize(this.selectedFile.size)}
-                          </div>
-                        </div>
+                        <div>${this.selectedFile.name}</div>
+                        <div>${this.formatFileSize(this.selectedFile.size)}</div>
                       </div>
                     `
                   : html`
                       <div class="file-upload-placeholder">
                         <div class="upload-text">
-                          <strong>Click to select</strong> or drag and drop
+                          Click to select or drag and drop
                         </div>
                         <div class="upload-hint">
                           Supports: TXT, MD, PDF, DOC, DOCX
@@ -609,7 +540,6 @@ export class TorlifyReferences extends LitElement {
         file: this.selectedFile,
       });
 
-
       if (uploadResult.success) {
         this.bookContext.book!.references.push({
           instructions: this.instructions,
@@ -672,45 +602,5 @@ export class TorlifyReferences extends LitElement {
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  }
-
-  private handleDragOver(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    this.uploadArea?.classList.add("drag-over");
-  }
-
-  private handleDragLeave(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    this.uploadArea?.classList.remove("drag-over");
-  }
-
-  private handleDrop(event: DragEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    this.uploadArea?.classList.remove("drag-over");
-
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      // Check if file type is accepted
-      const acceptedTypes = [".txt", ".md", ".pdf", ".doc", ".docx"];
-      const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
-
-      if (acceptedTypes.includes(fileExtension)) {
-        this.setSelectedFile(file);
-        // Update the file input as well
-        if (this.fileInput) {
-          // Create a new DataTransfer to set files
-          const dt = new DataTransfer();
-          dt.items.add(file);
-          this.fileInput.files = dt.files;
-        }
-      } else {
-        // TODO: Show error message for unsupported file type
-        console.warn("Unsupported file type:", fileExtension);
-      }
-    }
   }
 }
