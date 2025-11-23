@@ -5,11 +5,12 @@ import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { formatNumber } from "../shared/util.number.js";
-import "./component.auto-textarea.js";
 import { dispatch } from "./util.events.js";
 import { UpdateBookEvent } from "./event.update-book.js";
 import { buildNestedObject } from "../shared/util.property.js";
 import { BookPartial } from "../shared/type.book.js";
+import { WarningEvent } from "./event.warning.js";
+import "./component.auto-textarea.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -36,6 +37,12 @@ export class TorlifyBookEditor extends LitElement {
     return html`
       ${this.bookContext.book
         ? html`
+            <div class="button-bar">
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Download</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Configure</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Details</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate</button>
+            </div>
             <div class="secondary-surface">
               <torlify-auto-textarea
                 cssClass="h2"

@@ -8,6 +8,7 @@ import { ChapterPartial } from "../shared/type.book.js";
 import { dispatch } from "./util.events.js";
 import { buildNestedObject } from "../shared/util.property.js";
 import { UpdateChapterEvent } from "./event.update-chapter.js";
+import { WarningEvent } from "./event.warning.js";
 import "./component.auto-textarea.js";
 
 @customElement("torlify-chapter-editor")
@@ -60,6 +61,12 @@ export class TorlifyChapterEditor extends LitElement {
               <input type="text" .value="${this.chapterContext.chapter.maxParts}" @input="${this.save("maxParts")}"></input>
               <h4>Estimated Part Length in Words</h4>
               <input type="text" .value="${this.chapterContext.chapter.partLength}" @input="${this.save("partLength")}"></input>
+            </div>
+            <div class="button-bar">
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Outline</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Chapter</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Everything</button>
             </div>
             <div class="secondary-surface">
               <h4>Outline</h4>

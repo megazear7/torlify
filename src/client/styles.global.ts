@@ -97,6 +97,26 @@ export const globalStyles = css`
     transform: var(--transform-hover);
   }
 
+  .button-bar {
+    display: flex;
+    margin-top: var(--size-large);
+    box-shadow: var(--shadow-normal);
+  }
+
+  .button-bar > button.standard-button {
+    border-radius: 0;
+    padding: var(--size-medium) var(--size-large);
+    box-shadow: none;
+  }
+
+  .button-bar > button.standard-button:last-child {
+    border-radius: 0 var(--radius-large) var(--radius-large) 0;
+  }
+
+  .button-bar > button.standard-button:first-child {
+    border-radius: var(--radius-large) 0 0 var(--radius-large);
+  }
+
   input[type="text"] {
     width: 100%;
     box-sizing: border-box;
