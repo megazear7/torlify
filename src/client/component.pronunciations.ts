@@ -70,6 +70,7 @@ export class TorlifyPronunciations extends LitElement {
         animation: slideIn 0.3s ease-out;
         border: 1px solid transparent;
         transition: var(--transition-all);
+        box-shadow: var(--shadow-normal);
       }
 
       .pronunciation-item:hover {

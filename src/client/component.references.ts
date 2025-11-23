@@ -70,6 +70,7 @@ export class TorlifyReferences extends LitElement {
         justify-content: space-between;
         border: 1px solid transparent;
         transition: var(--transition-all);
+        box-shadow: var(--shadow-normal);
       }
 
       .reference-item:hover {
@@ -565,6 +566,8 @@ export class TorlifyReferences extends LitElement {
   private removeReference(index: number): void {
     const currentReferences = this.bookContext.book?.references || [];
     const newReferences = currentReferences.filter((_, i) => i !== index);
+    this.bookContext.book!.references = newReferences;
+    this.requestUpdate();
 
     const updateData = buildNestedObject(
       BookPartial,
@@ -606,15 +609,14 @@ export class TorlifyReferences extends LitElement {
         file: this.selectedFile,
       });
 
-      console.log("Upload result:", uploadResult);
 
       if (uploadResult.success) {
-        console.log("File uploaded successfully");
         this.bookContext.book!.references.push({
           instructions: this.instructions,
           whenToUse: this.whenToUse,
           file: this.selectedFile.name,
         });
+        this.requestUpdate();
         dispatch(
           this,
           UpdateBookEvent({
