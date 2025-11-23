@@ -27,9 +27,9 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
     status: LoadingStatus.enum.idle,
   };
 
-  private secondsBeforeAutoSaving = 5;
-  private updateTimeoutId?: number;
-  private updateRegistrationTime?: number;
+  protected secondsBeforeAutoSaving = 5;
+  protected updateTimeoutId?: number;
+  protected updateRegistrationTime?: number;
 
   override async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -95,7 +95,7 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
     this.updateTimeoutId = window.setTimeout(async () => {
       this.updateBook(book);
       this.updateTimeoutId = undefined;
-    }, 1000) as number;
+    }, ONE_SECOND_IN_MS) as number;
   }
 
   private async updateBook(book: BookPartial): Promise<void> {

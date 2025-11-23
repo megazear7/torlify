@@ -4,6 +4,7 @@ export function buildNestedObject<T>(
   validator: ZodType<T>,
   path: string,
   value: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  base?: T,
 ): T {
   const keys = path.split(".");
   const result: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -15,5 +16,6 @@ export function buildNestedObject<T>(
   }
 
   current[keys[keys.length - 1]] = value;
-  return validator.parse(result);
+  const final = base ? { ...base, ...result } : result;
+  return validator.parse(final);
 }

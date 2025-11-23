@@ -284,7 +284,7 @@ export class TorlifyReferences extends LitElement {
       }
 
       .file-selected {
-        width: 100%
+        width: 100%;
       }
 
       @keyframes bounce {
@@ -408,7 +408,9 @@ export class TorlifyReferences extends LitElement {
                   ? html`
                       <div class="file-selected">
                         <div>${this.selectedFile.name}</div>
-                        <div>${this.formatFileSize(this.selectedFile.size)}</div>
+                        <div>
+                          ${this.formatFileSize(this.selectedFile.size)}
+                        </div>
                       </div>
                     `
                   : html`

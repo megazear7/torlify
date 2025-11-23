@@ -207,6 +207,11 @@ export const Chapter = z.object({
 });
 export type Chapter = z.infer<typeof Chapter>;
 
+export const ChapterPartial = Chapter.partial().extend({
+  number: Chapter.shape.number,
+});
+export type ChapterPartial = z.infer<typeof ChapterPartial>;
+
 export const EditInstructions = z
   .string()
   .describe(
