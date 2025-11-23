@@ -13,6 +13,7 @@ import "./component.book-editor.js";
 import { ONE_SECOND_IN_MS } from "../shared/util.time.js";
 import { SaveEvent } from "./event.save.js";
 import { dispatch } from "./util.events.js";
+import { updateChapterService } from "../shared/service.update-chapter.js";
 
 export abstract class TorlifyChapterProvider extends TorlifyBookProvider {
   @provide({ context: chapterContext })
@@ -81,13 +82,11 @@ export abstract class TorlifyChapterProvider extends TorlifyBookProvider {
     }
 
     this.updateRegistrationTime = undefined;
-    console.log("Chapter updated:", chapter);
-    // TODO: Implement the updateChapterService and uncomment the code below to actually update the chapter.
-    // const updatedChapter = await updateChapterService.fetch({
-    //   chapter,
-    //   book: this.bookContext.book.id,
-    // });
-    // this.chapterContext = { ...this.chapterContext, chapter: updatedChapter };
+    const updatedChapter = await updateChapterService.fetch({
+      book: this.bookContext.book.id,
+      chapter,
+    });
+    this.chapterContext = { ...this.chapterContext, chapter: updatedChapter };
     dispatch(this, SaveEvent());
   }
 }

@@ -6,6 +6,7 @@ import { generateBookController } from "./controller.generate-book.js";
 import { clientController } from "./controller.client.js";
 import { updateBookController } from "./controller.update-book.js";
 import { registerUploadReference } from "./controller.upload-reference.js";
+import { updateChapterController } from "./controller.update-chapter.js";
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ getBookController.register(router);
 generateBookController.register(router);
 clientController.register(router);
 updateBookController.register(router);
+updateChapterController.register(router);
 registerUploadReference(router);
 
 export { router };

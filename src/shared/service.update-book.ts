@@ -1,6 +1,6 @@
 import { AbstractService, ServiceType } from "./main.service.js";
 import { HttpMethod } from "./type.http.js";
-import { Book, BookId } from "./type.book.js";
+import { Book, BookId, BookPartial } from "./type.book.js";
 import z from "zod";
 
 export const UpdateBookPathParameters = z.object({
@@ -9,7 +9,7 @@ export const UpdateBookPathParameters = z.object({
 export type UpdateBookPathParameters = z.infer<typeof UpdateBookPathParameters>;
 
 export const UpdateBookBodyParameters = z.object({
-  book: Book.partial(),
+  book: BookPartial,
 });
 export type UpdateBookBodyParameters = z.infer<typeof UpdateBookBodyParameters>;
 

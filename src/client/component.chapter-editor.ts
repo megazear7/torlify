@@ -41,32 +41,33 @@ export class TorlifyChapterEditor extends LitElement {
             </div>
             <div class="secondary-surface">
               <h4>When</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.when}"></torlify-auto-textarea>
+              <torlify-auto-textarea .value="${this.chapterContext.chapter.when}" @input="${this.save("when")}"></torlify-auto-textarea>
               <h4>Where</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.where}"></torlify-auto-textarea>
+              <torlify-auto-textarea .value="${this.chapterContext.chapter.where}" @input="${this.save("where")}"></torlify-auto-textarea>
               <h4>What</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.what}"></torlify-auto-textarea>
+              <torlify-auto-textarea .value="${this.chapterContext.chapter.what}" @input="${this.save("what")}"></torlify-auto-textarea>
               <h4>Why</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.why}"></torlify-auto-textarea>
+              <torlify-auto-textarea .value="${this.chapterContext.chapter.why}" @input="${this.save("why")}"></torlify-auto-textarea>
               <h4>How</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.how}"></torlify-auto-textarea>
+              <torlify-auto-textarea .value="${this.chapterContext.chapter.how}" @input="${this.save("how")}"></torlify-auto-textarea>
               <h4>Who</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.who}"></torlify-auto-textarea>
+              <torlify-auto-textarea .value="${this.chapterContext.chapter.who}" @input="${this.save("who")}"></torlify-auto-textarea>
             </div>
             <div class="secondary-surface">
               <h4>Minimum Parts</h4>
-              <input type="text" .value="${this.chapterContext.chapter.minParts}"></input>
+              <input type="text" .value="${this.chapterContext.chapter.minParts}" @input="${this.save("minParts")}"></input>
               <h4>Maximum Parts</h4>
-              <input type="text" .value="${this.chapterContext.chapter.maxParts}"></input>
+              <input type="text" .value="${this.chapterContext.chapter.maxParts}" @input="${this.save("maxParts")}"></input>
               <h4>Estimated Part Length in Words</h4>
-              <input type="text" .value="${this.chapterContext.chapter.partLength}"></input>
+              <input type="text" .value="${this.chapterContext.chapter.partLength}" @input="${this.save("partLength")}"></input>
             </div>
             <div class="secondary-surface">
               <h4>Outline</h4>
               ${this.chapterContext.chapter.outline.map(
-                (item) => html`
+                (item, index) => html`
                   <torlify-auto-textarea
                     .value="${item}"
+                    @input="${this.saveOutline(index)}"
                   ></torlify-auto-textarea>
                 `,
               )}
@@ -78,11 +79,28 @@ export class TorlifyChapterEditor extends LitElement {
 
   save(prop: string): (event: CustomEvent) => void {
     return (event: CustomEvent): void => {
-      if (event.detail.value) {
+      if (event.detail.value && this.chapterContext.chapter) {
         const updateData = buildNestedObject(
           ChapterPartial,
           prop,
           event.detail.value,
+          { number: this.chapterContext.chapter!.number },
+        );
+        updateData.number = this.chapterContext.chapter!.number;
+        dispatch(this, UpdateChapterEvent(updateData));
+      }
+    };
+  }
+
+  saveOutline(index: number): (event: CustomEvent) => void {
+    return (event: CustomEvent): void => {
+      if (event.detail.value && this.chapterContext.chapter) {
+        const outline = [...this.chapterContext.chapter.outline];
+        outline[index] = event.detail.value;
+        const updateData = buildNestedObject(
+          ChapterPartial,
+          "outline",
+          outline,
           { number: this.chapterContext.chapter!.number },
         );
         updateData.number = this.chapterContext.chapter!.number;
