@@ -97,6 +97,31 @@ export const globalStyles = css`
     transform: var(--transform-hover);
   }
 
+  input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--size-large);
+    border: 1px solid var(--color-grey-transparent);
+    border-radius: var(--radius-medium);
+    background: transparent;
+    color: var(--color-secondary-text);
+    font-family: var(--font-family);
+    font-size: var(--font-medium);
+    transition: var(--transition-all);
+    margin-bottom: var(--size-large);
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--color-1);
+    box-shadow: var(--shadow-active);
+    background: var(--color-secondary-surface-active);
+  }
+
+  input[type="text"]::placeholder {
+    color: var(--color-grey-transparent);
+  }
+
   torlify-modal button.standard-button {
     background: var(--color-secondary-bold);
   }
