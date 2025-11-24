@@ -98,7 +98,7 @@ export class TorlifyAutoTextarea extends LitElement {
     );
   }
 
-  private adjustHeight(): void {
+  adjustHeight(): void {
     if (this.textarea && !this.cssClass) {
       this.textarea.style.height = "auto";
       this.textarea.style.height = `${this.textarea.scrollHeight}px`;

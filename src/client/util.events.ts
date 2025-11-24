@@ -8,9 +8,13 @@ import { UpdateBookEventData } from "./event.update-book.js";
 import { SaveEventData } from "./event.save.js";
 import { UpdateBookImmediateEventData } from "./event.update-book-immediate.js";
 import { UpdateChapterEventData } from "./event.update-chapter.js";
+import { ModelClosingEventData } from "./event.modal-closing.js";
+import { ModelOpeningEventData } from "./event.modal-opening.js";
 
 export const TorlifyEvent = z.union([
   ModelSubmitEventData,
+  ModelOpeningEventData,
+  ModelClosingEventData,
   NavigationEventData,
   ScrollToEventData,
   WarningEventData,

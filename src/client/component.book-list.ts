@@ -1,5 +1,5 @@
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, queryAll } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import {
   bookContext,
@@ -19,6 +19,8 @@ import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { WarningEvent } from "./event.warning.js";
 import { SuccessEvent } from "./event.success.js";
+import { TorlifyAutoTextarea } from "./component.auto-textarea.js";
+import { wait } from "../shared/util.wait.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -87,6 +89,9 @@ export class TorlifyBookList extends LitElement {
     "In a mystical land, a dragon rider soared through skies. Bonded with her dragon, they protected villages from threats. A legendary foe emerged...",
   ];
 
+  @queryAll('torlify-modal torlify-auto-textarea')
+  private modalTextAreas!: NodeListOf<TorlifyAutoTextarea>;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.chooseSampleDescription();
@@ -106,7 +111,7 @@ export class TorlifyBookList extends LitElement {
           `,
         ) ?? html`<li>No books found</li>`}
         <li>
-          <torlify-modal @ModelSubmit="${this.handleCreateBook}">
+          <torlify-modal @ModelSubmit="${this.handleCreateBook}" @ModelOpening=${this.handleOpenModal}>
             <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
               <h2>Add Book</h2>
@@ -127,6 +132,11 @@ export class TorlifyBookList extends LitElement {
         .visible="${this.loading}"
       ></torlify-loading-overlay>
     `;
+  }
+
+  private async handleOpenModal(): Promise<void> {
+    await wait(10);
+    this.modalTextAreas.forEach((textarea) => textarea.adjustHeight());
   }
 
   private readonly handleGenerateBookInstructions = (event: Event): void => {

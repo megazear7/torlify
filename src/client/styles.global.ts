@@ -99,7 +99,7 @@ export const globalStyles = css`
 
   .button-bar {
     display: flex;
-    margin-top: var(--size-large);
+    margin-top: var(--size-xl);
     box-shadow: var(--shadow-normal);
   }
 
