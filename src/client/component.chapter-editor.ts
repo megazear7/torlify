@@ -64,10 +64,10 @@ export class TorlifyChapterEditor extends LitElement {
               <input type="text" .value="${this.chapterContext.chapter.partLength}" @input="${this.save("partLength")}"></input>
             </div>
             <torlify-bar>
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Outline</button>
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Chapter</button>
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Everything</button>
+              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Outline</button>
+              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Chapter</button>
+              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
+              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Everything</button>
             </torlify-bar>
             <div class="secondary-surface">
               <h4>Outline</h4>

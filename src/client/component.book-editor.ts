@@ -39,10 +39,34 @@ export class TorlifyBookEditor extends LitElement {
       ${this.bookContext.book
         ? html`
             <torlify-bar>
-                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Download</button>
-                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Configure</button>
-                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Details</button>
-                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate</button>
+              <button
+                @click=${(): void =>
+                  dispatch(this, WarningEvent("Not implemented"))}
+                class="standard-button"
+              >
+                Download
+              </button>
+              <button
+                @click=${(): void =>
+                  dispatch(this, WarningEvent("Not implemented"))}
+                class="standard-button"
+              >
+                Configure
+              </button>
+              <button
+                @click=${(): void =>
+                  dispatch(this, WarningEvent("Not implemented"))}
+                class="standard-button"
+              >
+                Details
+              </button>
+              <button
+                @click=${(): void =>
+                  dispatch(this, WarningEvent("Not implemented"))}
+                class="standard-button"
+              >
+                Generate
+              </button>
             </torlify-bar>
             <div class="secondary-surface">
               <torlify-auto-textarea

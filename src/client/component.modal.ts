@@ -50,7 +50,8 @@ export class TorlifyModal extends LitElement {
         margin-top: var(--size-l);
       }
 
-      .modal-backdrop.visible, .modal-backdrop.opening {
+      .modal-backdrop.visible,
+      .modal-backdrop.opening {
         display: flex;
       }
 
@@ -109,7 +110,10 @@ export class TorlifyModal extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <slot name="open-button" @click="${(): Promise<void> => this.open()}"></slot>
+      <slot
+        name="open-button"
+        @click="${(): Promise<void> => this.open()}"
+      ></slot>
       <div
         class="${this.backdropClasses()}"
         @click="${(): Promise<void> => this.close()}"

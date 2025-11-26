@@ -31,6 +31,14 @@ export abstract class TorlifyChapterProvider extends TorlifyBookProvider {
     );
   }
 
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeEventListener(
+      UpdateChapterEventName.value,
+      this.handleUpdateChapter,
+    );
+  }
+
   override async load(): Promise<void> {
     await super.load();
     const params = parseRouteParams(

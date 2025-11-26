@@ -202,11 +202,7 @@ export class TorlifyCharacters extends LitElement {
         </div>
 
         ${characters.length === 0
-          ? html`
-              <div class="empty-state">
-                No characters added yet
-              </div>
-            `
+          ? html` <div class="empty-state">No characters added yet</div> `
           : html`
               <div class="characters-list">
                 ${characters.map(
@@ -292,9 +288,7 @@ export class TorlifyCharacters extends LitElement {
 
     // Dispatch the actual removal event
     const currentCharacters = this.bookContext.book?.characters || [];
-    const newCharacters = currentCharacters.filter(
-      (_, i) => i !== index,
-    );
+    const newCharacters = currentCharacters.filter((_, i) => i !== index);
 
     const updateData = buildNestedObject(
       BookPartial,

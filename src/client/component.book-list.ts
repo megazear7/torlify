@@ -89,7 +89,7 @@ export class TorlifyBookList extends LitElement {
     "In a mystical land, a dragon rider soared through skies. Bonded with her dragon, they protected villages from threats. A legendary foe emerged...",
   ];
 
-  @queryAll('torlify-modal torlify-auto-textarea')
+  @queryAll("torlify-modal torlify-auto-textarea")
   private modalTextAreas!: NodeListOf<TorlifyAutoTextarea>;
 
   override connectedCallback(): void {
@@ -102,7 +102,10 @@ export class TorlifyBookList extends LitElement {
       <ul class="pill">
         <li><a href="/">${homeIcon}</a></li>
         <li>
-          <torlify-modal @ModelSubmit="${this.handleCreateBook}" @ModelOpening=${this.handleOpenModal}>
+          <torlify-modal
+            @ModelSubmit="${this.handleCreateBook}"
+            @ModelOpening=${this.handleOpenModal}
+          >
             <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
               <h2>Add Book</h2>

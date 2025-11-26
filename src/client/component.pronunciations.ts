@@ -203,8 +203,7 @@ export class TorlifyPronunciations extends LitElement {
         ${pronunciations.length === 0
           ? html`
               <div class="empty-state">
-                No pronunciations added yet
-                started.
+                No pronunciations added yet started.
               </div>
             `
           : html`

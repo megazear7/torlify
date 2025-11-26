@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { RouteError } from "./util.route.js";
+import { ErrorResponse } from "../shared/type.http.js";
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
@@ -20,7 +21,8 @@ export const errorHandler = (
       ` -> Route error ${err.statusCode}: ${req.path}`,
       err.message,
     );
-    res.status(err.statusCode).json({ error: err.message });
+    const responseBody: ErrorResponse = { error: err.message };
+    res.status(err.statusCode).json(responseBody);
     return;
   } else {
     console.error(`${req.method} ${req.path}`, err.message);
@@ -30,9 +32,14 @@ export const errorHandler = (
   if (req.path.startsWith("/api")) {
     try {
       const jsonError = JSON.parse(err.message);
-      res.status(500).json({ error: jsonError });
+      const responseBody: ErrorResponse = {
+        error: "There was a parsing error",
+        detail: jsonError,
+      };
+      res.status(500).json(responseBody);
     } catch {
-      res.status(500).json({ error: err.message });
+      const responseBody: ErrorResponse = { error: err.message };
+      res.status(500).json(responseBody);
     }
   } else {
     res

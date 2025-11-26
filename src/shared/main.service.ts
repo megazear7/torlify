@@ -1,4 +1,4 @@
-import { HttpMethod } from "./type.http.js";
+import { ErrorResponse, HttpMethod } from "./type.http.js";
 import { renderPathname } from "./util.route-params.js";
 import z, { ZodObject, ZodType } from "zod";
 
@@ -13,7 +13,7 @@ export type ServiceType = z.infer<typeof ServiceType>;
 
 export interface RequestOptions<
   RequestBodyType extends Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  PathParams extends Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  PathParams extends Record<string, string>,
 > {
   bodyParams: RequestBodyType;
   pathParams: PathParams;
@@ -21,7 +21,7 @@ export interface RequestOptions<
 
 export interface Service<
   RequestBodyType extends Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  PathParams extends Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  PathParams extends Record<string, string>,
   ResponseContent,
 > {
   readonly method: HttpMethod;
@@ -33,7 +33,7 @@ export interface Service<
 
 export abstract class AbstractService<
   RequestBodyType extends Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  PathParams extends Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+  PathParams extends Record<string, string>,
   ResponseContent,
 > implements Service<RequestBodyType, PathParams, ResponseContent>
 {
@@ -78,10 +78,17 @@ export abstract class AbstractService<
 
       const PathParams = this.PathParams as ZodObject;
       const pathParams = PathParams.strip().parse(params);
-      path = renderPathname(this.path, pathParams);
+      const mappedPathParams: Record<string, string> = {};
+      for (const [key, value] of Object.entries(pathParams)) {
+        mappedPathParams[key] = String(value);
+      }
+      path = renderPathname(this.path, mappedPathParams);
     }
     const res = await fetch(path, requestConfig);
-    if (this.type === ServiceType.enum.html) {
+    if (res.status >= 400) {
+      const errorResponse = ErrorResponse.parse(await res.json());
+      throw new Error(errorResponse.error);
+    } else if (this.type === ServiceType.enum.html) {
       return res.text() as Promise<ResponseContent>;
     } else if (this.type === ServiceType.enum.json) {
       return this.ResponseContent.parse(await res.json());
