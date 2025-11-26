@@ -1,0 +1,36 @@
+import { ONE_SECOND_IN_MS } from "../shared/util.time";
+
+export const STANDARD_DEBOUNCE_DURATION = 1 * ONE_SECOND_IN_MS;
+export const STANDARD_FORCE_DURATION = 10 * ONE_SECOND_IN_MS;
+
+export class DebounceHandler {
+    private debounceDuration: number;
+    private forceDuration: number;
+    private timeoutId: ReturnType<typeof setTimeout> | null = null;
+    protected registrationTime?: number;
+
+    constructor(debounceDuration: number = STANDARD_DEBOUNCE_DURATION, forceDuration: number = STANDARD_FORCE_DURATION) {
+        this.debounceDuration = debounceDuration;
+        this.forceDuration = forceDuration;
+    }
+
+    debounce(func: () => void) {
+        if (this.forceExpired()) {
+            func();
+            this.timeoutId = null;
+            this.registrationTime = undefined;
+        } else {
+            if (!this.registrationTime) this.registrationTime = Date.now();
+            if (this.timeoutId !== null) clearTimeout(this.timeoutId);
+            this.timeoutId = setTimeout(() => func(), this.debounceDuration);
+        }
+    }
+
+    forceExpired(): boolean {
+        return !!(
+            this.timeoutId &&
+            this.registrationTime &&
+            Date.now() - this.registrationTime > this.forceDuration
+        );
+    }
+}

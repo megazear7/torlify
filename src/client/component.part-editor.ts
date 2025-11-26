@@ -13,9 +13,11 @@ import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { WarningEvent } from "./event.warning.js";
 import { dispatch } from "./util.events.js";
-import { UpdatePartEvent } from "./event.update-part.js";
+import { updatePartService } from "../shared/service.update-part.js";
+import { DebounceHandler } from "./util.debounce.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
+import { SaveEvent } from "./event.save.js";
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
@@ -38,6 +40,8 @@ export class TorlifyPartEditor extends LitElement {
   public partContext: PartContext = {
     status: LoadingStatus.enum.idle,
   };
+
+  private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     return html`
@@ -79,22 +83,16 @@ export class TorlifyPartEditor extends LitElement {
 
   handleTextChange(): (event: CustomEvent) => void {
     return (event: CustomEvent): void => {
-      if (
-        event.detail.value &&
-        this.bookContext.book &&
-        this.chapterContext.chapter &&
-        this.partContext.part
-      ) {
-        this.partContext.part.text = event.detail.value;
-        dispatch(
-          this,
-          UpdatePartEvent({
-            book: this.bookContext.book.id,
-            chapter: String(this.chapterContext.chapter.number),
-            part: this.partContext.part,
-          }),
-        );
-      }
+      if (!event.detail.value) return;
+      this.partContext.part!.text = event.detail.value;
+      this.debounceHandler.debounce(() => {
+        updatePartService.fetch({
+          book: this.bookContext.book?.id!,
+          chapter: String(this.chapterContext.chapter?.number!),
+          part: this.partContext.part!,
+        });
+        dispatch(this, SaveEvent());
+      });
     };
   }
 
