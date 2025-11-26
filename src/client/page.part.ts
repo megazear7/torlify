@@ -11,6 +11,7 @@ import "./component.part-list.js";
 import "./component.part-editor.js";
 import "./component.pronunciations.js";
 import "./component.references.js";
+import "./component.characters.js";
 
 @customElement("torlify-part-page")
 export class TorlifyPartPage extends TorlifyPartProvider {
@@ -37,6 +38,7 @@ export class TorlifyPartPage extends TorlifyPartProvider {
         <torlify-book-editor></torlify-book-editor>
         <torlify-pronunciations></torlify-pronunciations>
         <torlify-references></torlify-references>
+        <torlify-characters></torlify-characters>
         <torlify-chapter-editor></torlify-chapter-editor>
         <torlify-part-list></torlify-part-list>
         <torlify-part-editor></torlify-part-editor>

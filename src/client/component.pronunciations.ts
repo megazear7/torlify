@@ -203,7 +203,7 @@ export class TorlifyPronunciations extends LitElement {
         ${pronunciations.length === 0
           ? html`
               <div class="empty-state">
-                No pronunciations added yet. Click "Add Pronunciation" to get
+                No pronunciations added yet
                 started.
               </div>
             `
@@ -290,7 +290,7 @@ export class TorlifyPronunciations extends LitElement {
     this.requestUpdate();
 
     // Wait for animation to complete
-    await wait(2000);
+    await wait(350);
 
     // Remove from removing indices
     this.removingIndices = this.removingIndices.filter((i) => i !== index);
