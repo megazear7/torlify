@@ -86,10 +86,17 @@ export class TorlifyPartEditor extends LitElement {
       if (!event.detail.value) return;
       this.partContext.part!.text = event.detail.value;
       this.debounceHandler.debounce(() => {
+        const book = this.bookContext.book;
+        const chapter = this.chapterContext.chapter;
+        const part = this.partContext.part;
+        if (!book || !chapter || !part) {
+          dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+          return;
+        }
         updatePartService.fetch({
-          book: this.bookContext.book?.id!,
-          chapter: String(this.chapterContext.chapter?.number!),
-          part: this.partContext.part!,
+          book: book.id,
+          chapter: String(chapter.number),
+          part: part,
         });
         dispatch(this, SaveEvent());
       });
