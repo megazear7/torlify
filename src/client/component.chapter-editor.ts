@@ -10,6 +10,7 @@ import { buildNestedObject } from "../shared/util.property.js";
 import { UpdateChapterEvent } from "./event.update-chapter.js";
 import { WarningEvent } from "./event.warning.js";
 import "./component.auto-textarea.js";
+import "./component.bar.js";
 
 @customElement("torlify-chapter-editor")
 export class TorlifyChapterEditor extends LitElement {
@@ -62,12 +63,12 @@ export class TorlifyChapterEditor extends LitElement {
               <h4>Estimated Part Length in Words</h4>
               <input type="text" .value="${this.chapterContext.chapter.partLength}" @input="${this.save("partLength")}"></input>
             </div>
-            <div class="button-bar">
+            <torlify-bar>
               <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Outline</button>
               <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Chapter</button>
               <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
               <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Everything</button>
-            </div>
+            </torlify-bar>
             <div class="secondary-surface">
               <h4>Outline</h4>
               ${this.chapterContext.chapter.outline.map(

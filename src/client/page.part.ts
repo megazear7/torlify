@@ -11,8 +11,6 @@ import "./component.part-list.js";
 import "./component.part-editor.js";
 import "./component.pronunciations.js";
 import "./component.references.js";
-import { WarningEvent } from "./event.warning.js";
-import { dispatch } from "./util.events.js";
 
 @customElement("torlify-part-page")
 export class TorlifyPartPage extends TorlifyPartProvider {
@@ -41,11 +39,6 @@ export class TorlifyPartPage extends TorlifyPartProvider {
         <torlify-references></torlify-references>
         <torlify-chapter-editor></torlify-chapter-editor>
         <torlify-part-list></torlify-part-list>
-        <div class="button-bar">
-          <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Part</button>
-          <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Edit Part</button>
-          <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
-        </div>
         <torlify-part-editor></torlify-part-editor>
       </div>
     `;

@@ -4,7 +4,10 @@ import { customElement, property } from "lit/decorators.js";
 import { PartContext, partContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
+import { WarningEvent } from "./event.warning.js";
+import { dispatch } from "./util.events.js";
 import "./component.auto-textarea.js";
+import "./component.bar.js";
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
@@ -20,6 +23,11 @@ export class TorlifyPartEditor extends LitElement {
     return html`
       ${this.partContext.part
         ? html`
+            <torlify-bar>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Part</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Edit Part</button>
+              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
+            </torlify-bar>
             <div class="secondary-surface">
               <torlify-auto-textarea
                 .value="${this.partContext.part.text}"

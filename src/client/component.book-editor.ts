@@ -11,6 +11,7 @@ import { buildNestedObject } from "../shared/util.property.js";
 import { BookPartial } from "../shared/type.book.js";
 import { WarningEvent } from "./event.warning.js";
 import "./component.auto-textarea.js";
+import "./component.bar.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -37,12 +38,12 @@ export class TorlifyBookEditor extends LitElement {
     return html`
       ${this.bookContext.book
         ? html`
-            <div class="button-bar">
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Download</button>
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Configure</button>
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Details</button>
-              <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate</button>
-            </div>
+            <torlify-bar>
+                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Download</button>
+                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Configure</button>
+                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Details</button>
+                <button @click=${() => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate</button>
+            </torlify-bar>
             <div class="secondary-surface">
               <torlify-auto-textarea
                 cssClass="h2"

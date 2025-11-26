@@ -3,11 +3,13 @@ import { css } from "lit";
 export const pillStyles = css`
   ul.pill {
     display: flex;
-    flex-wrap: wrap;
     gap: var(--size-medium);
     margin: var(--size-xl) 0 0 0;
     padding: 0;
     list-style: none;
+    overflow: auto;
+    scrollbar-width: none;
+    padding: var(--size-large) 0;
   }
 
   ul.pill > li {
@@ -65,7 +67,7 @@ export const pillStyles = css`
     align-items: center;
     color: inherit;
     text-decoration: none;
-    padding: var(--size-medium) var(--size-large);
+    padding: var(--size-small) var(--size-medium);
     position: relative;
     z-index: 1;
     transition: var(--transition-all);

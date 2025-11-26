@@ -101,15 +101,6 @@ export class TorlifyBookList extends LitElement {
     return html`
       <ul class="pill">
         <li><a href="/">${homeIcon}</a></li>
-        ${this.booksContext.books?.map(
-          (book) => html`
-            <li
-              class="${this.bookContext.book?.id === book.id ? "active" : ""}"
-            >
-              <a href="/book/${book.id}">${book.title}</a>
-            </li>
-          `,
-        ) ?? html`<li>No books found</li>`}
         <li>
           <torlify-modal @ModelSubmit="${this.handleCreateBook}" @ModelOpening=${this.handleOpenModal}>
             <button slot="open-button">${aiIcon} Create</button>
@@ -126,6 +117,15 @@ export class TorlifyBookList extends LitElement {
             </button>
           </torlify-modal>
         </li>
+        ${this.booksContext.books?.map(
+          (book) => html`
+            <li
+              class="${this.bookContext.book?.id === book.id ? "active" : ""}"
+            >
+              <a href="/book/${book.id}">${book.title}</a>
+            </li>
+          `,
+        ) ?? html`<li>No books found</li>`}
       </ul>
 
       <torlify-loading-overlay
