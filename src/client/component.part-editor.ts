@@ -18,6 +18,7 @@ import { DebounceHandler } from "./util.debounce.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { SaveEvent } from "./event.save.js";
+import { generatePartService } from "../shared/service.generate-part.js";
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
@@ -41,18 +42,20 @@ export class TorlifyPartEditor extends LitElement {
     status: LoadingStatus.enum.idle,
   };
 
+  @property({ type: String })
+  loading: boolean = false;
+
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     return html`
       ${this.partContext.part
         ? html`
+            <torlify-loading-overlay
+              .visible="${this.loading}"
+            ></torlify-loading-overlay>
             <torlify-bar>
-              <button
-                @click=${(): void =>
-                  dispatch(this, WarningEvent("Not implemented"))}
-                class="standard-button"
-              >
+              <button @click=${this.generateText()} class="standard-button">
                 ${this.msgText}
               </button>
               <button
@@ -81,9 +84,26 @@ export class TorlifyPartEditor extends LitElement {
     `;
   }
 
+  generateText(): () => void {
+    return async (): Promise<void> => {
+      this.loading = true;
+      const book = this.bookContext.book?.id;
+      const chapter = String(this.chapterContext.chapter?.number);
+      const part = String(this.partContext.part?.number);
+      if (!book || !chapter || !part) {
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        this.loading = false;
+        return;
+      }
+      const newPart = await generatePartService.fetch({ book, chapter, part });
+      this.partContext.part = newPart;
+      this.loading = false;
+    };
+  }
+
   handleTextChange(): (event: CustomEvent) => void {
     return (event: CustomEvent): void => {
-      if (!event.detail.value) return;
+      if (event.detail.value === undefined) return;
       this.partContext.part!.text = event.detail.value;
       this.debounceHandler.debounce(() => {
         const book = this.bookContext.book;

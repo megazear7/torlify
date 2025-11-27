@@ -111,7 +111,7 @@ export class TorlifyChapterEditor extends LitElement {
       const value = isAutoTextarea
         ? (event as CustomEvent).detail.value
         : (event.target as HTMLInputElement).value;
-      if (!value) return;
+      if (value === undefined) return;
       const chapter = this.chapterContext.chapter!;
       if (!chapter) return;
       if (

@@ -8,6 +8,7 @@ import { updateBookController } from "./controller.update-book.js";
 import { registerUploadReference } from "./controller.upload-reference.js";
 import { updateChapterController } from "./controller.update-chapter.js";
 import { updatePartController } from "./controller.update-part.js";
+import { generatePartController } from "./controller.generate-part.js";
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ clientController.register(router);
 updateBookController.register(router);
 updateChapterController.register(router);
 updatePartController.register(router);
+generatePartController.register(router);
 registerUploadReference(router);
 
 export { router };

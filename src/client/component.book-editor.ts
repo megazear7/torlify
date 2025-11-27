@@ -109,6 +109,7 @@ export class TorlifyBookEditor extends LitElement {
 
   save(prop: string): (event: CustomEvent) => void {
     return (event: CustomEvent): void => {
+      if (event.detail.value === undefined) return;
       const book = buildNestedObject(BookPartial, prop, event.detail.value);
       this.bookContext.book = {
         ...this.bookContext.book!,
