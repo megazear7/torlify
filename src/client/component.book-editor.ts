@@ -6,10 +6,12 @@ import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { formatNumber } from "../shared/util.number.js";
 import { dispatch } from "./util.events.js";
-import { UpdateBookEvent } from "./event.update-book.js";
 import { buildNestedObject } from "../shared/util.property.js";
 import { BookPartial } from "../shared/type.book.js";
 import { WarningEvent } from "./event.warning.js";
+import { SaveEvent } from "./event.save.js";
+import { DebounceHandler } from "./util.debounce.js";
+import { updateBookService } from "../shared/service.update-book.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 
@@ -33,6 +35,8 @@ export class TorlifyBookEditor extends LitElement {
   public bookContext: BookContext = {
     status: LoadingStatus.enum.idle,
   };
+
+  private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     return html`
@@ -105,14 +109,18 @@ export class TorlifyBookEditor extends LitElement {
 
   save(prop: string): (event: CustomEvent) => void {
     return (event: CustomEvent): void => {
-      if (event.detail.value) {
-        const updateData = buildNestedObject(
-          BookPartial,
-          prop,
-          event.detail.value,
-        );
-        dispatch(this, UpdateBookEvent(updateData));
-      }
+      const book = buildNestedObject(BookPartial, prop, event.detail.value);
+      this.bookContext.book = {
+        ...this.bookContext.book!,
+        ...book,
+      };
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          book,
+          name: this.bookContext.book!.id,
+        });
+        dispatch(this, SaveEvent());
+      });
     };
   }
 

@@ -4,9 +4,7 @@ import { NavigationEventData } from "./event.navigation.js";
 import { ScrollToEventData } from "./event.scroll-to.js";
 import { WarningEventData } from "./event.warning.js";
 import { SuccessEventData } from "./event.success.js";
-import { UpdateBookEventData } from "./event.update-book.js";
 import { SaveEventData } from "./event.save.js";
-import { UpdateBookImmediateEventData } from "./event.update-book-immediate.js";
 import { ModelClosingEventData } from "./event.modal-closing.js";
 import { ModelOpeningEventData } from "./event.modal-opening.js";
 
@@ -18,8 +16,6 @@ export const TorlifyEvent = z.union([
   ScrollToEventData,
   WarningEventData,
   SuccessEventData,
-  UpdateBookEventData,
-  UpdateBookImmediateEventData,
   SaveEventData,
 ]);
 export type TorlifyEvent = z.infer<typeof TorlifyEvent>;

@@ -5,12 +5,11 @@ import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { dispatch } from "./util.events.js";
-import { UpdateBookEvent } from "./event.update-book.js";
-import { buildNestedObject } from "../shared/util.property.js";
-import { BookPartial } from "../shared/type.book.js";
 import { plusIcon, trashIcon } from "./icons.js";
-import { UpdateBookImmediateEvent } from "./event.update-book-immediate.js";
 import { wait } from "../shared/util.wait.js";
+import { updateBookService } from "../shared/service.update-book.js";
+import { SaveEvent } from "./event.save.js";
+import { DebounceHandler } from "./util.debounce.js";
 
 @customElement("torlify-pronunciations")
 export class TorlifyPronunciations extends LitElement {
@@ -188,6 +187,8 @@ export class TorlifyPronunciations extends LitElement {
   @property({ type: Array })
   private removingIndices: number[] = [];
 
+  private debounceHandler = new DebounceHandler();
+
   override render(): TemplateResult {
     const pronunciations = this.bookContext.book?.pronunciation || [];
 
@@ -274,43 +275,37 @@ export class TorlifyPronunciations extends LitElement {
       ...currentPronunciations,
       { match: "", replace: "" },
     ];
-
-    const updateData = buildNestedObject(
-      BookPartial,
-      "pronunciation",
-      newPronunciations,
-    );
-    dispatch(this, UpdateBookImmediateEvent(updateData));
+    this.bookContext.book!.pronunciation = newPronunciations;
+    this.requestUpdate();
+    this.debounceHandler.debounce(() => {
+      updateBookService.fetch({
+        name: this.bookContext.book!.id,
+        book: this.bookContext.book!,
+      });
+      dispatch(this, SaveEvent());
+    });
   }
 
   private async removePronunciation(index: number): Promise<void> {
-    // Add to removing indices to trigger animation
     this.removingIndices = [...this.removingIndices, index];
     this.requestUpdate();
-
-    // Wait for animation to complete
     await wait(350);
-
-    // Remove from removing indices
     this.removingIndices = this.removingIndices.filter((i) => i !== index);
-
-    // Dispatch the actual removal event
     const currentPronunciations = this.bookContext.book?.pronunciation || [];
     const newPronunciations = currentPronunciations.filter(
       (_, i) => i !== index,
     );
-
-    const updateData = buildNestedObject(
-      BookPartial,
-      "pronunciation",
-      newPronunciations,
-    );
-    dispatch(this, UpdateBookImmediateEvent(updateData));
-
-    // TODO: Fix the jitter that happens after removing the item
-    // Wait for removal to be complete
-    await wait(300);
-    this.removingIndices = this.removingIndices.filter((i) => i !== index);
+    this.bookContext.book = {
+      ...this.bookContext.book!,
+      pronunciation: newPronunciations,
+    };
+    this.debounceHandler.debounce(() => {
+      updateBookService.fetch({
+        name: this.bookContext.book!.id,
+        book: this.bookContext.book!,
+      });
+      dispatch(this, SaveEvent());
+    });
   }
 
   private updatePronunciation(
@@ -322,12 +317,13 @@ export class TorlifyPronunciations extends LitElement {
     const newPronunciations = currentPronunciations.map((pronunciation, i) =>
       i === index ? { ...pronunciation, [field]: value } : pronunciation,
     );
-
-    const updateData = buildNestedObject(
-      BookPartial,
-      "pronunciation",
-      newPronunciations,
-    );
-    dispatch(this, UpdateBookEvent(updateData));
+    this.bookContext.book!.pronunciation = newPronunciations;
+    this.debounceHandler.debounce(() => {
+      updateBookService.fetch({
+        name: this.bookContext.book!.id,
+        book: this.bookContext.book!,
+      });
+      dispatch(this, SaveEvent());
+    });
   }
 }

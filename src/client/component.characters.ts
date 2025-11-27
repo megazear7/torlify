@@ -5,12 +5,11 @@ import { consume } from "@lit/context";
 import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { dispatch } from "./util.events.js";
-import { UpdateBookEvent } from "./event.update-book.js";
-import { buildNestedObject } from "../shared/util.property.js";
-import { BookPartial } from "../shared/type.book.js";
 import { plusIcon, trashIcon } from "./icons.js";
-import { UpdateBookImmediateEvent } from "./event.update-book-immediate.js";
 import { wait } from "../shared/util.wait.js";
+import { DebounceHandler } from "./util.debounce.js";
+import { updateBookService } from "../shared/service.update-book.js";
+import { SaveEvent } from "./event.save.js";
 import "./component.auto-textarea.js";
 
 @customElement("torlify-characters")
@@ -189,6 +188,8 @@ export class TorlifyCharacters extends LitElement {
   @property({ type: Array })
   private removingIndices: number[] = [];
 
+  private debounceHandler = new DebounceHandler();
+
   override render(): TemplateResult {
     const characters = this.bookContext.book?.characters || [];
 
@@ -266,41 +267,38 @@ export class TorlifyCharacters extends LitElement {
       ...currentCharacters,
       { name: "", instructions: "" },
     ];
-
-    const updateData = buildNestedObject(
-      BookPartial,
-      "characters",
-      newCharacters,
-    );
-    dispatch(this, UpdateBookImmediateEvent(updateData));
+    this.bookContext.book = {
+      ...this.bookContext.book!,
+      characters: newCharacters,
+    };
+    this.requestUpdate();
+    this.debounceHandler.debounce(() => {
+      updateBookService.fetch({
+        name: this.bookContext.book!.id,
+        book: this.bookContext.book!,
+      });
+      dispatch(this, SaveEvent());
+    });
   }
 
   private async removeCharacter(index: number): Promise<void> {
-    // Add to removing indices to trigger animation
     this.removingIndices = [...this.removingIndices, index];
     this.requestUpdate();
-
-    // Wait for animation to complete
     await wait(350);
-
-    // Remove from removing indices
     this.removingIndices = this.removingIndices.filter((i) => i !== index);
-
-    // Dispatch the actual removal event
     const currentCharacters = this.bookContext.book?.characters || [];
     const newCharacters = currentCharacters.filter((_, i) => i !== index);
-
-    const updateData = buildNestedObject(
-      BookPartial,
-      "characters",
-      newCharacters,
-    );
-    dispatch(this, UpdateBookImmediateEvent(updateData));
-
-    // TODO: Fix the jitter that happens after removing the item
-    // Wait for removal to be complete
-    await wait(300);
-    this.removingIndices = this.removingIndices.filter((i) => i !== index);
+    this.bookContext.book = {
+      ...this.bookContext.book!,
+      characters: newCharacters,
+    };
+    this.debounceHandler.debounce(() => {
+      updateBookService.fetch({
+        name: this.bookContext.book!.id,
+        book: this.bookContext.book!,
+      });
+      dispatch(this, SaveEvent());
+    });
   }
 
   private updateCharacter(
@@ -312,12 +310,16 @@ export class TorlifyCharacters extends LitElement {
     const newCharacters = currentCharacters.map((character, i) =>
       i === index ? { ...character, [field]: value } : character,
     );
-
-    const updateData = buildNestedObject(
-      BookPartial,
-      "characters",
-      newCharacters,
-    );
-    dispatch(this, UpdateBookEvent(updateData));
+    this.bookContext.book = {
+      ...this.bookContext.book!,
+      characters: newCharacters,
+    };
+    this.debounceHandler.debounce(() => {
+      updateBookService.fetch({
+        name: this.bookContext.book!.id,
+        book: this.bookContext.book!,
+      });
+      dispatch(this, SaveEvent());
+    });
   }
 }

@@ -6,13 +6,13 @@ import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { ReferenceUse } from "../shared/type.book.js";
 import { dispatch } from "./util.events.js";
-import { UpdateBookEvent } from "./event.update-book.js";
-import { buildNestedObject } from "../shared/util.property.js";
-import { BookPartial } from "../shared/type.book.js";
 import { plusIcon, trashIcon, editIcon } from "./icons.js";
 import { TorlifyModal } from "./component.modal.js";
 import { uploadReferenceService } from "../shared/service.upload-reference.js";
 import { WarningEvent } from "./event.warning.js";
+import { DebounceHandler } from "./util.debounce.js";
+import { updateBookService } from "../shared/service.update-book.js";
+import { SaveEvent } from "./event.save.js";
 
 @customElement("torlify-references")
 export class TorlifyReferences extends LitElement {
@@ -323,6 +323,7 @@ export class TorlifyReferences extends LitElement {
 
   private editingIndex: number | null = null;
   private selectedFile: File | null = null;
+  private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     const references = this.bookContext.book?.references || [];
@@ -502,12 +503,13 @@ export class TorlifyReferences extends LitElement {
     this.bookContext.book!.references = newReferences;
     this.requestUpdate();
 
-    const updateData = buildNestedObject(
-      BookPartial,
-      "references",
-      newReferences,
-    );
-    dispatch(this, UpdateBookEvent(updateData));
+    this.debounceHandler.debounce(() => {
+      updateBookService.fetch({
+        name: this.bookContext.book!.id,
+        book: this.bookContext.book!,
+      });
+      dispatch(this, SaveEvent());
+    });
   }
 
   private updateReference(): void {
@@ -517,12 +519,13 @@ export class TorlifyReferences extends LitElement {
         whenToUse: this.whenToUse,
         file: this.bookContext.book?.references[this.editingIndex!].file,
       };
-      dispatch(
-        this,
-        UpdateBookEvent({
-          references: this.bookContext.book?.references || [],
-        }),
-      );
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: this.bookContext.book!,
+        });
+        dispatch(this, SaveEvent());
+      });
     }
   }
 
@@ -549,12 +552,13 @@ export class TorlifyReferences extends LitElement {
           file: this.selectedFile.name,
         });
         this.requestUpdate();
-        dispatch(
-          this,
-          UpdateBookEvent({
-            references: this.bookContext.book?.references || [],
-          }),
-        );
+        this.debounceHandler.debounce(() => {
+          updateBookService.fetch({
+            name: this.bookContext.book!.id,
+            book: this.bookContext.book!,
+          });
+          dispatch(this, SaveEvent());
+        });
       }
     } else {
       dispatch(this, WarningEvent("Please select a file to upload."));
