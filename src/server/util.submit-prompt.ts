@@ -20,11 +20,15 @@ export async function getCompletion<T>(
   modelConfigs: ModelConfigs,
   zod?: ZodType<T>,
 ): Promise<CompletionWithUsage<T>> {
+  const debugDir = "debug/submit-prompt";
+  const debugFile = `${debugDir}/${Date.now()}-prompt.json`;
+  await fs.mkdir(debugDir, { recursive: true });
   const client = await loadTextClient(modelConfigs);
-  const config: ChatCompletionCreateParamsNonStreaming = {
+  const input: ChatCompletionCreateParamsNonStreaming = {
     model: modelConfigs.text.modelName,
     messages: messages,
   };
+  await fs.writeFile(debugFile, JSON.stringify({ input }, null, 2));
 
   if (zod) {
     const innerSchema = z.toJSONSchema(zod);
@@ -33,40 +37,28 @@ export async function getCompletion<T>(
       schema: innerSchema,
       strict: true,
     };
-    config.response_format = {
+    input.response_format = {
       type: "json_schema",
       json_schema: jsonSchemaForOpenAI,
     };
   }
 
-  const completion = await client.chat.completions.create(config);
-  if (!completion.choices[0].message.content) {
+  const output = await client.chat.completions.create(input);
+  if (!output.choices[0].message.content) {
     throw new Error("No response");
   }
 
-  await fs.mkdir("debug/submit-prompt", { recursive: true });
-  await fs.writeFile(
-    "debug/submit-prompt/tmp.json",
-    JSON.stringify(
-      {
-        try: 2,
-        input: config,
-        output: completion,
-      },
-      null,
-      2,
-    ),
-  );
+  await fs.writeFile(debugFile, JSON.stringify({ input, output }, null, 2));
 
   if (zod) {
     return {
-      completion: zod.parse(JSON.parse(completion.choices[0].message.content)),
-      usage: completion.usage!,
+      completion: zod.parse(JSON.parse(output.choices[0].message.content)),
+      usage: output.usage!,
     };
   } else {
     return {
-      completion: completion.choices[0].message.content as T,
-      usage: completion.usage!,
+      completion: output.choices[0].message.content as T,
+      usage: output.usage!,
     };
   }
 }

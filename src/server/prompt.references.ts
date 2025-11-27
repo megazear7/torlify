@@ -10,7 +10,7 @@ export const referencesPrompt = async (
   const loadedRefs: ChatCompletionMessageParam[] = [];
   for (const ref of book.references) {
     if (ref.whenToUse.includes(use)) {
-      const loadedRef = await loadFiles(ref);
+      const loadedRef = await loadFiles(book.id, ref);
       loadedRefs.push({
         role: MessageType.enum.user,
         content: loadedRef.fileContent,

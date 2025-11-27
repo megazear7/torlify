@@ -1,10 +1,15 @@
 import { promises as fs } from "fs";
-import { BookReference, LoadedBookReference } from "../shared/type.book.js";
+import {
+  BookId,
+  BookReference,
+  LoadedBookReference,
+} from "../shared/type.book.js";
 import mammoth from "mammoth";
 import TurndownService from "turndown";
 import { PdfReader } from "pdfreader";
 
 export async function loadFiles(
+  book: BookId,
   ref: BookReference,
 ): Promise<LoadedBookReference> {
   const filePath = ref.file;
@@ -13,7 +18,10 @@ export async function loadFiles(
   let content: string;
 
   if (extension === "txt") {
-    content = await fs.readFile(filePath, "utf-8");
+    content = await fs.readFile(
+      `data/books/${book}/references/${filePath}`,
+      "utf-8",
+    );
   } else if (extension === "docx") {
     const buffer = await fs.readFile(filePath);
     const result = await mammoth.convertToHtml({ buffer });

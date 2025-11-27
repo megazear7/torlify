@@ -95,8 +95,16 @@ export class TorlifyPartEditor extends LitElement {
         this.loading = false;
         return;
       }
-      const newPart = await generatePartService.fetch({ book, chapter, part });
-      this.partContext.part = newPart;
+      try {
+        const newPart = await generatePartService.fetch({
+          book,
+          chapter,
+          part,
+        });
+        this.partContext.part = newPart;
+      } catch {
+        dispatch(this, WarningEvent("Failed to generate part"));
+      }
       this.loading = false;
     };
   }
