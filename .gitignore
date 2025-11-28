@@ -4,4 +4,4 @@ dist
 .env
 debug
 data/
-!data/app/index.sample.json
+!data/app/index.example.json
