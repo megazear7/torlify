@@ -2,7 +2,7 @@ import { NoBodyParams, RequestOptions } from "../shared/main.service.js";
 import {
   DeleteBookPathParameters,
   deleteBookService,
-  DeleteBookResponse
+  DeleteBookResponse,
 } from "../shared/service.delete-book.js";
 import { AbstractController } from "./main.controller.js";
 import { getBook } from "./util.book.js";
@@ -16,7 +16,10 @@ export class DeleteBookController extends AbstractController<
 > {
   async handler({
     pathParams,
-  }: RequestOptions<NoBodyParams, DeleteBookPathParameters>): Promise<DeleteBookResponse> {
+  }: RequestOptions<
+    NoBodyParams,
+    DeleteBookPathParameters
+  >): Promise<DeleteBookResponse> {
     const book = await getBook(pathParams.bookId);
     if (!book) throw new RouteError(404, "Book not found");
     const path = `data/books/${pathParams.bookId}`;

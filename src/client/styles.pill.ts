@@ -73,6 +73,10 @@ export const pillStyles = css`
     transition: var(--transition-all);
   }
 
+  ul.pill > li > torlify-modal {
+    z-index: 1000;
+  }
+
   ul.pill > li > * {
     border: none;
     background: transparent;

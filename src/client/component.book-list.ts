@@ -1,5 +1,5 @@
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property, queryAll } from "lit/decorators.js";
+import { customElement, property, query, queryAll } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import {
   bookContext,
@@ -25,6 +25,8 @@ import { NavigationEvent } from "./event.navigation.js";
 import { WarningEvent } from "./event.warning.js";
 import { TorlifyAutoTextarea } from "./component.auto-textarea.js";
 import { wait } from "../shared/util.wait.js";
+import { TorlifyModal } from "./component.modal.js";
+import { createBookService } from "../shared/service.create-book.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -99,6 +101,9 @@ export class TorlifyBookList extends LitElement {
   @queryAll("torlify-modal torlify-auto-textarea")
   private modalTextAreas!: NodeListOf<TorlifyAutoTextarea>;
 
+  @query("#create-book-modal")
+  private createBookModal!: TorlifyModal;
+
   override connectedCallback(): void {
     super.connectedCallback();
     this.chooseSampleDescription();
@@ -110,7 +115,8 @@ export class TorlifyBookList extends LitElement {
         <li><a href="/">${homeIcon}</a></li>
         <li>
           <torlify-modal
-            @ModelSubmit="${this.handleCreateBook}"
+            id="create-book-modal"
+            @ModelSubmit="${this.handleGenerateBook}"
             @ModelOpening=${this.handleOpenModal}
           >
             <button slot="open-button">${aiIcon} Create</button>
@@ -128,10 +134,21 @@ export class TorlifyBookList extends LitElement {
                 .value=${this.generateBookNumberOfChapters}
                 @input="${this.handleGenerateBookNumberOfChapters}"
               ></torlify-number-slider>
+              <torlify-bar>
+                <button
+                  class="standard-button"
+                  @click="${this.handleGenerateBook}"
+                >
+                  ${aiIcon} Generate
+                </button>
+                <button
+                  class="standard-button"
+                  @click="${this.handleCreateBook}"
+                >
+                  Create Empty
+                </button>
+              </torlify-bar>
             </div>
-            <button class="standard-button" slot="submit-button">
-              ${aiIcon} Generate
-            </button>
           </torlify-modal>
         </li>
         ${this.booksContext.books?.map(
@@ -169,6 +186,24 @@ export class TorlifyBookList extends LitElement {
   };
 
   private readonly handleCreateBook = async (): Promise<void> => {
+    this.createBookModal.close();
+    this.loading = true;
+    try {
+      const book = await createBookService.fetch({
+        instructions: this.generateBookInstructions || this.sampleDescription,
+        numberOfChapters: this.generateBookNumberOfChapters,
+      });
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
+    } catch (error) {
+      console.error("Create book failed:", error);
+      dispatch(this, WarningEvent("Failed to create book."));
+    } finally {
+      this.loading = false;
+    }
+  };
+
+  private readonly handleGenerateBook = async (): Promise<void> => {
+    this.createBookModal.close();
     this.loading = true;
     try {
       const book = await generateBookService.fetch({

@@ -74,15 +74,30 @@ export class TorlifyBookEditor extends LitElement {
               >
                 Generate
               </button>
-              <button class="standard-button" @click=${this.openRemoveBookModal}>Remove</button>
+              <button
+                class="standard-button"
+                @click=${this.openRemoveBookModal}
+              >
+                Remove
+              </button>
             </torlify-bar>
             <torlify-modal id="remove-book-modal">
               <div slot="body">
                 <h3>Remove Book</h3>
                 <p>Are you sure you want to remove this book?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.confirmRemoveBook}">Yes</button>
-                  <button class="standard-button" @click=${this.closeRemoveBookModal}>No</button>
+                  <button
+                    class="standard-button"
+                    @click="${this.confirmRemoveBook}"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    class="standard-button"
+                    @click=${this.closeRemoveBookModal}
+                  >
+                    No
+                  </button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -129,14 +144,14 @@ export class TorlifyBookEditor extends LitElement {
 
   openRemoveBookModal = (): void => {
     this.removeBookModal.open();
-  }
+  };
 
   confirmRemoveBook = async (): Promise<void> => {
     const bookId = this.bookContext.book!.id;
     try {
       await deleteBookService.fetch({ bookId });
       dispatch(this, WarningEvent("Book deleted successfully"));
-    } catch (error) {
+    } catch {
       dispatch(this, WarningEvent("Book deletion failed"));
     } finally {
       this.removeBookModal.close();
@@ -146,7 +161,7 @@ export class TorlifyBookEditor extends LitElement {
 
   closeRemoveBookModal = (): void => {
     this.removeBookModal.close();
-  }
+  };
 
   save(prop: string): (event: CustomEvent) => void {
     return (event: CustomEvent): void => {

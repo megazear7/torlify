@@ -4,7 +4,7 @@ import { ModelConfigs } from "./type.model.js";
 export const BookId = z
   .string()
   .min(3)
-  .max(20)
+  .max(64)
   .describe(
     "The id of the book. This should be all lower case letters and should use dashes instead of spaces. It should be a snakecase version of the title, simplified if neccessary.",
   );

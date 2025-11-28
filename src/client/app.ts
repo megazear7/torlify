@@ -7,6 +7,9 @@ import { TorlifyAbstractProvider } from "./provider.abstract.js";
 import { TorlifyToast } from "./component.toast.js";
 import { TorlifySaveIndicator } from "./component.save-indicator.js";
 import { SaveEventName } from "./event.save.js";
+import { NavigationEventName } from "./event.navigation.js";
+import { SuccessEventName } from "./event.success.js";
+import { WarningEventName } from "./event.warning.js";
 import "./page.home.js";
 import "./page.book.js";
 import "./page.chapter.js";
@@ -35,15 +38,15 @@ export class TorlifyApp extends LitElement {
   override connectedCallback(): void {
     super.connectedCallback();
     document.addEventListener("click", this.navigate.bind(this));
-    document.addEventListener("Warning", (event: Event) => {
+    document.addEventListener(WarningEventName.value, (event: Event) => {
       const customEvent = event as CustomEvent;
       this.toast.show(customEvent.detail.message, "warning");
     });
-    document.addEventListener("Success", (event: Event) => {
+    document.addEventListener(SuccessEventName.value, (event: Event) => {
       const customEvent = event as CustomEvent;
       this.toast.show(customEvent.detail.message, "success");
     });
-    document.addEventListener("NavigationEvent", (event: Event) => {
+    document.addEventListener(NavigationEventName.value, (event: Event) => {
       const customEvent = event as CustomEvent;
       window.history.pushState({}, "", customEvent.detail.path);
       this.currentRoute = this.determineRouteName();
