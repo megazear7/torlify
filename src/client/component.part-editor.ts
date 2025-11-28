@@ -21,6 +21,7 @@ import "./component.bar.js";
 import { SaveEvent } from "./event.save.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { generatePartService } from "../shared/service.generate-part.js";
+import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
@@ -68,8 +69,7 @@ export class TorlifyPartEditor extends LitElement {
                 Edit Part
               </button>
               <button
-                @click=${(): void =>
-                  dispatch(this, WarningEvent("Not implemented"))}
+                @click=${this.generateAudio}
                 class="standard-button"
               >
                 ${this.msgAudio}
@@ -91,6 +91,24 @@ export class TorlifyPartEditor extends LitElement {
         : html`<p>Loading part...</p>`}
     `;
   }
+
+  generateAudio = async (): Promise<void> => {
+    this.loading = true;
+    try {
+      const book = this.bookContext.book?.id;
+      const chapter = String(this.chapterContext.chapter?.number);
+      const part = String(this.partContext.part?.number);
+      if (!book || !chapter || !part) {
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+      } else {
+        await generatePartAudioService.fetch({ book, chapter, part });
+      }
+    } catch {
+      dispatch(this, WarningEvent("Failed to generate audio"));
+    } finally {
+      this.loading = false;
+    }
+  };
 
   generateText(): () => void {
     return async (): Promise<void> => {

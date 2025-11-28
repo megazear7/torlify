@@ -13,6 +13,7 @@ import { registerDownloadBook } from "./controller.download-book.js";
 import { generateChapterOutlineController } from "./controller.generate-chapter-outline.js";
 import { deleteBookController } from "./controller.delete-book.js";
 import { createBookController } from "./controller.create-book.js";
+import { generatePartAudioController } from "./controller.generate-part-audio.js";
 
 const router = express.Router();
 
@@ -28,6 +29,7 @@ generatePartController.register(router);
 generateChapterOutlineController.register(router);
 deleteBookController.register(router);
 createBookController.register(router);
+generatePartAudioController.register(router);
 registerUploadReference(router);
 registerDownloadBook(router);
 

@@ -54,6 +54,17 @@ export async function createDocxFile(bookId: string): Promise<Buffer> {
     ],
   });
 
+  // Blank Page
+  sections.push({
+    properties: {
+      page: {
+        size: { width: 8640, height: 12960 },
+        margin: { top: 720, bottom: 720, left: 720, right: 720 },
+      },
+    },
+    children: [new Paragraph({ text: "" })],
+  });
+
   // Copyright Page
   if (book.details?.isbn) {
     sections.push({
