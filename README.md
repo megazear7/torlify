@@ -2,9 +2,16 @@
 
 A book maker
 
+## Prerequisites
+
+```sh
+brew install nvm
+```
+
 ## Getting Started
 
 ```sh
+nvm use 22
 npm install
 ```
 
