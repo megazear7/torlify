@@ -29,8 +29,10 @@ export class GenerateBookController extends AbstractController<
     );
     const book: Book = bookNoParts as Book;
     for (const chapter of book.chapters) {
-      if (chapter.outline.length < chapter.minParts) chapter.minParts = chapter.outline.length;
-      if (chapter.outline.length > chapter.maxParts) chapter.maxParts = chapter.outline.length;
+      if (chapter.outline.length < chapter.minParts)
+        chapter.minParts = chapter.outline.length;
+      if (chapter.outline.length > chapter.maxParts)
+        chapter.maxParts = chapter.outline.length;
       for (let i = 0; i < chapter.outline.length; i++) {
         chapter.parts[i] = {
           number: i + 1,

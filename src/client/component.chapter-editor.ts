@@ -18,6 +18,7 @@ import { BookId, Chapter } from "../shared/type.book.js";
 import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
+import { generatePartService } from "../shared/service.generate-part.js";
 
 @customElement("torlify-chapter-editor")
 export class TorlifyChapterEditor extends LitElement {
@@ -42,12 +43,18 @@ export class TorlifyChapterEditor extends LitElement {
     status: LoadingStatus.enum.idle,
   };
 
+  @property({ type: String })
+  loading: boolean = false;
+
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     return html`
       ${this.chapterContext.chapter
         ? html`
+            <torlify-loading-overlay
+              .visible="${this.loading}"
+            ></torlify-loading-overlay>
             <div class="secondary-surface">
               <h4>Chapter ${this.chapterContext.chapter.number}</h4>
               <torlify-auto-textarea
@@ -80,7 +87,7 @@ export class TorlifyChapterEditor extends LitElement {
             </div>
             <torlify-bar>
               <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Outline</button>
-              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Chapter</button>
+              <button @click=${this.generateChapter()} class="standard-button">Generate Chapter</button>
               <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
               <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Everything</button>
             </torlify-bar>
@@ -98,6 +105,32 @@ export class TorlifyChapterEditor extends LitElement {
           `
         : html`<p>Loading chapter...</p>`}
     `;
+  }
+
+  generateChapter() {
+    return async (): Promise<void> => {
+      this.loading = true;
+      for (const part of this.chapterContext.chapter?.parts || []) {
+        const book = this.bookContext.book?.id;
+        const chapter = String(this.chapterContext.chapter?.number);
+        if (!book || !chapter) {
+          dispatch(this, WarningEvent("Book or chapter not loaded"));
+          this.loading = false;
+          return;
+        }
+        try {
+          const newPart = await generatePartService.fetch({
+            book,
+            chapter,
+            part: String(part.number),
+          });
+          this.chapterContext.chapter!.parts[part.number - 1] = newPart;
+        } catch {
+          dispatch(this, WarningEvent("Failed to generate part"));
+        }
+      }
+      this.loading = false;
+    };
   }
 
   updateProperty(
