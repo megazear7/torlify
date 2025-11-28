@@ -14,6 +14,7 @@ import { DebounceHandler } from "./util.debounce.js";
 import { updateBookService } from "../shared/service.update-book.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
+import { downloadBookService } from "../shared/service.download-book.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -43,11 +44,7 @@ export class TorlifyBookEditor extends LitElement {
       ${this.bookContext.book
         ? html`
             <torlify-bar>
-              <button
-                @click=${(): void =>
-                  dispatch(this, WarningEvent("Not implemented"))}
-                class="standard-button"
-              >
+              <button @click=${this.downloadBook()} class="standard-button">
                 Download
               </button>
               <button
@@ -105,6 +102,12 @@ export class TorlifyBookEditor extends LitElement {
           `
         : html`<p>Loading book...</p>`}
     `;
+  }
+
+  downloadBook(): () => void {
+    return async (): Promise<void> => {
+      await downloadBookService.fetch({ book: this.bookContext.book!.id });
+    };
   }
 
   save(prop: string): (event: CustomEvent) => void {

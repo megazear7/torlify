@@ -9,6 +9,7 @@ import { registerUploadReference } from "./controller.upload-reference.js";
 import { updateChapterController } from "./controller.update-chapter.js";
 import { updatePartController } from "./controller.update-part.js";
 import { generatePartController } from "./controller.generate-part.js";
+import { registerDownloadBook } from "./controller.download-book.js";
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ updateChapterController.register(router);
 updatePartController.register(router);
 generatePartController.register(router);
 registerUploadReference(router);
+registerDownloadBook(router);
 
 export { router };
