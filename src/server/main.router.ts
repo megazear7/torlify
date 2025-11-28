@@ -10,6 +10,7 @@ import { updateChapterController } from "./controller.update-chapter.js";
 import { updatePartController } from "./controller.update-part.js";
 import { generatePartController } from "./controller.generate-part.js";
 import { registerDownloadBook } from "./controller.download-book.js";
+import { generateChapterOutlineController } from "./controller.generate-chapter-outline.js";
 
 const router = express.Router();
 
@@ -22,6 +23,7 @@ updateBookController.register(router);
 updateChapterController.register(router);
 updatePartController.register(router);
 generatePartController.register(router);
+generateChapterOutlineController.register(router);
 registerUploadReference(router);
 registerDownloadBook(router);
 

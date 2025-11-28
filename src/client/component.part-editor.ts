@@ -14,10 +14,12 @@ import { globalStyles } from "./styles.global.js";
 import { WarningEvent } from "./event.warning.js";
 import { dispatch } from "./util.events.js";
 import { updatePartService } from "../shared/service.update-part.js";
+import { updateChapterService } from "../shared/service.update-chapter.js";
 import { DebounceHandler } from "./util.debounce.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { SaveEvent } from "./event.save.js";
+import { NavigationEvent } from "./event.navigation.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 
 @customElement("torlify-part-editor")
@@ -71,6 +73,12 @@ export class TorlifyPartEditor extends LitElement {
                 class="standard-button"
               >
                 ${this.msgAudio}
+              </button>
+              <button @click=${this.removePart()} class="standard-button">
+                Remove Part
+              </button>
+              <button @click=${this.addPart()} class="standard-button">
+                Add Part
               </button>
             </torlify-bar>
             <div class="secondary-surface">
@@ -128,6 +136,132 @@ export class TorlifyPartEditor extends LitElement {
         });
         dispatch(this, SaveEvent());
       });
+    };
+  }
+
+  removePart(): () => void {
+    return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+
+      if (!book || !chapter || !part) {
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+
+      const partIndex = chapter.parts.findIndex(
+        (p) => p.number === part.number,
+      );
+      if (partIndex === -1) {
+        dispatch(this, WarningEvent("Part not found in chapter"));
+        return;
+      }
+
+      // Remove the part
+      chapter.parts.splice(partIndex, 1);
+
+      // Also remove the corresponding outline entry
+      if (chapter.outline && chapter.outline.length > partIndex) {
+        chapter.outline.splice(partIndex, 1);
+      }
+
+      // Renumber remaining parts
+      chapter.parts.forEach((p, index) => {
+        p.number = index + 1;
+      });
+
+      try {
+        await updateChapterService.fetch({
+          book: book.id,
+          chapter: chapter,
+        });
+        dispatch(this, SaveEvent());
+
+        // Navigate to appropriate part
+        const newPartNumber = partIndex > 0 ? partIndex : 1;
+        const targetPart = chapter.parts.find(
+          (p) => p.number === newPartNumber,
+        );
+
+        if (targetPart) {
+          dispatch(
+            this,
+            NavigationEvent({
+              path: `/book/${book.id}/chapter/${chapter.number}/part/${targetPart.number}`,
+            }),
+          );
+        } else {
+          // No parts left, navigate to chapter
+          dispatch(
+            this,
+            NavigationEvent({
+              path: `/book/${book.id}/chapter/${chapter.number}`,
+            }),
+          );
+        }
+      } catch {
+        dispatch(this, WarningEvent("Failed to remove part"));
+      }
+    };
+  }
+
+  addPart(): () => void {
+    return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+
+      if (!book || !chapter || !part) {
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+
+      const partIndex = chapter.parts.findIndex(
+        (p) => p.number === part.number,
+      );
+      if (partIndex === -1) {
+        dispatch(this, WarningEvent("Part not found in chapter"));
+        return;
+      }
+
+      // Create new empty part
+      const newPart = {
+        number: partIndex + 2, // Will be renumbered
+        text: "",
+        audio: undefined,
+      };
+
+      // Insert after current part
+      chapter.parts.splice(partIndex + 1, 0, newPart);
+
+      // Also insert an empty outline entry at the same position
+      if (chapter.outline) {
+        chapter.outline.splice(partIndex + 1, 0, "");
+      }
+
+      // Renumber all parts
+      chapter.parts.forEach((p, index) => {
+        p.number = index + 1;
+      });
+
+      try {
+        await updateChapterService.fetch({
+          book: book.id,
+          chapter: chapter,
+        });
+        dispatch(this, SaveEvent());
+
+        // Navigate to the new part
+        dispatch(
+          this,
+          NavigationEvent({
+            path: `/book/${book.id}/chapter/${chapter.number}/part/${newPart.number}`,
+          }),
+        );
+      } catch {
+        dispatch(this, WarningEvent("Failed to add part"));
+      }
     };
   }
 

@@ -19,6 +19,7 @@ import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { generatePartService } from "../shared/service.generate-part.js";
+import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
 
 @customElement("torlify-chapter-editor")
 export class TorlifyChapterEditor extends LitElement {
@@ -86,7 +87,7 @@ export class TorlifyChapterEditor extends LitElement {
               <input type="text" .value="${this.chapterContext.chapter.partLength}" @input="${this.updateProperty("partLength")}"></input>
             </div>
             <torlify-bar>
-              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Outline</button>
+              <button @click=${this.generateChapterOutline()} class="standard-button">Generate Outline</button>
               <button @click=${this.generateChapter()} class="standard-button">Generate Chapter</button>
               <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
               <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Everything</button>
@@ -105,6 +106,29 @@ export class TorlifyChapterEditor extends LitElement {
           `
         : html`<p>Loading chapter...</p>`}
     `;
+  }
+
+  generateChapterOutline() {
+    return async (): Promise<void> => {
+      this.loading = true;
+      const book = this.bookContext.book?.id;
+      const chapter = String(this.chapterContext.chapter?.number);
+      if (!book || !chapter) {
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        this.loading = false;
+        return;
+      }
+      try {
+        const updatedChapter = await generateChapterOutlineService.fetch({
+          book,
+          chapter,
+        });
+        this.chapterContext.chapter!.outline = updatedChapter.outline;
+      } catch {
+        dispatch(this, WarningEvent("Failed to generate outline"));
+      }
+      this.loading = false;
+    };
   }
 
   generateChapter() {
