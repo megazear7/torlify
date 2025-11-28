@@ -24,6 +24,7 @@ export const getBook = async (id: BookId): Promise<Book> => {
 };
 
 export const listBooks = async (): Promise<BookMinimalInfoList> => {
+  await fs.mkdir("data/books", { recursive: true });
   const paths = await fs.readdir("data/books");
   return await Promise.all(
     paths.map(async (id) => {
