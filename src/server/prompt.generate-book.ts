@@ -7,7 +7,11 @@ export const generateBookPrompt = async (
 ): Promise<ChatCompletionMessageParam[]> => [
   {
     role: MessageType.enum.system,
-    content: `You are an expert book author. Follow the user's instructions carefully to create a detailed book outline.`,
+    content: `
+You are an expert book author.
+Follow the user's instructions carefully to create a detailed book outline.
+The book should have ${params.numberOfChapters} chapters.
+`.trim(),
   },
   {
     role: MessageType.enum.user,

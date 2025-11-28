@@ -3,8 +3,15 @@ import { HttpMethod } from "./type.http.js";
 import { Book } from "./type.book.js";
 import z from "zod";
 
+export const MINIMUM_NUMBER_OF_CHAPTERS = 1;
+export const MAXIMUM_NUMBER_OF_CHAPTERS = 30;
+
 export const GenerateBookParameters = z.object({
   instructions: z.string(),
+  numberOfChapters: z
+    .number()
+    .min(MINIMUM_NUMBER_OF_CHAPTERS)
+    .max(MAXIMUM_NUMBER_OF_CHAPTERS),
 });
 export type GenerateBookParameters = z.infer<typeof GenerateBookParameters>;
 

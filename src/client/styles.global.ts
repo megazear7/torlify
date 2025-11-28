@@ -158,4 +158,9 @@ export const globalStyles = css`
   .secondary-surface:hover {
     box-shadow: var(--shadow-hover);
   }
+
+  torlify-modal torylify-auto-textarea textarea {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
 `;

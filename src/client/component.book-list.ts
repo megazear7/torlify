@@ -13,8 +13,13 @@ import "./component.modal.js";
 import { aiIcon, homeIcon } from "./icons.js";
 import "./component.modal.js";
 import "./component.loading-overlay.js";
+import "./component.number-slider.js";
 import { dispatch } from "./util.events.js";
-import { generateBookService } from "../shared/service.generate-book.js";
+import {
+  generateBookService,
+  MAXIMUM_NUMBER_OF_CHAPTERS,
+  MINIMUM_NUMBER_OF_CHAPTERS,
+} from "../shared/service.generate-book.js";
 import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { WarningEvent } from "./event.warning.js";
@@ -47,6 +52,9 @@ export class TorlifyBookList extends LitElement {
 
   @property({ type: String })
   generateBookInstructions = "";
+
+  @property({ type: Number })
+  generateBookNumberOfChapters = 3;
 
   @property({ type: String })
   sampleDescription: string = "";
@@ -113,6 +121,13 @@ export class TorlifyBookList extends LitElement {
                 @input="${this.handleGenerateBookInstructions}"
                 placeholder="${this.sampleDescription}"
               ></torlify-auto-textarea>
+              <torlify-number-slider
+                min="${MINIMUM_NUMBER_OF_CHAPTERS}"
+                max="${MAXIMUM_NUMBER_OF_CHAPTERS}"
+                label="Number of Chapters"
+                .value=${this.generateBookNumberOfChapters}
+                @input="${this.handleGenerateBookNumberOfChapters}"
+              ></torlify-number-slider>
             </div>
             <button class="standard-button" slot="submit-button">
               ${aiIcon} Generate
@@ -146,11 +161,19 @@ export class TorlifyBookList extends LitElement {
     this.generateBookInstructions = target.value;
   };
 
+  private readonly handleGenerateBookNumberOfChapters = (
+    event: Event,
+  ): void => {
+    const target = event.target as HTMLInputElement;
+    this.generateBookNumberOfChapters = Number(target.value);
+  };
+
   private readonly handleCreateBook = async (): Promise<void> => {
     this.loading = true;
     try {
       const book = await generateBookService.fetch({
         instructions: this.generateBookInstructions || this.sampleDescription,
+        numberOfChapters: this.generateBookNumberOfChapters,
       });
       dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
     } catch {
