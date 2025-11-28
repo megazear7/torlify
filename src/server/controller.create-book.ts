@@ -8,6 +8,7 @@ import { AbstractController } from "./main.controller.js";
 import { readAppConfig } from "./service.app-config.js";
 import { saveBook } from "./util.book.js";
 import { submitPrompt } from "./util.submit-prompt.js";
+import { promises as fs } from "fs";
 
 export class CreateBookController extends AbstractController<
   CreateBookParameters,
@@ -87,6 +88,7 @@ export class CreateBookController extends AbstractController<
         partLength: 0,
       });
     }
+    await fs.mkdir(`data/books/${book.id}`, { recursive: true });
     await saveBook(book);
     return book;
   }
