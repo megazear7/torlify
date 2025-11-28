@@ -10,7 +10,9 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      "@typescript-eslint/explicit-function-return-type": "error",
+      "@typescript-eslint/explicit-function-return-type": ["error", {
+        allowExpressions: true
+      }],
       "no-useless-escape": "off",
     }
   }

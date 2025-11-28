@@ -1,6 +1,6 @@
 import { consume } from "@lit/context";
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
@@ -15,6 +15,9 @@ import { updateBookService } from "../shared/service.update-book.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { downloadBookService } from "../shared/service.download-book.js";
+import { TorlifyModal } from "./component.modal.js";
+import { deleteBookService } from "../shared/service.delete-book.js";
+import { NavigationEvent } from "./event.navigation.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -36,6 +39,9 @@ export class TorlifyBookEditor extends LitElement {
   public bookContext: BookContext = {
     status: LoadingStatus.enum.idle,
   };
+
+  @query("#remove-book-modal")
+  private removeBookModal!: TorlifyModal;
 
   private debounceHandler = new DebounceHandler();
 
@@ -68,7 +74,18 @@ export class TorlifyBookEditor extends LitElement {
               >
                 Generate
               </button>
+              <button class="standard-button" @click=${this.openRemoveBookModal}>Remove</button>
             </torlify-bar>
+            <torlify-modal id="remove-book-modal">
+              <div slot="body">
+                <h3>Remove Book</h3>
+                <p>Are you sure you want to remove this book?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.confirmRemoveBook}">Yes</button>
+                  <button class="standard-button" @click=${this.closeRemoveBookModal}>No</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
             <div class="secondary-surface">
               <torlify-auto-textarea
                 cssClass="h2"
@@ -108,6 +125,27 @@ export class TorlifyBookEditor extends LitElement {
     return async (): Promise<void> => {
       await downloadBookService.fetch({ book: this.bookContext.book!.id });
     };
+  }
+
+  openRemoveBookModal = (): void => {
+    this.removeBookModal.open();
+  }
+
+  confirmRemoveBook = async (): Promise<void> => {
+    const bookId = this.bookContext.book!.id;
+    try {
+      await deleteBookService.fetch({ bookId });
+      dispatch(this, WarningEvent("Book deleted successfully"));
+    } catch (error) {
+      dispatch(this, WarningEvent("Book deletion failed"));
+    } finally {
+      this.removeBookModal.close();
+      dispatch(this, NavigationEvent({ path: "/" }));
+    }
+  };
+
+  closeRemoveBookModal = (): void => {
+    this.removeBookModal.close();
   }
 
   save(prop: string): (event: CustomEvent) => void {

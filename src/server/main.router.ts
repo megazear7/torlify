@@ -11,6 +11,7 @@ import { updatePartController } from "./controller.update-part.js";
 import { generatePartController } from "./controller.generate-part.js";
 import { registerDownloadBook } from "./controller.download-book.js";
 import { generateChapterOutlineController } from "./controller.generate-chapter-outline.js";
+import { deleteBookController } from "./controller.delete-book.js";
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ updateChapterController.register(router);
 updatePartController.register(router);
 generatePartController.register(router);
 generateChapterOutlineController.register(router);
+deleteBookController.register(router);
 registerUploadReference(router);
 registerDownloadBook(router);
 
