@@ -43,6 +43,12 @@ export class TorlifyApp extends LitElement {
       const customEvent = event as CustomEvent;
       this.toast.show(customEvent.detail.message, "success");
     });
+    document.addEventListener("NavigationEvent", (event: Event) => {
+      const customEvent = event as CustomEvent;
+      window.history.pushState({}, "", customEvent.detail.path);
+      this.currentRoute = this.determineRouteName();
+      this.requestUpdate();
+    });
 
     this.addEventListener(SaveEventName.value, this.handleSaveEvent);
   }
