@@ -18,6 +18,8 @@ import { downloadBookService } from "../shared/service.download-book.js";
 import { TorlifyModal } from "./component.modal.js";
 import { deleteBookService } from "../shared/service.delete-book.js";
 import { NavigationEvent } from "./event.navigation.js";
+import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
+import { generatePartService } from "../shared/service.generate-part.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -40,8 +42,14 @@ export class TorlifyBookEditor extends LitElement {
     status: LoadingStatus.enum.idle,
   };
 
+  @property({ type: Boolean })
+  public loading: boolean = false;
+
   @query("#remove-book-modal")
   private removeBookModal!: TorlifyModal;
+
+  @query("#generate-remaining-modal")
+  private generateRemainingModal!: TorlifyModal;
 
   private debounceHandler = new DebounceHandler();
 
@@ -49,6 +57,9 @@ export class TorlifyBookEditor extends LitElement {
     return html`
       ${this.bookContext.book
         ? html`
+            <torlify-loading-overlay
+              ?visible=${this.loading}
+            ></torlify-loading-overlay>
             <torlify-bar>
               <button @click=${this.downloadBook()} class="standard-button">
                 Download
@@ -68,8 +79,7 @@ export class TorlifyBookEditor extends LitElement {
                 Details
               </button>
               <button
-                @click=${(): void =>
-                  dispatch(this, WarningEvent("Not implemented"))}
+                @click=${this.openGenerateRemainingModal}
                 class="standard-button"
               >
                 Generate
@@ -81,6 +91,29 @@ export class TorlifyBookEditor extends LitElement {
                 Remove
               </button>
             </torlify-bar>
+            <torlify-modal id="generate-remaining-modal">
+              <div slot="body">
+                <h3>Generate Remaining Content</h3>
+                <p>
+                  Are you sure you want to generate the remaining content for
+                  this book? It may take a long time.
+                </p>
+                <torlify-bar>
+                  <button
+                    class="standard-button"
+                    @click="${this.confirmGenerateRemainingContent}"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    class="standard-button"
+                    @click=${this.closeGenerateRemainingModal}
+                  >
+                    No
+                  </button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
             <torlify-modal id="remove-book-modal">
               <div slot="body">
                 <h3>Remove Book</h3>
@@ -141,6 +174,49 @@ export class TorlifyBookEditor extends LitElement {
       await downloadBookService.fetch({ book: this.bookContext.book!.id });
     };
   }
+
+  openGenerateRemainingModal = (): void => {
+    this.generateRemainingModal.open();
+  };
+
+  closeGenerateRemainingModal = (): void => {
+    this.generateRemainingModal.close();
+  };
+
+  confirmGenerateRemainingContent = async (): Promise<void> => {
+    this.generateRemainingModal.close();
+    this.loading = true;
+    try {
+      for (let chapter of this.bookContext.book!.chapters) {
+        const generateOutline =
+          chapter.outline.filter((item) => !item || !item.trim()).length > 0;
+        if (generateOutline) {
+          chapter = await generateChapterOutlineService.fetch({
+            book: this.bookContext.book!.id,
+            chapter: String(chapter.number),
+          });
+        }
+        for (const part of chapter.parts) {
+          if (!part.text || part.text.trim() === "") {
+            await generatePartService.fetch({
+              book: this.bookContext.book!.id,
+              chapter: String(chapter.number),
+              part: String(part.number),
+            });
+          }
+        }
+      }
+      dispatch(
+        this,
+        NavigationEvent({ path: `/book/${this.bookContext.book!.id}` }),
+      );
+    } catch (error) {
+      console.error("Error generating remaining content:", error);
+      dispatch(this, WarningEvent("Failed to generate remaining content"));
+    } finally {
+      this.loading = false;
+    }
+  };
 
   openRemoveBookModal = (): void => {
     this.removeBookModal.open();

@@ -165,7 +165,7 @@ export async function createDocxFile(bookId: string): Promise<Buffer> {
           }),
         ],
         alignment: "center",
-        spacing: { before: 4000, after: 400 },
+        spacing: { before: 2000, after: 400 },
       }),
       new Table({
         alignment: "center",
