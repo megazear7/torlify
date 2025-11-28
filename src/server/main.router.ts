@@ -14,6 +14,7 @@ import { generateChapterOutlineController } from "./controller.generate-chapter-
 import { deleteBookController } from "./controller.delete-book.js";
 import { createBookController } from "./controller.create-book.js";
 import { generatePartAudioController } from "./controller.generate-part-audio.js";
+import { registerGetChapterAudio } from "./controller.get-part-audio.js";
 
 const router = express.Router();
 
@@ -32,5 +33,6 @@ createBookController.register(router);
 generatePartAudioController.register(router);
 registerUploadReference(router);
 registerDownloadBook(router);
+registerGetChapterAudio(router);
 
 export { router };

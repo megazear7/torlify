@@ -31,11 +31,11 @@ export async function createChapterPartAudio(
   }
 
   const response = await client.chat.completions.create({
-    model: "gpt-4o-audio-preview-2025-06-03",
+    model: book.model.audio.modelName,
     modalities: ["text", "audio"],
     max_completion_tokens: 15000,
     audio: {
-      voice: "ash", // Preview voice options here: https://www.openai.fm/
+      voice: book.model.audio.voice!, // Preview voice options here: https://www.openai.fm/
       format: "mp3",
     },
     messages: [

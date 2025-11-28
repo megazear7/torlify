@@ -1,6 +1,6 @@
 import { consume } from "@lit/context";
 import { html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import {
   bookContext,
   BookContext,
@@ -22,6 +22,7 @@ import { SaveEvent } from "./event.save.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
+import { getChapterAudioService } from "../shared/service.get-part-audio.js";
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
@@ -47,6 +48,9 @@ export class TorlifyPartEditor extends LitElement {
 
   @property({ type: String })
   loading: boolean = false;
+
+  @query("#part-audio")
+  partAudioElement!: HTMLAudioElement;
 
   private debounceHandler = new DebounceHandler();
 
@@ -82,6 +86,18 @@ export class TorlifyPartEditor extends LitElement {
               </button>
             </torlify-bar>
             <div class="secondary-surface">
+              ${this.partContext.part.audio ? html`
+                <audio controls id="part-audio" src="${getChapterAudioService.renderPath({
+                  book: this.bookContext.book!.id,
+                  chapter: String(this.chapterContext.chapter!.number),
+                  part: String(this.partContext.part!.number),
+                })}">
+                  <source src="${this.partContext.part.audio}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+              ` : html`
+                <p>No audio available</p>
+              `}
               <torlify-auto-textarea
                 .value="${this.partContext.part.text}"
                 @input=${this.handleTextChange()}

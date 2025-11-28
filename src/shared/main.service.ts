@@ -96,4 +96,13 @@ export abstract class AbstractService<
       throw new Error(`Unsupported service type: ${this.type}`);
     }
   }
+
+  renderPath(params: PathParams): string {
+    if (Array.isArray(this.path)) {
+      throw new Error(
+        "Cannot render path from multiple paths. Specify a single path.",
+      );
+    }
+    return renderPathname(this.path, params);
+  }
 }
