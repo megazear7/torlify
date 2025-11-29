@@ -18,7 +18,6 @@ import { makeChapterPartPrompt } from "./prompt.make-chapter-part.js";
 import { getBook, saveBook } from "./util.book.js";
 import { RouteError } from "./util.route.js";
 import { submitPrompt } from "./util.submit-prompt.js";
-import { charactersPrompt } from "./prompt.characters.js";
 import { referencesPrompt } from "./prompt.references.js";
 import { writtenChaptersPrompt } from "./prompt.written-chapters.js";
 import { editInstructionsPrompt } from "./prompt.edit-instructions.js";
@@ -99,7 +98,6 @@ async function authorPart(
   partDescription: ChapterPartDescription,
 ): Promise<string> {
   const messages: ChatCompletionMessageParam[] = [
-    ...(await charactersPrompt(book)),
     ...(await referencesPrompt(book, ReferenceUse.enum.writing)),
     ...(await editInstructionsPrompt(book)),
     ...(await writtenChaptersPrompt(book, chapter)),

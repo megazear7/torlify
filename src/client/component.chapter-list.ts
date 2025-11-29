@@ -12,6 +12,7 @@ export class TorlifyChapterList extends LitElement {
     css`
       .chapter-list-container {
         display: flex;
+        overflow-y: scroll;
       }
 
       .chapter-item {
@@ -32,6 +33,7 @@ export class TorlifyChapterList extends LitElement {
         text-decoration: none;
         font-size: var(--font-small);
         transition: color var(--time-normal) ease-in-out;
+        white-space: nowrap;
       }
 
       .chapter-label a:hover {
