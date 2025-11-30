@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "init": "node ./dist/cli/index.js init",
+    "init": "node ./dist/cli/index.cjs init",
     "start": "run-s build serve",
     "serve": "run-p serve:api watch",
     "serve:api": "nodemon dist/server/index.js --ignore data --ignore debug",
@@ -16,7 +16,8 @@
     "build:rollup": "rollup -c",
     "build:tsc": "tsc",
     "lint": "prettier src --check && eslint src",
-    "fix": "prettier src --write && eslint src --fix"
+    "fix": "prettier src --write && eslint src --fix",
+    "build:cli": "rollup -c rollup.cli.js"
   },
   "keywords": [
     "book",
