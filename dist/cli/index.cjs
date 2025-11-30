@@ -17362,5 +17362,6 @@ program
     await fs.promises.writeFile("data/app/index.json", JSON.stringify(appConfig, null, 2));
     console.log("Initialization complete.");
     console.log("Now you can start the app with 'npm start'");
+    await close();
 });
 program.parse(process.argv);

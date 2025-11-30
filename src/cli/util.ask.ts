@@ -18,3 +18,7 @@ export async function ask(
     );
   });
 }
+
+export async function close(): Promise<void> {
+  rl.close();
+}

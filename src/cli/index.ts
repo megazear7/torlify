@@ -75,6 +75,7 @@ program
     );
     console.log("Initialization complete.");
     console.log("Now you can start the app with 'npm start'");
+    await close();
   });
 
 program.parse(process.argv);
