@@ -13,11 +13,12 @@ program
   .description("Initialize the Torlify app")
   .action(async () => {
     console.log("Initializing the Torlify app...");
-    console.log(
-      "All models must be compatible with the OpenAI API schema, such as Grok, OpenAI, Ollama, etc.",
-    );
+    console.log("\nAll models must be compatible with the OpenAI API schema.");
     const appConfig = { ...standardAppConfig };
-    appConfig.model.text.name = await ask("Model name?", defaults.grok.name);
+    console.log(
+      `The following models have provided default configurations:\n${Object.keys(defaults).join(", ")}`,
+    );
+    appConfig.model.text.name = await ask("\nModel name?", defaults.grok.name);
     appConfig.model.text.endpoint = await ask(
       "Model endpoint?",
       defaults[appConfig.model.text.name as ModelTypeOption]?.endpoint,

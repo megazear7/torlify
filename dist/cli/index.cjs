@@ -17239,7 +17239,7 @@ var z = /*#__PURE__*/Object.freeze({
 	xid: xid
 });
 
-const ModelTypeOption = z.enum(["grok", "openai", "custom"]);
+const ModelTypeOption = z.enum(["grok", "openai", "ollama", "custom"]);
 
 const defaults = {
     [ModelTypeOption.enum.grok]: {
@@ -17265,6 +17265,21 @@ const defaults = {
             inputTokenCost: 2.5,
             inputTokenCount: 0,
             outputTokenCost: 64.0,
+            outputTokenCount: 0,
+        },
+        usage: {
+            completion_tokens: 0,
+            prompt_tokens: 0,
+        },
+    },
+    [ModelTypeOption.enum.ollama]: {
+        name: "ollama",
+        endpoint: "http://localhost:11434/v1",
+        modelName: "llama2-7b-chat",
+        cost: {
+            inputTokenCost: 0,
+            inputTokenCount: 0,
+            outputTokenCost: 0,
             outputTokenCount: 0,
         },
         usage: {
@@ -17324,9 +17339,10 @@ program
     .description("Initialize the Torlify app")
     .action(async () => {
     console.log("Initializing the Torlify app...");
-    console.log("All models must be compatible with the OpenAI API schema, such as Grok, OpenAI, Ollama, etc.");
+    console.log("\nAll models must be compatible with the OpenAI API schema.");
     const appConfig = { ...standardAppConfig };
-    appConfig.model.text.name = await ask("Model name?", defaults.grok.name);
+    console.log(`The following models have provided default configurations:\n${Object.keys(defaults).join(", ")}`);
+    appConfig.model.text.name = await ask("\nModel name?", defaults.grok.name);
     appConfig.model.text.endpoint = await ask("Model endpoint?", defaults[appConfig.model.text.name]?.endpoint);
     const textApiKey = await ask("Text model API key?");
     appConfig.model.text.cost.inputTokenCost = Number(await ask("Input token cost (dollars per 1M tokens)?", String(defaults[appConfig.model.text.name]?.cost
