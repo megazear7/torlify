@@ -29,6 +29,9 @@ export class GenerateBookController extends AbstractController<
       ...bookStub,
       chapters: bookStub.chapters.map((chapter) => ({
         ...chapter,
+        minParts: 2,
+        maxParts: 4,
+        partLength: 800,
         outline: [],
         parts: [],
       })),

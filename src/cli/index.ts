@@ -86,9 +86,11 @@ program
       );
     }
 
+    const port = await ask("Port to run the app on?", "3000");
+
     await fs.writeFile(
       ".env",
-      createEnvFile(appConfig, textApiKey, audioApiKey),
+      createEnvFile(appConfig, port, textApiKey, audioApiKey),
     );
     await fs.writeFile(
       "data/app/index.json",

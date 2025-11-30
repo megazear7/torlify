@@ -173,14 +173,12 @@ export type ChapterWho = z.infer<typeof ChapterWho>;
 export const ChapterMinParts = z
   .number()
   .min(1)
-  .max(4)
   .describe("The minumum number of parts for the chapter");
 export type ChapterMinParts = z.infer<typeof ChapterMinParts>;
 
 export const ChapterMaxParts = z
   .number()
   .min(2)
-  .max(6)
   .describe("The maximum number of parts for the chapter");
 export type ChapterMaxParts = z.infer<typeof ChapterMaxParts>;
 
@@ -199,13 +197,13 @@ export const ChapterStub = z.object({
   why: ChapterWhy,
   how: ChapterHow,
   who: ChapterWho,
-  minParts: ChapterMinParts,
-  maxParts: ChapterMaxParts,
-  partLength: ChapterPartLength,
 });
 export type ChapterStub = z.infer<typeof ChapterStub>;
 
 export const Chapter = ChapterStub.extend({
+  minParts: ChapterMinParts,
+  maxParts: ChapterMaxParts,
+  partLength: ChapterPartLength,
   outline: ChapterOutline,
   parts: ChapterParts,
 });

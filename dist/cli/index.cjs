@@ -17326,10 +17326,11 @@ async function closeAsk() {
     rl.close();
 }
 
-function createEnvFile(config, textApiKey, audioApiKey) {
+function createEnvFile(config, port, textApiKey, audioApiKey) {
     return `
 ${config.model.text.name.toUpperCase()}_MODEL_API_KEY=${textApiKey}
 ${config.model.audio.name.toUpperCase()}_MODEL_API_KEY=${audioApiKey}
+APP_PORT=${port}
 `.trim();
 }
 
@@ -17362,7 +17363,8 @@ program
         appConfig.model.audio.cost.outputTokenCost = Number(await ask("Output token cost (dollars per 1M tokens)?", String(defaults[appConfig.model.audio.name]?.cost
             .outputTokenCost || 0)));
     }
-    await fs.promises.writeFile(".env", createEnvFile(appConfig, textApiKey, audioApiKey));
+    const port = await ask("Port to run the app on?", "3000");
+    await fs.promises.writeFile(".env", createEnvFile(appConfig, port, textApiKey, audioApiKey));
     await fs.promises.writeFile("data/app/index.json", JSON.stringify(appConfig, null, 2));
     console.log("Initialization complete.");
     console.log("Now you can start the app with 'npm start' and open the app in your browser at http://localhost:3000");
