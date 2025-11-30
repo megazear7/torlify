@@ -14,7 +14,7 @@ program
   .action(async () => {
     console.log("Initializing the Torlify app...");
     console.log(
-      "All models need to be compatible with the OpenAI API schema, such as Grok, OpenAI, or Ollama.",
+      "All models must be compatible with the OpenAI API schema, such as Grok, OpenAI, Ollama, etc.",
     );
     const appConfig = { ...standardAppConfig };
     appConfig.model.text.name = await ask("Model name?", defaults.grok.name);
