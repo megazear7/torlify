@@ -9,6 +9,7 @@ import { loadTextClient } from "./util.model.js";
 import { Book } from "../shared/type.book.js";
 import { ModelConfigs } from "../shared/type.model.js";
 import { promises as fs } from "fs";
+import { ONE_HOUR_IN_MS } from "../shared/util.time.js";
 
 interface CompletionWithUsage<T> {
   completion: T;
@@ -28,7 +29,6 @@ export async function getCompletion<T>(
     model: modelConfigs.text.modelName,
     messages: messages,
   };
-  await fs.writeFile(debugFile, JSON.stringify({ input }, null, 2));
 
   if (zod) {
     const innerSchema = z.toJSONSchema(zod);
@@ -43,6 +43,20 @@ export async function getCompletion<T>(
     };
   }
 
+  const files = await fs.readdir(debugDir);
+  const now = Date.now();
+  for (const file of files) {
+    const filePath = `${debugDir}/${file}`;
+    if (file.includes("-")) {
+      const timestampStr = file.split("-")[0];
+      const timestamp = parseInt(timestampStr);
+      if (now - timestamp > ONE_HOUR_IN_MS) {
+        await fs.unlink(filePath);
+      }
+    }
+  }
+
+  await fs.writeFile(debugFile, JSON.stringify({ input }, null, 2));
   const output = await client.chat.completions.create(input);
   if (!output.choices[0].message.content) {
     throw new Error("No response");

@@ -13,6 +13,7 @@ Each part of the outline should contain details as to the events that happen in 
 and details that an author would need to write it.
 Do not include specific dates, months, and days in the overview.
 Instead focus on what should be written in the book.
+Do not include a "Part X:" prefix before each part.
 Remember that you are an amazing author.
 `.trim(),
   },

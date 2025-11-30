@@ -4,12 +4,13 @@ import {
   GenerateBookParameters,
   generateBookService,
 } from "../shared/service.generate-book.js";
-import { Book, BookNoParts } from "../shared/type.book.js";
+import { Book, BookStub } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { readAppConfig } from "./service.app-config.js";
 import { generateBookPrompt } from "./prompt.generate-book.js";
 import { saveBook } from "./util.book.js";
 import { submitPrompt } from "./util.submit-prompt.js";
+import { generateChapterOutline } from "./util.generate-chapter-outline.js";
 
 export class GenerateBookController extends AbstractController<
   GenerateBookParameters,
@@ -23,25 +24,34 @@ export class GenerateBookController extends AbstractController<
     const messages: ChatCompletionMessageParam[] = [
       ...(await generateBookPrompt(bodyParams)),
     ];
-    const bookNoParts: BookNoParts = await submitPrompt<BookNoParts>(
-      messages,
-      BookNoParts,
-    );
-    const book: Book = bookNoParts as Book;
+    const bookStub: BookStub = await submitPrompt<BookStub>(messages, BookStub);
+    const book: Book = {
+      ...bookStub,
+      chapters: bookStub.chapters.map((chapter) => ({
+        ...chapter,
+        outline: [],
+        parts: [],
+      })),
+      model: {
+        text: {
+          ...appConfig.model.text,
+          usage: {
+            completion_tokens: 0,
+            prompt_tokens: 0,
+          },
+        },
+        audio: {
+          ...appConfig.model.audio,
+          usage: {
+            completion_tokens: 0,
+            prompt_tokens: 0,
+          },
+        },
+      },
+    };
     for (const chapter of book.chapters) {
-      if (chapter.outline.length < chapter.minParts)
-        chapter.minParts = chapter.outline.length;
-      if (chapter.outline.length > chapter.maxParts)
-        chapter.maxParts = chapter.outline.length;
-      for (let i = 0; i < chapter.outline.length; i++) {
-        chapter.parts[i] = {
-          number: i + 1,
-          text: "",
-        };
-      }
+      await generateChapterOutline(book, chapter);
     }
-    book.model.text = appConfig.model.text;
-    book.model.audio = appConfig.model.audio;
     await saveBook(book);
     return book;
   }

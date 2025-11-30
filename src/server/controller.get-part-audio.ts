@@ -12,8 +12,7 @@ export async function registerGetChapterAudio(router: Router): Promise<void> {
     }
     const audioId = book.chapters
       .find((ch) => ch.number === parseInt(req.params.chapter))
-      ?.parts.find((p) => p.number === parseInt(req.params.part))
-      ?.audio;
+      ?.parts.find((p) => p.number === parseInt(req.params.part))?.audio;
 
     if (!audioId) {
       res.status(404).send("Audio file not found");

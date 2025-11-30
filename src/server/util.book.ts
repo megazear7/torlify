@@ -27,13 +27,15 @@ export const listBooks = async (): Promise<BookMinimalInfoList> => {
   await fs.mkdir("data/books", { recursive: true });
   const paths = await fs.readdir("data/books");
   return await Promise.all(
-    paths.map(async (id) => {
-      const book = await getBook(BookId.parse(id));
-      return {
-        id: BookId.parse(id),
-        title: book.title,
-      };
-    }),
+    paths
+      .filter((id) => !id.startsWith("."))
+      .map(async (id) => {
+        const book = await getBook(BookId.parse(id));
+        return {
+          id: BookId.parse(id),
+          title: book.title,
+        };
+      }),
   );
 };
 

@@ -30,7 +30,9 @@ export class GetChapterAudioService extends AbstractService<
     params: GetChapterAudioPathParameters | NoBodyParams,
   ): Promise<GetChapterAudioResponse> {
     console.log("GetChapterAudioService.fetch called", params);
-    throw new Error("Not implemented on client. This endpoint is meant to be used with audio streaming.");
+    throw new Error(
+      "Not implemented on client. This endpoint is meant to be used with audio streaming.",
+    );
   }
 }
 

@@ -190,7 +190,7 @@ export const ChapterNumber = z
   .describe("The chapter number starting from 1");
 export type ChapterNumber = z.infer<typeof ChapterNumber>;
 
-export const ChapterNoParts = z.object({
+export const ChapterStub = z.object({
   number: ChapterNumber,
   title: ChapterTitle,
   when: ChapterWhen,
@@ -202,12 +202,11 @@ export const ChapterNoParts = z.object({
   minParts: ChapterMinParts,
   maxParts: ChapterMaxParts,
   partLength: ChapterPartLength,
-  outline: ChapterOutline,
-  parts: ChapterParts,
 });
-export type ChapterNoParts = z.infer<typeof ChapterNoParts>;
+export type ChapterStub = z.infer<typeof ChapterStub>;
 
-export const Chapter = ChapterNoParts.extend({
+export const Chapter = ChapterStub.extend({
+  outline: ChapterOutline,
   parts: ChapterParts,
 });
 export type Chapter = z.infer<typeof Chapter>;
@@ -282,7 +281,7 @@ export type LoadingMessage = z.infer<typeof LoadingMessage>;
 export const LoadingMessages = LoadingMessage.array();
 export type LoadingMessages = z.infer<typeof LoadingMessages>;
 
-export const BookNoParts = z
+export const BookStub = z
   .object({
     id: BookId,
     title: BookTitle,
@@ -291,7 +290,7 @@ export const BookNoParts = z
     ),
     overview: BookOverview,
     details: BookDetails.optional(),
-    chapters: ChapterNoParts.array(),
+    chapters: ChapterStub.array(),
     instructions: Instructions,
     pronunciation: Pronunciation.array(),
     characters: Character.array(),
@@ -299,9 +298,9 @@ export const BookNoParts = z
     loadingMessages: LoadingMessages,
   })
   .strict();
-export type BookNoParts = z.infer<typeof BookNoParts>;
+export type BookStub = z.infer<typeof BookStub>;
 
-export const Book = BookNoParts.extend({
+export const Book = BookStub.extend({
   chapters: Chapter.array(),
 });
 export type Book = z.infer<typeof Book>;

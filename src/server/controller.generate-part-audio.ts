@@ -3,10 +3,7 @@ import {
   GeneratePartAudioPathParameters,
   generatePartAudioService,
 } from "../shared/service.generate-part-audio.js";
-import {
-  Chapter,
-  ChapterPart,
-} from "../shared/type.book.js";
+import { Chapter, ChapterPart } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { getBook } from "./util.book.js";
 import { createChapterPartAudio } from "./util.create-chapter-part-audio.js";
@@ -36,11 +33,7 @@ export class GeneratePartAudioController extends AbstractController<
       throw new RouteError(404, "Part description not found");
     }
 
-    return await createChapterPartAudio(
-      book.id,
-      chapter.number,
-      partNumber,
-    );
+    return await createChapterPartAudio(book.id, chapter.number, partNumber);
   }
 }
 

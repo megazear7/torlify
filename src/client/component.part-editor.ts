@@ -72,10 +72,7 @@ export class TorlifyPartEditor extends LitElement {
               >
                 Edit Part
               </button>
-              <button
-                @click=${this.generateAudio}
-                class="standard-button"
-              >
+              <button @click=${this.generateAudio} class="standard-button">
                 ${this.msgAudio}
               </button>
               <button @click=${this.removePart()} class="standard-button">
@@ -86,18 +83,25 @@ export class TorlifyPartEditor extends LitElement {
               </button>
             </torlify-bar>
             <div class="secondary-surface">
-              ${this.partContext.part.audio ? html`
-                <audio controls id="part-audio" src="${getChapterAudioService.renderPath({
-                  book: this.bookContext.book!.id,
-                  chapter: String(this.chapterContext.chapter!.number),
-                  part: String(this.partContext.part!.number),
-                })}">
-                  <source src="${this.partContext.part.audio}" type="audio/mpeg">
-                  Your browser does not support the audio element.
-                </audio>
-              ` : html`
-                <p>No audio available</p>
-              `}
+              ${this.partContext.part.audio
+                ? html`
+                    <audio
+                      controls
+                      id="part-audio"
+                      src="${getChapterAudioService.renderPath({
+                        book: this.bookContext.book!.id,
+                        chapter: String(this.chapterContext.chapter!.number),
+                        part: String(this.partContext.part!.number),
+                      })}"
+                    >
+                      <source
+                        src="${this.partContext.part.audio}"
+                        type="audio/mpeg"
+                      />
+                      Your browser does not support the audio element.
+                    </audio>
+                  `
+                : html` <p>No audio available</p> `}
               <torlify-auto-textarea
                 .value="${this.partContext.part.text}"
                 @input=${this.handleTextChange()}
