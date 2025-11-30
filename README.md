@@ -10,11 +10,20 @@ A book maker
 
 ## Getting Started
 
+You can simply run the below command to get started or follow the (slightly) longer steps below.
+
+```sh
+curl -s https://github.com/megazear7/torlify/blob/main/init.sh | bash
+```
+
+Or the slightly longer version:
+
 ```sh
 git clone https://github.com/megazear7/torlify.git
 cd torlify
 nvm use 22
 npm run init
+npm start
 ```
 
 The cli will ask you a series of questions to initialize your system for running Torlify.
