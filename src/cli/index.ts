@@ -13,6 +13,9 @@ program
   .description("Initialize the Torlify app")
   .action(async () => {
     console.log("Initializing the Torlify app...");
+    console.log(
+      "All models need to be compatible with the OpenAI API schema, such as Grok, OpenAI, or Ollama.",
+    );
     const appConfig = { ...standardAppConfig };
     appConfig.model.text.name = await ask("Model name?", defaults.grok.name);
     appConfig.model.text.endpoint = await ask(
@@ -25,7 +28,7 @@ program
         "Input token cost (dollars per 1M tokens)?",
         String(
           defaults[appConfig.model.text.name as ModelTypeOption]?.cost
-            .inputTokenCost,
+            .inputTokenCost || 0,
         ),
       ),
     );
@@ -34,34 +37,45 @@ program
         "Output token cost (dollars per 1M tokens)?",
         String(
           defaults[appConfig.model.text.name as ModelTypeOption]?.cost
-            .outputTokenCost,
+            .outputTokenCost || 0,
         ),
       ),
     );
-    appConfig.model.audio.name = await ask("Model name?", defaults.openai.name);
-    appConfig.model.audio.endpoint = await ask(
-      "Model endpoint?",
-      defaults[appConfig.model.audio.name as ModelTypeOption]?.endpoint,
-    );
-    const audioApiKey = await ask("Audio model API key?");
-    appConfig.model.audio.cost.inputTokenCost = Number(
-      await ask(
-        "Input token cost (dollars per 1M tokens)?",
-        String(
-          defaults[appConfig.model.audio.name as ModelTypeOption]?.cost
-            .inputTokenCost,
+
+    let audioApiKey = "todo";
+    const configureAudio =
+      (
+        await ask("Do you want to configure an audio model?", "yes")
+      ).toLowerCase() === "yes";
+    if (configureAudio) {
+      appConfig.model.audio.name = await ask(
+        "Model name?",
+        defaults.openai.name,
+      );
+      appConfig.model.audio.endpoint = await ask(
+        "Model endpoint?",
+        defaults[appConfig.model.audio.name as ModelTypeOption]?.endpoint,
+      );
+      audioApiKey = await ask("Audio model API key?");
+      appConfig.model.audio.cost.inputTokenCost = Number(
+        await ask(
+          "Input token cost (dollars per 1M tokens)?",
+          String(
+            defaults[appConfig.model.audio.name as ModelTypeOption]?.cost
+              .inputTokenCost || 0,
+          ),
         ),
-      ),
-    );
-    appConfig.model.audio.cost.outputTokenCost = Number(
-      await ask(
-        "Output token cost (dollars per 1M tokens)?",
-        String(
-          defaults[appConfig.model.audio.name as ModelTypeOption]?.cost
-            .outputTokenCost,
+      );
+      appConfig.model.audio.cost.outputTokenCost = Number(
+        await ask(
+          "Output token cost (dollars per 1M tokens)?",
+          String(
+            defaults[appConfig.model.audio.name as ModelTypeOption]?.cost
+              .outputTokenCost || 0,
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     await fs.writeFile(
       ".env",
