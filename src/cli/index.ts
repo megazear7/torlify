@@ -19,6 +19,10 @@ program
       `The following models have provided default configurations:\n${Object.keys(defaults).join(", ")}`,
     );
     appConfig.model.text.name = await ask("\nModel name?", defaults.grok.name);
+    appConfig.model.text.modelName = await ask(
+      "Model identifier?",
+      defaults[appConfig.model.text.name as ModelTypeOption]?.modelName,
+    );
     appConfig.model.text.endpoint = await ask(
       "Model endpoint?",
       defaults[appConfig.model.text.name as ModelTypeOption]?.endpoint,
@@ -52,6 +56,10 @@ program
       appConfig.model.audio.name = await ask(
         "Model name?",
         defaults.openai.name,
+      );
+      appConfig.model.audio.modelName = await ask(
+        "Model identifier?",
+        defaults[appConfig.model.audio.name as ModelTypeOption]?.modelName,
       );
       appConfig.model.audio.endpoint = await ask(
         "Model endpoint?",

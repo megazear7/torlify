@@ -3,3 +3,4 @@ cd torlify
 nvm use 22
 npm install
 npm run init
+echo "You will need run 'cd torlify'"

@@ -17275,7 +17275,7 @@ const defaults = {
     [ModelTypeOption.enum.ollama]: {
         name: "ollama",
         endpoint: "http://localhost:11434/v1",
-        modelName: "llama2-7b-chat",
+        modelName: "qwen3:4b",
         cost: {
             inputTokenCost: 0,
             inputTokenCount: 0,
@@ -17343,6 +17343,7 @@ program
     const appConfig = { ...standardAppConfig };
     console.log(`The following models have provided default configurations:\n${Object.keys(defaults).join(", ")}`);
     appConfig.model.text.name = await ask("\nModel name?", defaults.grok.name);
+    appConfig.model.text.modelName = await ask("Model identifier?", defaults[appConfig.model.text.name]?.modelName);
     appConfig.model.text.endpoint = await ask("Model endpoint?", defaults[appConfig.model.text.name]?.endpoint);
     const textApiKey = await ask("Text model API key?");
     appConfig.model.text.cost.inputTokenCost = Number(await ask("Input token cost (dollars per 1M tokens)?", String(defaults[appConfig.model.text.name]?.cost
@@ -17353,6 +17354,7 @@ program
     const configureAudio = (await ask("Do you want to configure an audio model?", "yes")).toLowerCase() === "yes";
     if (configureAudio) {
         appConfig.model.audio.name = await ask("Model name?", defaults.openai.name);
+        appConfig.model.audio.modelName = await ask("Model identifier?", defaults[appConfig.model.audio.name]?.modelName);
         appConfig.model.audio.endpoint = await ask("Model endpoint?", defaults[appConfig.model.audio.name]?.endpoint);
         audioApiKey = await ask("Audio model API key?");
         appConfig.model.audio.cost.inputTokenCost = Number(await ask("Input token cost (dollars per 1M tokens)?", String(defaults[appConfig.model.audio.name]?.cost

@@ -35,7 +35,7 @@ export const defaults: Record<ModelTypeOption, ModelTypeConfig> = {
   [ModelTypeOption.enum.ollama]: {
     name: "ollama",
     endpoint: "http://localhost:11434/v1",
-    modelName: "llama2-7b-chat",
+    modelName: "qwen3:4b",
     cost: {
       inputTokenCost: 0,
       inputTokenCount: 0,
