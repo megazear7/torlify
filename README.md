@@ -13,7 +13,7 @@ A book maker
 You can simply run the below command to get started or follow the (slightly) longer steps below.
 
 ```sh
-curl -s https://raw.githubusercontent.com/megazear7/torlify/refs/heads/main/init.sh | bash
+curl -s https://raw.githubusercontent.com/megazear7/torlify/refs/heads/main/init.sh -o init.sh && chmod 744 init.sh && ./init.sh
 ```
 
 Or the slightly longer version:
