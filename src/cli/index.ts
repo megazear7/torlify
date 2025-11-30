@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { standardAppConfig } from "./util.standard-app-config.js";
 import { defaults } from "./util.defaults.js";
-import { ask } from "./util.ask.js";
+import { ask, closeAsk } from "./util.ask.js";
 import { ModelTypeOption } from "./type.cli.js";
 import { promises as fs } from "fs";
 import { createEnvFile } from "./util.create-env-file.js";
@@ -75,7 +75,7 @@ program
     );
     console.log("Initialization complete.");
     console.log("Now you can start the app with 'npm start'");
-    await close();
+    await closeAsk();
   });
 
 program.parse(process.argv);

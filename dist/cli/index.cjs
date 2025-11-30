@@ -17309,6 +17309,9 @@ async function ask(question, defaultAnswer) {
         });
     });
 }
+async function closeAsk() {
+    rl.close();
+}
 
 function createEnvFile(config, textApiKey, audioApiKey) {
     return `
@@ -17362,6 +17365,6 @@ program
     await fs.promises.writeFile("data/app/index.json", JSON.stringify(appConfig, null, 2));
     console.log("Initialization complete.");
     console.log("Now you can start the app with 'npm start'");
-    await close();
+    await closeAsk();
 });
 program.parse(process.argv);

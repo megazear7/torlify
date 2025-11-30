@@ -19,6 +19,6 @@ export async function ask(
   });
 }
 
-export async function close(): Promise<void> {
+export async function closeAsk(): Promise<void> {
   rl.close();
 }
