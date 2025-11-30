@@ -49,6 +49,9 @@ export class TorlifyPartEditor extends LitElement {
   @property({ type: String })
   loading: boolean = false;
 
+  @property({ type: String })
+  public loadingMessage: string = "Loading";
+
   @query("#part-audio")
   partAudioElement!: HTMLAudioElement;
 
@@ -60,6 +63,7 @@ export class TorlifyPartEditor extends LitElement {
         ? html`
             <torlify-loading-overlay
               .visible="${this.loading}"
+              message="${this.loadingMessage}"
             ></torlify-loading-overlay>
             <torlify-bar>
               <button @click=${this.generateText()} class="standard-button">
@@ -113,7 +117,6 @@ export class TorlifyPartEditor extends LitElement {
   }
 
   generateAudio = async (): Promise<void> => {
-    this.loading = true;
     try {
       const book = this.bookContext.book?.id;
       const chapter = String(this.chapterContext.chapter?.number);
@@ -121,6 +124,8 @@ export class TorlifyPartEditor extends LitElement {
       if (!book || !chapter || !part) {
         dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
       } else {
+        this.loading = true;
+        this.loadingMessage = `Generating audio for part ${part} of chapter ${chapter}`;
         await generatePartAudioService.fetch({ book, chapter, part });
       }
     } catch {
@@ -132,16 +137,16 @@ export class TorlifyPartEditor extends LitElement {
 
   generateText(): () => void {
     return async (): Promise<void> => {
-      this.loading = true;
       const book = this.bookContext.book?.id;
       const chapter = String(this.chapterContext.chapter?.number);
       const part = String(this.partContext.part?.number);
       if (!book || !chapter || !part) {
         dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
-        this.loading = false;
         return;
       }
       try {
+        this.loading = true;
+        this.loadingMessage = `Generating text for part ${part} of chapter ${chapter}`;
         const newPart = await generatePartService.fetch({
           book,
           chapter,
@@ -150,8 +155,9 @@ export class TorlifyPartEditor extends LitElement {
         this.partContext.part = newPart;
       } catch {
         dispatch(this, WarningEvent("Failed to generate part"));
+      } finally {
+        this.loading = false;
       }
-      this.loading = false;
     };
   }
 
@@ -159,7 +165,7 @@ export class TorlifyPartEditor extends LitElement {
     return (event: CustomEvent): void => {
       if (event.detail.value === undefined) return;
       this.partContext.part!.text = event.detail.value;
-      this.debounceHandler.debounce(() => {
+      this.debounceHandler.debounce(async () => {
         const book = this.bookContext.book;
         const chapter = this.chapterContext.chapter;
         const part = this.partContext.part;
@@ -167,7 +173,7 @@ export class TorlifyPartEditor extends LitElement {
           dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
           return;
         }
-        updatePartService.fetch({
+        await updatePartService.fetch({
           book: book.id,
           chapter: String(chapter.number),
           part: part,

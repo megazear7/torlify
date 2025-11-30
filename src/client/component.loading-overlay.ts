@@ -2,6 +2,7 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { globalStyles } from "./styles.global.js";
+import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
 
 @customElement("torlify-loading-overlay")
 export class TorlifyLoadingOverlay extends LitElement {
@@ -106,12 +107,17 @@ export class TorlifyLoadingOverlay extends LitElement {
       }
 
       .loading-text {
+        position: relative;
         margin-top: var(--size-xl);
         font-size: calc(var(--font-medium) * 1.5);
         font-weight: 600;
         color: var(--color-primary-text);
         animation: text-glow 2s ease-in-out infinite alternate;
         text-align: center;
+      }
+
+      .loading-dots {
+        position: absolute;
       }
 
       @keyframes text-glow {
@@ -169,8 +175,14 @@ export class TorlifyLoadingOverlay extends LitElement {
     `,
   ];
 
+  @property({ type: String })
+  message = "Loading";
+
   @property({ type: Boolean })
   visible = false;
+
+  private dotCount = 0;
+  private dotInterval: ReturnType<typeof setTimeout> | null = null;
 
   override render(): TemplateResult {
     return html`
@@ -190,7 +202,10 @@ export class TorlifyLoadingOverlay extends LitElement {
             )}
           </div>
         </div>
-        <div class="loading-text">Loading...</div>
+        <div class="loading-text">
+          <span>${this.message}</span>
+          <span class="loading-dots">${".".repeat(this.dotCount)}</span>
+        </div>
       </div>
     `;
   }
@@ -199,11 +214,32 @@ export class TorlifyLoadingOverlay extends LitElement {
     return classMap({ "loading-overlay": true, visible: this.visible });
   }
 
+  override attributeChangedCallback(
+    name: string,
+    _old: string | null,
+    value: string | null,
+  ): void {
+    super.attributeChangedCallback(name, _old, value);
+    if (name === "visible") {
+      if (this.visible) {
+        this.open();
+      } else {
+        this.close();
+      }
+    }
+  }
+
   open(): void {
     this.visible = true;
+    this.dotInterval = setInterval(() => {
+      this.dotCount = (this.dotCount + 1) % 4;
+      this.requestUpdate();
+    }, ANIMATION_SPEED_IN_MS);
   }
 
   close(): void {
     this.visible = false;
+    clearInterval(this.dotInterval!);
+    this.dotCount = 0;
   }
 }

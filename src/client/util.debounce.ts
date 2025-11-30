@@ -1,7 +1,7 @@
-import { ONE_SECOND_IN_MS } from "../shared/util.time";
-
-export const STANDARD_DEBOUNCE_DURATION = 1 * ONE_SECOND_IN_MS;
-export const STANDARD_FORCE_DURATION = 10 * ONE_SECOND_IN_MS;
+import {
+  STANDARD_DEBOUNCE_DURATION,
+  STANDARD_FORCE_DURATION,
+} from "../shared/util.time";
 
 export class DebounceHandler {
   private debounceDuration: number;

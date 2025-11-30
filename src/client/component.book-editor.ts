@@ -45,6 +45,9 @@ export class TorlifyBookEditor extends LitElement {
   @property({ type: Boolean })
   public loading: boolean = false;
 
+  @property({ type: String })
+  public loadingMessage: string = "Loading";
+
   @query("#remove-book-modal")
   private removeBookModal!: TorlifyModal;
 
@@ -59,6 +62,7 @@ export class TorlifyBookEditor extends LitElement {
         ? html`
             <torlify-loading-overlay
               ?visible=${this.loading}
+              message="${this.loadingMessage}"
             ></torlify-loading-overlay>
             <torlify-bar>
               <button @click=${this.downloadBook()} class="standard-button">
@@ -93,11 +97,12 @@ export class TorlifyBookEditor extends LitElement {
             </torlify-bar>
             <torlify-modal id="generate-remaining-modal">
               <div slot="body">
-                <h3>Generate Remaining Content</h3>
+                <h3>Generate Remaining Content?</h3>
                 <p>
                   Are you sure you want to generate the remaining content for
-                  this book? It may take a long time.
+                  this book?
                 </p>
+                <p>It may take a long time.</p>
                 <torlify-bar>
                   <button
                     class="standard-button"
@@ -186,8 +191,10 @@ export class TorlifyBookEditor extends LitElement {
   confirmGenerateRemainingContent = async (): Promise<void> => {
     this.generateRemainingModal.close();
     this.loading = true;
+    this.loadingMessage = "Generating remaining content";
     try {
       for (let chapter of this.bookContext.book!.chapters) {
+        this.loadingMessage = `Generating outline for chapter ${chapter.number}`;
         const generateOutline =
           chapter.outline.filter((item) => !item || !item.trim()).length > 0;
         if (generateOutline) {
@@ -198,6 +205,7 @@ export class TorlifyBookEditor extends LitElement {
         }
         for (const part of chapter.parts) {
           if (!part.text || part.text.trim() === "") {
+            this.loadingMessage = `Generating part ${part.number} of chapter ${chapter.number}`;
             await generatePartService.fetch({
               book: this.bookContext.book!.id,
               chapter: String(chapter.number),

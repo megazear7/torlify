@@ -64,6 +64,9 @@ export class TorlifyBookList extends LitElement {
   @property({ type: String })
   loading: boolean = false;
 
+  @property({ type: String })
+  public loadingMessage: string = "Loading";
+
   @property({ type: Array })
   sampleDescriptions: string[] = [
     "A valiant knight scaled the tower to the true Princess. A dragon loomed, but the knights courage shone. With a swift strike...",
@@ -164,6 +167,7 @@ export class TorlifyBookList extends LitElement {
 
       <torlify-loading-overlay
         .visible="${this.loading}"
+        message="${this.loadingMessage}"
       ></torlify-loading-overlay>
     `;
   }
@@ -188,6 +192,7 @@ export class TorlifyBookList extends LitElement {
   private readonly handleCreateBook = async (): Promise<void> => {
     this.createBookModal.close();
     this.loading = true;
+    this.loadingMessage = "Creating book";
     try {
       const book = await createBookService.fetch({
         instructions: this.generateBookInstructions || this.sampleDescription,
@@ -205,6 +210,7 @@ export class TorlifyBookList extends LitElement {
   private readonly handleGenerateBook = async (): Promise<void> => {
     this.createBookModal.close();
     this.loading = true;
+    this.loadingMessage = "Generating book";
     try {
       const book = await generateBookService.fetch({
         instructions: this.generateBookInstructions || this.sampleDescription,
