@@ -32,6 +32,8 @@ Once complete, the `.env` file and the `data/app/index.json` files will be creat
 can run Torlify with `npm start`. You can also refer to the example files that are provided
 if you want to set it up manually.
 
+![Torlify App Screenshot](.github/images/app-screenshot.png)
+
 ## Install
 
 ```sh
