@@ -4,12 +4,14 @@ import { defaults } from "./util.defaults.js";
 import { ask } from "./util.ask.js";
 import { promises as fs } from "fs";
 import { createEnvFile } from "./util.create-env-file.js";
+import { runNpmInstall } from "./util.run-npm-install.js";
 const program = new Command();
 program
     .command("init")
     .description("Initialize the Torlify app")
     .action(async () => {
     console.log("Initializing the Torlify app...");
+    await runNpmInstall();
     const appConfig = { ...standardAppConfig };
     appConfig.model.text.name = await ask("Model name?", defaults.grok.name);
     appConfig.model.text.endpoint = await ask("Model endpoint?", defaults[appConfig.model.text.name]?.endpoint);
