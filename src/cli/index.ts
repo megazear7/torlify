@@ -5,7 +5,6 @@ import { ask, closeAsk } from "./util.ask.js";
 import { ModelTypeOption } from "./type.cli.js";
 import { promises as fs } from "fs";
 import { createEnvFile } from "./util.create-env-file.js";
-import { runNpmInstall } from "./util.run-npm-install.js";
 
 const program = new Command();
 
@@ -14,7 +13,6 @@ program
   .description("Initialize the Torlify app")
   .action(async () => {
     console.log("Initializing the Torlify app...");
-    await runNpmInstall();
     const appConfig = { ...standardAppConfig };
     appConfig.model.text.name = await ask("Model name?", defaults.grok.name);
     appConfig.model.text.endpoint = await ask(

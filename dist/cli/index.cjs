@@ -7,8 +7,6 @@ var require$$3 = require('node:fs');
 var require$$4 = require('node:process');
 var readline = require('readline');
 var fs = require('fs');
-var child_process = require('child_process');
-var util$1 = require('util');
 
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -17320,32 +17318,12 @@ ${config.model.audio.name.toUpperCase()}_MODEL_API_KEY=${audioApiKey}
 `.trim();
 }
 
-async function runNpmInstall() {
-    const execPromise = util$1.promisify(child_process.exec);
-    console.log("Running npm install...");
-    try {
-        const { stdout, stderr } = await execPromise("npm install", {
-            cwd: process.cwd(),
-        });
-        console.log(stdout);
-        if (stderr) {
-            console.error(stderr);
-        }
-        console.log("npm install completed successfully.");
-    }
-    catch (error) {
-        console.error("Error during npm install:", error);
-        throw error;
-    }
-}
-
 const program = new Command();
 program
     .command("init")
     .description("Initialize the Torlify app")
     .action(async () => {
     console.log("Initializing the Torlify app...");
-    await runNpmInstall();
     const appConfig = { ...standardAppConfig };
     appConfig.model.text.name = await ask("Model name?", defaults.grok.name);
     appConfig.model.text.endpoint = await ask("Model endpoint?", defaults[appConfig.model.text.name]?.endpoint);
