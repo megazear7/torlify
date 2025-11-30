@@ -1,6 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
   input: {
@@ -11,7 +12,6 @@ export default {
     dir: 'dist/client',
     format: 'esm',
   },
-  external: ['commander'],
   onwarn(warning) {
     if (warning.code !== 'THIS_IS_UNDEFINED') {
       console.error(`(!) ${warning.message}`);
@@ -24,6 +24,7 @@ export default {
       declarationMap: false,
       outDir: 'dist/client',
     }),
+    commonjs(),
     resolve(),
   ],
 };
