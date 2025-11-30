@@ -8,13 +8,11 @@ A book maker
 1. [nvm](https://www.nvmnode.com/guide/installation.html)
 1. [node](https://nodejs.org/en)
 
-```sh
-nvm use 22
-```
-
 ## Getting Started
 
 ```sh
+git clone https://github.com/megazear7/torlify.git
+nvm use 22
 npm run init
 ```
 
