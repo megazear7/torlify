@@ -86,7 +86,9 @@ program
       JSON.stringify(appConfig, null, 2),
     );
     console.log("Initialization complete.");
-    console.log("Now you can start the app with 'npm start'");
+    console.log(
+      "Now you can start the app with 'npm start' and open the app in your browser at http://localhost:3000",
+    );
     await closeAsk();
   });
 
