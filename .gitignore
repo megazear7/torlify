@@ -5,4 +5,4 @@ dist
 debug
 data/
 !data/app/index.example.json
-!dist/cli/index.js
+!dist/cli/index.cjs
