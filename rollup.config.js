@@ -3,11 +3,15 @@ import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 
 export default {
-  input: 'src/client/app.ts',
+  input: {
+    'bundle': 'src/client/app.ts',
+    'cli': 'src/cli/index.ts',
+  },
   output: {
-    file: 'dist/client/bundle.js',
+    dir: 'dist/client',
     format: 'esm',
   },
+  external: ['commander'],
   onwarn(warning) {
     if (warning.code !== 'THIS_IS_UNDEFINED') {
       console.error(`(!) ${warning.message}`);
@@ -18,6 +22,7 @@ export default {
     typescript({
       declaration: false,
       declarationMap: false,
+      outDir: 'dist/client',
     }),
     resolve(),
   ],

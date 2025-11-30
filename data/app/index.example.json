@@ -11,14 +11,14 @@
                 "outputTokenCount": 0
             },
             "usage": {
-                "completion_tokens": 43105,
-                "prompt_tokens": 1423429
+                "completion_tokens": 0,
+                "prompt_tokens": 0
             }
         },
         "audio": {
             "name": "openai",
             "endpoint": "https://api.openai.com/v1",
-            "modelName": "gpt-4o-audio-preview-2025-06-03",
+            "modelName": "gpt-audio-2025-08-28",
             "cost": {
                 "inputTokenCost": 0,
                 "inputTokenCount": 0,
