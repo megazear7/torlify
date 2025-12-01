@@ -143,8 +143,7 @@ export class TorlifyBookEditor extends LitElement {
               <torlify-auto-textarea
                 cssClass="h2"
                 .value="${this.bookContext.book.title}"
-                @input="${(e: CustomEvent): void =>
-                  (this.bookContext.book!.title = e.detail.value)}"
+                @input="${this.save("title")}"
               ></torlify-auto-textarea>
               <div class="stats">
                 <span>${formatNumber(this.tokens)} tokens</span>
