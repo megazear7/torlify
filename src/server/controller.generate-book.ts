@@ -11,6 +11,7 @@ import { generateBookPrompt } from "./prompt.generate-book.js";
 import { saveBook } from "./util.book.js";
 import { submitPrompt } from "./util.submit-prompt.js";
 import { generateChapterOutline } from "./util.generate-chapter-outline.js";
+import { generateLoadingMessages } from "./util.generate-loading-messages.js";
 
 export class GenerateBookController extends AbstractController<
   GenerateBookParameters,
@@ -35,6 +36,16 @@ export class GenerateBookController extends AbstractController<
         outline: [],
         parts: [],
       })),
+      loadingMessages: await generateLoadingMessages(bookStub.overview),
+      details: {
+        authorName: "Torlify",
+        includeChapterTitles: false,
+        isbn: "",
+        dedication: "",
+        acknowledgements: "",
+        aboutTheAuthor: "",
+      },
+      references: [],
       model: {
         text: {
           ...appConfig.model.text,

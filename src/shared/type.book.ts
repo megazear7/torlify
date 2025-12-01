@@ -283,23 +283,23 @@ export const BookStub = z
   .object({
     id: BookId,
     title: BookTitle,
-    references: BookReference.array().describe(
-      "A list of reference files to use when writing the book.",
-    ),
     overview: BookOverview,
-    details: BookDetails.optional(),
     chapters: ChapterStub.array(),
     instructions: Instructions,
     pronunciation: Pronunciation.array(),
     characters: Character.array(),
-    model: ModelConfigs,
-    loadingMessages: LoadingMessages,
   })
   .strict();
 export type BookStub = z.infer<typeof BookStub>;
 
 export const Book = BookStub.extend({
   chapters: Chapter.array(),
+  loadingMessages: LoadingMessages,
+  model: ModelConfigs,
+  details: BookDetails.optional(),
+  references: BookReference.array().describe(
+    "A list of reference files to use when writing the book.",
+  ),
 });
 export type Book = z.infer<typeof Book>;
 
