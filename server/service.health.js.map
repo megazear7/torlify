@@ -1,1 +1,0 @@
-{"version":3,"file":"service.health.js","sourceRoot":"","sources":["../src/server/service.health.ts"],"names":[],"mappings":"AAEA,MAAM,CAAC,MAAM,MAAM,GAAG,GAAW,EAAE;IACjC,OAAO,EAAE,OAAO,EAAE,IAAI,EAAE,CAAC;AAC3B,CAAC,CAAC","sourcesContent":["import { Health } from \"../shared/type/health.js\";\n\nexport const health = (): Health => {\n  return { healthy: true };\n};\n"]}
