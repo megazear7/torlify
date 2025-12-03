@@ -1,5 +1,6 @@
 import z from "zod";
-import { ModelConfigs } from "./type.model.js";
+import { ModelConfigs, ModelTypeConfig } from "./type.model.js";
+import { Cost, Usage } from "./type.prompt.js";
 
 export const BookId = z
   .string()
@@ -303,7 +304,24 @@ export const Book = BookStub.extend({
 });
 export type Book = z.infer<typeof Book>;
 
-export const BookPartial = Book.partial();
+export const BookPartial = Book.partial().extend({
+  model: ModelConfigs.partial()
+    .extend({
+      text: ModelTypeConfig.partial()
+        .extend({
+          cost: Cost.partial().optional(),
+          usage: Usage.partial().optional(),
+        })
+        .optional(),
+      audio: ModelTypeConfig.partial()
+        .extend({
+          cost: Cost.partial().optional(),
+          usage: Usage.partial().optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+});
 export type BookPartial = z.infer<typeof BookPartial>;
 
 export const Books = Book.array();

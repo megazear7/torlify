@@ -5,6 +5,7 @@ import {
   updateBookService,
 } from "../shared/service.update-book.js";
 import { Book } from "../shared/type.book.js";
+import { mergeBookProperties } from "../shared/util.merge-book.js";
 import { AbstractController } from "./main.controller.js";
 import { getBook, saveBook } from "./util.book.js";
 
@@ -21,14 +22,7 @@ export class UpdateBookController extends AbstractController<
     UpdateBookPathParameters
   >): Promise<Book> {
     const existingBook = await getBook(pathParams.name);
-    const updatedBook = {
-      ...existingBook,
-      ...bodyParams.book,
-      instructions: {
-        ...existingBook.instructions,
-        ...bodyParams.book.instructions,
-      },
-    };
+    const updatedBook = mergeBookProperties(existingBook, bodyParams.book);
     await saveBook(updatedBook);
     return updatedBook;
   }

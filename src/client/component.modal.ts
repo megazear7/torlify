@@ -34,7 +34,9 @@ export class TorlifyModal extends LitElement {
         box-shadow: var(--shadow-large);
         padding: var(--size-xxl);
         min-width: 30vw;
-        max-width: 80vw;
+        max-width: 50vw;
+        max-height: 80vh;
+        overflow-y: scroll;
         margin: 100px auto;
         position: relative;
         opacity: 0;
@@ -146,6 +148,7 @@ export class TorlifyModal extends LitElement {
     await wait(ANIMATION_SPEED);
     this.opening = false;
     this.visible = true;
+    window.document.body.style.overflow = "hidden";
   }
 
   async close(): Promise<void> {
@@ -154,6 +157,7 @@ export class TorlifyModal extends LitElement {
     await wait(ANIMATION_SPEED);
     this.closing = false;
     this.visible = false;
+    window.document.body.style.overflow = "auto";
   }
 
   submit(): void {

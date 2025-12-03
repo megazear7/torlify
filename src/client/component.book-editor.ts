@@ -12,14 +12,16 @@ import { WarningEvent } from "./event.warning.js";
 import { SaveEvent } from "./event.save.js";
 import { DebounceHandler } from "./util.debounce.js";
 import { updateBookService } from "../shared/service.update-book.js";
-import "./component.auto-textarea.js";
-import "./component.bar.js";
 import { downloadBookService } from "../shared/service.download-book.js";
 import { TorlifyModal } from "./component.modal.js";
 import { deleteBookService } from "../shared/service.delete-book.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
 import { generatePartService } from "../shared/service.generate-part.js";
+import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
+import { mergeBookProperties } from "../shared/util.merge-book.js";
+import "./component.auto-textarea.js";
+import "./component.bar.js";
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -54,6 +56,9 @@ export class TorlifyBookEditor extends LitElement {
   @query("#generate-remaining-modal")
   private generateRemainingModal!: TorlifyModal;
 
+  @query("#configure-book-modal")
+  private configureBookModal!: TorlifyModal;
+
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
@@ -69,8 +74,7 @@ export class TorlifyBookEditor extends LitElement {
                 Download
               </button>
               <button
-                @click=${(): void =>
-                  dispatch(this, WarningEvent("Not implemented"))}
+                @click=${this.openConfigureBookModal}
                 class="standard-button"
               >
                 Configure
@@ -95,6 +99,102 @@ export class TorlifyBookEditor extends LitElement {
                 Remove
               </button>
             </torlify-bar>
+            <torlify-modal id="configure-book-modal">
+              <div slot="body">
+                <h2>Configure Book</h2>
+                <h3>Text Model Configuration</h3>
+                <label for="model-text-name">Name</label>
+                <input
+                  type="text"
+                  id="model-text-name"
+                  .value="${this.bookContext.book.model.text.name}"
+                  @input=${this.save("model.text.name")}
+                />
+                <label for="model-text-model-name">Model Name</label>
+                <input
+                  type="text"
+                  id="model-text-model-name"
+                  .value="${this.bookContext.book.model.text.modelName}"
+                  @input=${this.save("model.text.modelName")}
+                />
+                <label for="model-text-endpoint">Endpoint</label>
+                <input
+                  type="text"
+                  id="model-text-endpoint"
+                  .value="${this.bookContext.book.model.text.endpoint}"
+                  @input=${this.save("model.text.endpoint")}
+                />
+                <label for="model-text-cost-input">Input Token Cost</label>
+                <input
+                  type="text"
+                  id="model-text-cost-input"
+                  .value="${this.bookContext.book.model.text.cost
+                    .inputTokenCost}"
+                  @input=${this.save(
+                    "model.text.cost.inputTokenCost",
+                    "number",
+                  )}
+                />
+                <label for="model-text-cost-output">Output Token Cost</label>
+                <input
+                  type="text"
+                  id="model-text-cost-output"
+                  .value="${this.bookContext.book.model.text.cost
+                    .outputTokenCost}"
+                  @input=${this.save(
+                    "model.text.cost.outputTokenCost",
+                    "number",
+                  )}
+                />
+                <h3>Audio Model Configuration</h3>
+                <label for="model-audio-name">Name</label>
+                <input
+                  type="text"
+                  id="model-audio-name"
+                  .value="${this.bookContext.book.model.audio.name}"
+                  @input=${this.save("model.audio.name")}
+                />
+                <label for="model-audio-model-name">Model Name</label>
+                <input
+                  type="text"
+                  id="model-audio-model-name"
+                  .value="${this.bookContext.book.model.audio.modelName}"
+                  @input=${this.save("model.audio.modelName")}
+                />
+                <label for="model-audio-endpoint">Endpoint</label>
+                <input
+                  type="text"
+                  id="model-audio-endpoint"
+                  .value="${this.bookContext.book.model.audio.endpoint}"
+                  @input=${this.save("model.audio.endpoint")}
+                />
+                <label for="model-audio-cost-input">Input Token Cost</label>
+                <input
+                  type="text"
+                  id="model-audio-cost-input"
+                  .value="${this.bookContext.book.model.audio.cost
+                    .inputTokenCost}"
+                  @input=${this.save(
+                    "model.audio.cost.inputTokenCost",
+                    "number",
+                  )}
+                />
+                <label for="model-audio-cost-output">Output Token Cost</label>
+                <input
+                  type="text"
+                  id="model-audio-cost-output"
+                  .value="${this.bookContext.book.model.audio.cost
+                    .outputTokenCost}"
+                  @input=${this.save(
+                    "model.audio.cost.outputTokenCost",
+                    "number",
+                  )}
+                />
+              </div>
+              <button class="standard-button" slot="submit-button">
+                Close
+              </button>
+            </torlify-modal>
             <torlify-modal id="generate-remaining-modal">
               <div slot="body">
                 <h3>Generate Remaining Content?</h3>
@@ -179,6 +279,10 @@ export class TorlifyBookEditor extends LitElement {
     };
   }
 
+  openConfigureBookModal = (): void => {
+    this.configureBookModal.open();
+  };
+
   openGenerateRemainingModal = (): void => {
     this.generateRemainingModal.open();
   };
@@ -246,14 +350,21 @@ export class TorlifyBookEditor extends LitElement {
     this.removeBookModal.close();
   };
 
-  save(prop: string): (event: CustomEvent) => void {
-    return (event: CustomEvent): void => {
-      if (event.detail.value === undefined) return;
-      const book = buildNestedObject(BookPartial, prop, event.detail.value);
-      this.bookContext.book = {
-        ...this.bookContext.book!,
-        ...book,
-      };
+  save(
+    prop: string,
+    type: "text" | "number" = "text",
+  ): (event: CustomEvent | InputEvent) => void {
+    return (event: CustomEvent | InputEvent): void => {
+      const isAutoTextarea =
+        (event.target as HTMLElement).tagName.toLocaleLowerCase() ===
+        AUTO_TEXTAREA_TAG_NAME;
+      const value = isAutoTextarea
+        ? (event as CustomEvent).detail.value
+        : (event.target as HTMLInputElement).value;
+      if (value === undefined) return;
+      const finalValue = type === "number" ? Number(value) : value;
+      const book = buildNestedObject(BookPartial, prop, finalValue);
+      this.bookContext.book = mergeBookProperties(this.bookContext.book!, book);
       this.debounceHandler.debounce(() => {
         updateBookService.fetch({
           book,
