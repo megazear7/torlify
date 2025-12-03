@@ -1,8 +1,11 @@
 import { html, css, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { globalStyles } from "./styles.global.js";
 import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
+import { BookContext, bookContext } from "./context.book.js";
+import { LoadingStatus } from "../shared/type.loading.js";
+import { consume } from "@lit/context";
 
 @customElement("torlify-loading-overlay")
 export class TorlifyLoadingOverlay extends LitElement {
@@ -107,13 +110,35 @@ export class TorlifyLoadingOverlay extends LitElement {
       }
 
       .loading-text {
-        position: relative;
+        position: absolute;
+        bottom: var(--size-xl);
         margin-top: var(--size-xl);
-        font-size: calc(var(--font-medium) * 1.5);
+        font-size: calc(var(--font-medium) * 1);
         font-weight: 600;
         color: var(--color-primary-text);
         animation: text-glow 2s ease-in-out infinite alternate;
         text-align: center;
+      }
+
+      .loading-snippet {
+        margin-top: var(--size-medium);
+        font-size: calc(var(--font-medium) * 1.2);
+        font-weight: 600;
+        animation: text-glow 2s ease-in-out infinite alternate;
+        height: var(--size-xxl);
+      }
+
+      .loading-snippet.fly-away {
+        animation: fly-away 1s ease-in forwards;
+      }
+
+      @keyframes fly-away {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(100vw);
+        }
       }
 
       .loading-dots {
@@ -130,81 +155,44 @@ export class TorlifyLoadingOverlay extends LitElement {
             0 0 30px var(--color-1);
         }
       }
-
-      .particles {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        overflow: hidden;
-      }
-
-      .particle {
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background: var(--color-1);
-        border-radius: 50%;
-        animation: float 3s ease-in-out infinite;
-      }
-
-      .particle:nth-child(2n) {
-        background: var(--color-2);
-        animation-delay: 1s;
-        animation-duration: 4s;
-      }
-
-      .particle:nth-child(3n) {
-        animation-delay: 2s;
-        animation-duration: 5s;
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(100vh) rotate(0deg);
-          opacity: 0;
-        }
-        50% {
-          transform: translateY(50vh) rotate(180deg);
-          opacity: 1;
-        }
-      }
     `,
   ];
+
+  @consume({ context: bookContext, subscribe: true })
+  @property({ attribute: false })
+  public bookContext: BookContext = {
+    status: LoadingStatus.enum.idle,
+  };
 
   @property({ type: String })
   message = "Loading";
 
-  @property({ type: Boolean })
-  visible = false;
+  @property({ type: Boolean, attribute: false })
+  private _visible = false;
 
+  @property({ type: Number, attribute: false })
   private dotCount = 0;
+
+  @property({ type: Array, attribute: false })
+  private loadingSnippet: string[] = [];
+
+  @query(".loading-snippet")
+  private loadingSnippetElement!: HTMLElement;
+
   private dotInterval: ReturnType<typeof setTimeout> | null = null;
+  private snippetInterval: ReturnType<typeof setTimeout> | null = null;
 
   override render(): TemplateResult {
     return html`
       <div class="${this.loadingOverlayClasses()}">
         <div class="loader-container">
           <div class="loader"></div>
-          <div class="particles">
-            ${Array.from(
-              { length: 20 },
-              () => html`
-                <div
-                  class="particle"
-                  style="left: ${Math.random() *
-                  100}%; animation-delay: ${Math.random() * 3}s;"
-                ></div>
-              `,
-            )}
-          </div>
         </div>
         <div class="loading-text">
           <span>${this.message}</span>
-          <span class="loading-dots">${".".repeat(this.dotCount)}</span>
+        </div>
+        <div class="loading-snippet">
+          <span class="loading-snippet-text">${this.loadingSnippet.map((letter) => html`${letter}`)}</span>
         </div>
       </div>
     `;
@@ -214,32 +202,69 @@ export class TorlifyLoadingOverlay extends LitElement {
     return classMap({ "loading-overlay": true, visible: this.visible });
   }
 
-  override attributeChangedCallback(
-    name: string,
-    _old: string | null,
-    value: string | null,
-  ): void {
-    super.attributeChangedCallback(name, _old, value);
-    if (name === "visible") {
-      if (this.visible) {
-        this.open();
-      } else {
-        this.close();
-      }
+  set visible(value: boolean) {
+    this._visible = value;
+    if (this._visible) {
+      this.open();
+    } else {
+      this.close();
     }
   }
 
+  get visible(): boolean {
+    return this._visible;
+  }
+
   open(): void {
-    this.visible = true;
+    this._visible = true;
     this.dotInterval = setInterval(() => {
       this.dotCount = (this.dotCount + 1) % 4;
-      this.requestUpdate();
     }, ANIMATION_SPEED_IN_MS);
+    if (this.bookContext.book) {
+      setTimeout(() => {
+        this.writeSnippet();
+      }, 1000);
+    }
+  }
+
+  writeSnippet(): void {
+    let pause = false;
+    this.loadingSnippet = [];
+    let snippet: string | null = this.pickNewSnippet();
+    setInterval(() => {
+      // Reset snippet if complete
+      if (!pause && snippet && this.loadingSnippet.length >= snippet.length) {
+        pause = true;
+        setTimeout(() => {
+          this.loadingSnippetElement.classList.add("fly-away");
+          setTimeout(() => {
+            pause = false;
+            this.loadingSnippet = [];
+            snippet = this.pickNewSnippet();
+            this.loadingSnippetElement.classList.remove("fly-away");
+          }, 1000);
+        }, 8000);
+      }
+
+      // Add next character
+      if (!pause && snippet && this.loadingSnippet.length < snippet.length) {
+        this.loadingSnippet.push(snippet[this.loadingSnippet.length]);
+        this.requestUpdate();
+      }
+    }, 100);
+  }
+
+  private pickNewSnippet(): string {
+    const messages = this.bookContext.book!.loadingMessages;
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
   }
 
   close(): void {
-    this.visible = false;
+    this._visible = false;
     clearInterval(this.dotInterval!);
     this.dotCount = 0;
+    clearInterval(this.snippetInterval!);
+    this.loadingSnippet = [];
   }
 }
