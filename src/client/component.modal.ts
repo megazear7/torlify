@@ -7,6 +7,7 @@ import { ModelSubmitEvent } from "./event.modal-submit.js";
 import { ModelOpeningEvent } from "./event.modal-opening.js";
 import { wait } from "../shared/util.wait";
 import { ModelClosingEvent } from "./event.modal-closing";
+import { xIcon } from "./icons.js";
 
 const ANIMATION_SPEED = 300;
 
@@ -32,7 +33,6 @@ export class TorlifyModal extends LitElement {
         background: var(--color-secondary-surface);
         border-radius: var(--radius-large);
         box-shadow: var(--shadow-large);
-        padding: var(--size-xxl);
         min-width: 30vw;
         max-width: 50vw;
         max-height: 80vh;
@@ -43,24 +43,33 @@ export class TorlifyModal extends LitElement {
         transform: translateY(-20vh);
       }
 
+      .modal-body {
+        padding: 0 var(--size-xxl) var(--size-xxl) var(--size-xxl);
+      }
+
       .modal-backdrop.visible .modal-content {
         opacity: 1;
         transform: translateY(0);
       }
 
-      .modal-close {
-        margin-top: var(--size-l);
+      .modal-header {
+        display: flex;
+        justify-content: flex-end;
+        padding: var(--size-medium) var(--size-small) 0 var(--size-small);
+      }
+
+      .close-button {
+        color: var(--color-primary-text);
+        transition: var(--transition-all);
+      }
+
+      .close-button:hover {
+        color: var(--color-error);
       }
 
       .modal-backdrop.visible,
       .modal-backdrop.opening {
         display: flex;
-      }
-
-      .modal-footer {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: var(--size-medium);
       }
 
       .modal-backdrop.opening .modal-content {
@@ -112,21 +121,14 @@ export class TorlifyModal extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <slot
-        name="open-button"
-        @click="${(): Promise<void> => this.open()}"
-      ></slot>
-      <div
-        class="${this.backdropClasses()}"
-        @click="${(): Promise<void> => this.close()}"
-      >
+      <slot name="open-button" @click="${(): Promise<void> => this.open()}"></slot>
+      <div class="${this.backdropClasses()}" @click="${(): Promise<void> => this.close()}">
         <div class="modal-content" @click="${stopProp}">
-          <slot name="body"></slot>
-          <div class="modal-footer">
-            <slot
-              name="submit-button"
-              @click="${(): void => this.submit()}"
-            ></slot>
+          <div class="modal-header">
+            <button class="close-button" @click="${(): Promise<void> => this.close()}">${xIcon}</button>
+          </div>
+          <div class="modal-body">
+            <slot name="body"></slot>
           </div>
         </div>
       </div>

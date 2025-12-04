@@ -380,11 +380,8 @@ export class TorlifyReferences extends LitElement {
             `}
       </div>
 
-      <torlify-modal @ModelSubmit="${this.handleModalSubmit}">
+      <torlify-modal>
         <div slot="body">${this.renderModalContent()}</div>
-        <button slot="submit-button" class="standard-button">
-          ${this.editingIndex !== null ? "Update Reference" : "Add Reference"}
-        </button>
       </torlify-modal>
     `;
   }
@@ -457,6 +454,9 @@ export class TorlifyReferences extends LitElement {
             )}
           </div>
         </div>
+        <button class="standard-button" @click="${this.handleModalSubmit}">
+          ${this.editingIndex !== null ? "Update Reference" : "Add Reference"}
+        </button>
       </div>
     `;
   }
@@ -535,6 +535,7 @@ export class TorlifyReferences extends LitElement {
     } else {
       this.handleModalSubmitEdit();
     }
+    this.modal.close();
   }
 
   private async handleModalSubmitCreate(): Promise<void> {

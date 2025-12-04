@@ -111,6 +111,10 @@ export const globalStyles = css`
     border-radius: var(--radius-large) 0 0 var(--radius-large);
   }
 
+  torlify-bar > button.standard-button:only-child {
+    border-radius: var(--radius-large);
+  }
+
   input[type="text"] {
     width: 100%;
     box-sizing: border-box;

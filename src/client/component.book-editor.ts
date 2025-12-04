@@ -1,6 +1,6 @@
 import { consume } from "@lit/context";
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { BookContext, bookContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
@@ -20,8 +20,12 @@ import { generateChapterOutlineService } from "../shared/service.generate-chapte
 import { generatePartService } from "../shared/service.generate-part.js";
 import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import { mergeBookProperties } from "../shared/util.merge-book.js";
+import z from "zod";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
+
+export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
+export type Modal = z.infer<typeof Modal>;
 
 @customElement("torlify-book-editor")
 export class TorlifyBookEditor extends LitElement {
@@ -50,58 +54,64 @@ export class TorlifyBookEditor extends LitElement {
   @property({ type: String })
   public loadingMessage: string = "Loading";
 
-  @query("#remove-book-modal")
-  private removeBookModal!: TorlifyModal;
-
-  @query("#generate-remaining-modal")
-  private generateRemainingModal!: TorlifyModal;
-
-  @query("#configure-book-modal")
-  private configureBookModal!: TorlifyModal;
-
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     return html`
       ${this.bookContext.book
         ? html`
-            <torlify-loading-overlay
-              ?visible=${this.loading}
-              message="${this.loadingMessage}"
-            ></torlify-loading-overlay>
+            <torlify-loading-overlay ?visible=${this.loading} message="${this.loadingMessage}"></torlify-loading-overlay>
             <torlify-bar>
-              <button @click=${this.downloadBook()} class="standard-button">
-                Download
-              </button>
-              <button
-                @click=${this.openConfigureBookModal}
-                class="standard-button"
-              >
-                Configure
-              </button>
-              <button
-                @click=${(): void =>
-                  dispatch(this, WarningEvent("Not implemented"))}
-                class="standard-button"
-              >
-                Details
-              </button>
-              <button
-                @click=${this.openGenerateRemainingModal}
-                class="standard-button"
-              >
-                Generate
-              </button>
-              <button
-                class="standard-button"
-                @click=${this.openRemoveBookModal}
-              >
-                Remove
-              </button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.download)}>Download</button>
             </torlify-bar>
-            <torlify-modal id="configure-book-modal">
+            <torlify-bar>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.details)}>Details</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.configure)}>Configure</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.delete)}>Delete</button>
+            </torlify-bar>
+            <torlify-modal id="${Modal.enum.generate}-modal">
               <div slot="body">
-                <h2>Configure Book</h2>
+                <h3>Generate Remaining Content?</h3>
+                <p>Are you sure you want to generate the remaining content for this book?</p>
+                <p>It may take a long time.</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Outline</button>
+                  <button class="standard-button" @click="${this.confirmGenerateRemainingContent}">Text</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Audio</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.edit}-modal">
+              <div slot="body">
+                <h3>Edit</h3>
+                <p>Edit the entire book based on your instructions</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.edit)}">Edit</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.download}-modal">
+              <div slot="body">
+                <h3>Download</h3>
+                <p>Download the complete book outline, text, or audio.</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
+                  <button class="standard-button" @click="${this.downloadBook()}">Text</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Audio</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.details}-modal">
+              <div slot="body">
+                <h3>Details</h3>
+                <p>This is not implemented yet</p>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.configure}-modal">
+              <div slot="body">
+                <h2>Configure</h2>
                 <h3>Text Model Configuration</h3>
                 <label for="model-text-name">Name</label>
                 <input
@@ -191,51 +201,14 @@ export class TorlifyBookEditor extends LitElement {
                   )}
                 />
               </div>
-              <button class="standard-button" slot="submit-button">
-                Close
-              </button>
             </torlify-modal>
-            <torlify-modal id="generate-remaining-modal">
+            <torlify-modal id="${Modal.enum.delete}-modal">
               <div slot="body">
-                <h3>Generate Remaining Content?</h3>
-                <p>
-                  Are you sure you want to generate the remaining content for
-                  this book?
-                </p>
-                <p>It may take a long time.</p>
+                <h3>Delete Book</h3>
+                <p>Are you sure you want to delete this book?</p>
                 <torlify-bar>
-                  <button
-                    class="standard-button"
-                    @click="${this.confirmGenerateRemainingContent}"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    class="standard-button"
-                    @click=${this.closeGenerateRemainingModal}
-                  >
-                    No
-                  </button>
-                </torlify-bar>
-              </div>
-            </torlify-modal>
-            <torlify-modal id="remove-book-modal">
-              <div slot="body">
-                <h3>Remove Book</h3>
-                <p>Are you sure you want to remove this book?</p>
-                <torlify-bar>
-                  <button
-                    class="standard-button"
-                    @click="${this.confirmRemoveBook}"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    class="standard-button"
-                    @click=${this.closeRemoveBookModal}
-                  >
-                    No
-                  </button>
+                  <button class="standard-button" @click="${this.confirmDeleteBook}">Yes</button>
+                  <button class="standard-button" @click=${this.closeModal(Modal.enum.delete)}>No</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -276,23 +249,33 @@ export class TorlifyBookEditor extends LitElement {
   downloadBook(): () => void {
     return async (): Promise<void> => {
       await downloadBookService.fetch({ book: this.bookContext.book!.id });
+      this.closeModal(Modal.enum.download)();
     };
   }
 
-  openConfigureBookModal = (): void => {
-    this.configureBookModal.open();
-  };
+  openModal(name: Modal): () => void {
+    return (): void => {
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      modal.open();
+    };
+  }
 
-  openGenerateRemainingModal = (): void => {
-    this.generateRemainingModal.open();
-  };
+  closeModal(name: Modal): () => void {
+    return (): void => {
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      modal.close();
+    };
+  }
 
-  closeGenerateRemainingModal = (): void => {
-    this.generateRemainingModal.close();
-  };
+  notImplemented(name: Modal): () => void {
+    return (): void => {
+      this.closeModal(name)();
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
+    };
+  }
 
   confirmGenerateRemainingContent = async (): Promise<void> => {
-    this.generateRemainingModal.close();
+    this.closeModal(Modal.enum.generate)();
     this.loading = true;
     this.loadingMessage = "Generating remaining content";
     try {
@@ -329,11 +312,7 @@ export class TorlifyBookEditor extends LitElement {
     }
   };
 
-  openRemoveBookModal = (): void => {
-    this.removeBookModal.open();
-  };
-
-  confirmRemoveBook = async (): Promise<void> => {
+  confirmDeleteBook = async (): Promise<void> => {
     const bookId = this.bookContext.book!.id;
     try {
       await deleteBookService.fetch({ bookId });
@@ -341,13 +320,9 @@ export class TorlifyBookEditor extends LitElement {
     } catch {
       dispatch(this, WarningEvent("Book deletion failed"));
     } finally {
-      this.removeBookModal.close();
+      this.closeModal(Modal.enum.delete);
       dispatch(this, NavigationEvent({ path: "/" }));
     }
-  };
-
-  closeRemoveBookModal = (): void => {
-    this.removeBookModal.close();
   };
 
   save(
