@@ -88,8 +88,8 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Generate Chapter</h3>
                 <p>Generate for the entire chapter?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Outline</button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Text</button>
+                  <button class="standard-button" @click="${this.generateOutline()}">Outline</button>
+                  <button class="standard-button" @click="${this.generateParts()}">Text</button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Audio</button>
                 </torlify-bar>
               </div>
@@ -166,12 +166,6 @@ export class TorlifyChapterEditor extends LitElement {
               <h4>Estimated Part Length in Words</h4>
               <input type="text" .value="${this.chapterContext.chapter.partLength}" @input="${this.updateProperty("partLength")}"></input>
             </div>
-            <torlify-bar>
-              <button @click=${this.generateChapterOutline()} class="standard-button">Generate Outline</button>
-              <button @click=${this.generateChapter()} class="standard-button">Generate Chapter</button>
-              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Audio</button>
-              <button @click=${(): void => dispatch(this, WarningEvent("Not implemented"))} class="standard-button">Generate Everything</button>
-            </torlify-bar>
             <div class="secondary-surface">
               <h4>Outline</h4>
               ${this.chapterContext.chapter.outline.map(
@@ -209,7 +203,7 @@ export class TorlifyChapterEditor extends LitElement {
     };
   }
 
-  generateChapterOutline() {
+  generateOutline() {
     return async (): Promise<void> => {
       const book = this.bookContext.book?.id;
       const chapter = String(this.chapterContext.chapter?.number);
@@ -232,7 +226,7 @@ export class TorlifyChapterEditor extends LitElement {
     };
   }
 
-  generateChapter() {
+  generateParts() {
     return async (): Promise<void> => {
       this.loading = true;
       for (const part of this.chapterContext.chapter?.parts || []) {

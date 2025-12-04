@@ -17,6 +17,7 @@ import z from "zod";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import "./component.book-field.js";
+import { Chapter, ChapterPart } from "../shared/type.book.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -52,7 +53,7 @@ export class TorlifyBookEditor extends LitElement {
     return html`
       ${this.bookContext.book
         ? html`
-            <torlify-loading-overlay ?visible=${this.loading} message="${this.loadingMessage}"></torlify-loading-overlay>
+            <torlify-loading-overlay .visible=${this.loading} message="${this.loadingMessage}"></torlify-loading-overlay>
             <torlify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
@@ -69,8 +70,8 @@ export class TorlifyBookEditor extends LitElement {
                 <p>Are you sure you want to generate the remaining content for this book?</p>
                 <p>It may take a long time.</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Outline</button>
-                  <button class="standard-button" @click="${this.confirmGenerateRemainingContent}">Text</button>
+                  <button class="standard-button" @click="${this.generateOutlines}">Outline</button>
+                  <button class="standard-button" @click="${this.generateParts}">Text</button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Audio</button>
                 </torlify-bar>
               </div>
@@ -182,31 +183,13 @@ export class TorlifyBookEditor extends LitElement {
     };
   }
 
-  confirmGenerateRemainingContent = async (): Promise<void> => {
+  generate = async (callback: (chapter: Chapter) => Promise<void>): Promise<void> => {
     this.closeModal(Modal.enum.generate)();
     this.loading = true;
     this.loadingMessage = "Generating remaining content";
     try {
       for (let chapter of this.bookContext.book!.chapters) {
-        this.loadingMessage = `Generating outline for chapter ${chapter.number}`;
-        const generateOutline =
-          chapter.outline.filter((item) => !item || !item.trim()).length > 0;
-        if (generateOutline) {
-          chapter = await generateChapterOutlineService.fetch({
-            book: this.bookContext.book!.id,
-            chapter: String(chapter.number),
-          });
-        }
-        for (const part of chapter.parts) {
-          if (!part.text || part.text.trim() === "") {
-            this.loadingMessage = `Generating part ${part.number} of chapter ${chapter.number}`;
-            await generatePartService.fetch({
-              book: this.bookContext.book!.id,
-              chapter: String(chapter.number),
-              part: String(part.number),
-            });
-          }
-        }
+        await callback(chapter);
       }
       dispatch(
         this,
@@ -219,6 +202,45 @@ export class TorlifyBookEditor extends LitElement {
       this.loading = false;
     }
   };
+
+  generateOutlines = async (): Promise<void> => {
+    this.generate(async (chapter: Chapter) => await this.generateOutlineForChapter(chapter));
+  };
+
+  generateParts = async (): Promise<void> => {
+    this.generate(async (chapter: Chapter) => await this.generatePartsForChapter(chapter));
+  };
+
+  async generateOutlineForChapter(chapter: Chapter): Promise<void> {
+    this.loading = true;
+    this.loadingMessage = `Generating outline for chapter ${chapter.number}`;
+    const generateOutline = chapter.outline.filter((item) => !item || !item.trim()).length > 0;
+    if (generateOutline) {
+      chapter = await generateChapterOutlineService.fetch({
+        book: this.bookContext.book!.id,
+        chapter: String(chapter.number),
+      });
+    }
+  };
+
+  async generatePartsForChapter(chapter: Chapter): Promise<void> {
+    await this.generateOutlineForChapter(chapter);
+    for (const part of chapter.parts) {
+      await this.generatePartForChapter(chapter, part);
+    }
+  };
+
+  async generatePartForChapter(chapter: Chapter, part: ChapterPart): Promise<void> {
+    if (!part.text || part.text.trim() === "") {
+      this.loading = true;
+      this.loadingMessage = `Generating part ${part.number} of chapter ${chapter.number}`;
+      await generatePartService.fetch({
+        book: this.bookContext.book!.id,
+        chapter: String(chapter.number),
+        part: String(part.number),
+      });
+    }
+  }
 
   confirmDeleteBook = async (): Promise<void> => {
     const bookId = this.bookContext.book!.id;
