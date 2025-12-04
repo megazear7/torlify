@@ -50,7 +50,7 @@ export class TorlifyAutoTextarea extends LitElement {
   value = "";
 
   @property({ type: String })
-  cssClass = "";
+  heading = "";
 
   @property({ type: String })
   placeholder = "";
@@ -69,7 +69,7 @@ export class TorlifyAutoTextarea extends LitElement {
   override render(): TemplateResult {
     return html`
       <textarea
-        class="${this.cssClass}"
+        class="${this.heading}"
         placeholder="${this.placeholder}"
         .value="${this.value}"
         @input="${this.handleInput}"
@@ -101,7 +101,7 @@ export class TorlifyAutoTextarea extends LitElement {
   }
 
   adjustHeight(): void {
-    if (this.textarea && !this.cssClass) {
+    if (this.textarea && !this.heading) {
       this.textarea.style.height = "auto";
       this.textarea.style.height = `${this.textarea.scrollHeight}px`;
     }

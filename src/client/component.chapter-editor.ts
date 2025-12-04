@@ -68,7 +68,7 @@ export class TorlifyChapterEditor extends LitElement {
             <div class="secondary-surface">
               <h4>Chapter ${this.chapterContext.chapter.number}</h4>
               <torlify-auto-textarea
-                cssClass="h2"
+                heading="h2"
                 .value="${this.chapterContext.chapter.title}"
                 @input="${this.updateProperty("title")}"
               ></torlify-auto-textarea>
@@ -140,7 +140,7 @@ export class TorlifyChapterEditor extends LitElement {
                 <p>Are you sure you want to delete this chapter?</p>
                 <torlify-bar>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Delete</button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Cancel</button>
+                  <button class="standard-button" @click="${this.closeModal(Modal.enum.delete)}">Cancel</button>
                 </torlify-bar>
               </div>
             </torlify-modal>

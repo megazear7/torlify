@@ -115,7 +115,7 @@ export const globalStyles = css`
     border-radius: var(--radius-large);
   }
 
-  input[type="text"] {
+  input[type="text"], input[type="number"] {
     width: 100%;
     box-sizing: border-box;
     padding: var(--size-large);
@@ -129,14 +129,14 @@ export const globalStyles = css`
     margin-bottom: var(--size-large);
   }
 
-  input[type="text"]:focus {
+  input[type="text"]:focus, input[type="number"]:focus {
     outline: none;
     border-color: var(--color-1);
     box-shadow: var(--shadow-active);
     background: var(--color-secondary-surface-active);
   }
 
-  input[type="text"]::placeholder {
+  input[type="text"]::placeholder, input[type="number"]::placeholder {
     color: var(--color-grey-transparent);
   }
 
@@ -166,5 +166,38 @@ export const globalStyles = css`
   torlify-modal torylify-auto-textarea textarea {
     max-height: 50vh;
     overflow-y: auto;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--size-small);
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--size-small);
+    cursor: pointer;
+    border-radius: var(--radius-small);
+  }
+
+  .checkbox-text {
+    text-transform: capitalize;
+    padding: var(--size-medium);
+    border-radius: var(--radius-medium);
+    transition: var(--transition-all);
+  }
+
+  .checkbox-text:hover {
+    background: var(--color-2);
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  input[type="checkbox"]:checked ~ .checkbox-text {
+    background-color: var(--color-1);
   }
 `;

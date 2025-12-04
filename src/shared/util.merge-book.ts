@@ -11,6 +11,10 @@ export function mergeBookProperties(
       ...existingBook.instructions,
       ...newBookData.instructions,
     },
+    details: {
+      ...existingBook.details,
+      ...newBookData.details,
+    },
     model: {
       ...existingBook.model,
       text: {

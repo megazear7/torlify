@@ -6,23 +6,17 @@ import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { formatNumber } from "../shared/util.number.js";
 import { dispatch } from "./util.events.js";
-import { buildNestedObject } from "../shared/util.property.js";
-import { BookPartial } from "../shared/type.book.js";
 import { WarningEvent } from "./event.warning.js";
-import { SaveEvent } from "./event.save.js";
-import { DebounceHandler } from "./util.debounce.js";
-import { updateBookService } from "../shared/service.update-book.js";
 import { downloadBookService } from "../shared/service.download-book.js";
 import { TorlifyModal } from "./component.modal.js";
 import { deleteBookService } from "../shared/service.delete-book.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
 import { generatePartService } from "../shared/service.generate-part.js";
-import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
-import { mergeBookProperties } from "../shared/util.merge-book.js";
 import z from "zod";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
+import "./component.book-field.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -53,8 +47,6 @@ export class TorlifyBookEditor extends LitElement {
 
   @property({ type: String })
   public loadingMessage: string = "Loading";
-
-  private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     return html`
@@ -106,100 +98,29 @@ export class TorlifyBookEditor extends LitElement {
             <torlify-modal id="${Modal.enum.details}-modal">
               <div slot="body">
                 <h3>Details</h3>
-                <p>This is not implemented yet</p>
+                <torlify-book-field property="details.authorName"></torlify-book-field>
+                <torlify-book-field property="details.isbn"></torlify-book-field>
+                <torlify-book-field property="details.dedication"></torlify-book-field>
+                <torlify-book-field property="details.acknowledgements"></torlify-book-field>
+                <torlify-book-field property="details.aboutTheAuthor"></torlify-book-field>
+                <torlify-book-field property="details.includeChapterTitles" type="boolean"></torlify-book-field>
               </div>
             </torlify-modal>
             <torlify-modal id="${Modal.enum.configure}-modal">
               <div slot="body">
                 <h2>Configure</h2>
                 <h3>Text Model Configuration</h3>
-                <label for="model-text-name">Name</label>
-                <input
-                  type="text"
-                  id="model-text-name"
-                  .value="${this.bookContext.book.model.text.name}"
-                  @input=${this.save("model.text.name")}
-                />
-                <label for="model-text-model-name">Model Name</label>
-                <input
-                  type="text"
-                  id="model-text-model-name"
-                  .value="${this.bookContext.book.model.text.modelName}"
-                  @input=${this.save("model.text.modelName")}
-                />
-                <label for="model-text-endpoint">Endpoint</label>
-                <input
-                  type="text"
-                  id="model-text-endpoint"
-                  .value="${this.bookContext.book.model.text.endpoint}"
-                  @input=${this.save("model.text.endpoint")}
-                />
-                <label for="model-text-cost-input">Input Token Cost</label>
-                <input
-                  type="text"
-                  id="model-text-cost-input"
-                  .value="${this.bookContext.book.model.text.cost
-                    .inputTokenCost}"
-                  @input=${this.save(
-                    "model.text.cost.inputTokenCost",
-                    "number",
-                  )}
-                />
-                <label for="model-text-cost-output">Output Token Cost</label>
-                <input
-                  type="text"
-                  id="model-text-cost-output"
-                  .value="${this.bookContext.book.model.text.cost
-                    .outputTokenCost}"
-                  @input=${this.save(
-                    "model.text.cost.outputTokenCost",
-                    "number",
-                  )}
-                />
+                <torlify-book-field property="model.text.name"></torlify-book-field>
+                <torlify-book-field property="model.text.modelName"></torlify-book-field>
+                <torlify-book-field property="model.text.endpoint"></torlify-book-field>
+                <torlify-book-field property="model.text.cost.inputTokenCost" type="number"></torlify-book-field>
+                <torlify-book-field property="model.text.cost.outputTokenCost" type="number"></torlify-book-field>
                 <h3>Audio Model Configuration</h3>
-                <label for="model-audio-name">Name</label>
-                <input
-                  type="text"
-                  id="model-audio-name"
-                  .value="${this.bookContext.book.model.audio.name}"
-                  @input=${this.save("model.audio.name")}
-                />
-                <label for="model-audio-model-name">Model Name</label>
-                <input
-                  type="text"
-                  id="model-audio-model-name"
-                  .value="${this.bookContext.book.model.audio.modelName}"
-                  @input=${this.save("model.audio.modelName")}
-                />
-                <label for="model-audio-endpoint">Endpoint</label>
-                <input
-                  type="text"
-                  id="model-audio-endpoint"
-                  .value="${this.bookContext.book.model.audio.endpoint}"
-                  @input=${this.save("model.audio.endpoint")}
-                />
-                <label for="model-audio-cost-input">Input Token Cost</label>
-                <input
-                  type="text"
-                  id="model-audio-cost-input"
-                  .value="${this.bookContext.book.model.audio.cost
-                    .inputTokenCost}"
-                  @input=${this.save(
-                    "model.audio.cost.inputTokenCost",
-                    "number",
-                  )}
-                />
-                <label for="model-audio-cost-output">Output Token Cost</label>
-                <input
-                  type="text"
-                  id="model-audio-cost-output"
-                  .value="${this.bookContext.book.model.audio.cost
-                    .outputTokenCost}"
-                  @input=${this.save(
-                    "model.audio.cost.outputTokenCost",
-                    "number",
-                  )}
-                />
+                <torlify-book-field property="model.audio.name"></torlify-book-field>
+                <torlify-book-field property="model.audio.modelName"></torlify-book-field>
+                <torlify-book-field property="model.audio.endpoint"></torlify-book-field>
+                <torlify-book-field property="model.audio.cost.inputTokenCost" type="number"></torlify-book-field>
+                <torlify-book-field property="model.audio.cost.outputTokenCost" type="number"></torlify-book-field>
               </div>
             </torlify-modal>
             <torlify-modal id="${Modal.enum.delete}-modal">
@@ -213,11 +134,7 @@ export class TorlifyBookEditor extends LitElement {
               </div>
             </torlify-modal>
             <div class="secondary-surface">
-              <torlify-auto-textarea
-                cssClass="h2"
-                .value="${this.bookContext.book.title}"
-                @input="${this.save("title")}"
-              ></torlify-auto-textarea>
+              <torlify-book-field property="title" type="textarea" heading="h2"></torlify-book-field>
               <div class="stats">
                 <span>${formatNumber(this.tokens)} tokens</span>
                 <span>$${formatNumber(this.cost, { decimals: 2 })}</span>
@@ -226,20 +143,11 @@ export class TorlifyBookEditor extends LitElement {
             </div>
             <div class="secondary-surface">
               <h4>Overview</h4>
-              <torlify-auto-textarea
-                .value="${this.bookContext.book.overview}"
-                @input="${this.save("overview")}"
-              ></torlify-auto-textarea>
+              <torlify-book-field property="overview" type="textarea"></torlify-book-field>
               <h4>Edit Instructions</h4>
-              <torlify-auto-textarea
-                .value="${this.bookContext.book.instructions.edit}"
-                @input="${this.save("instructions.edit")}"
-              ></torlify-auto-textarea>
+              <torlify-book-field property="instructions.edit" type="textarea"></torlify-book-field>
               <h4>Audio Instructions</h4>
-              <torlify-auto-textarea
-                .value="${this.bookContext.book.instructions.audio}"
-                @input="${this.save("instructions.audio")}"
-              ></torlify-auto-textarea>
+              <torlify-book-field property="instructions.audio" type="textarea"></torlify-book-field>
             </div>
           `
         : html`<p>Loading book...</p>`}
@@ -324,31 +232,6 @@ export class TorlifyBookEditor extends LitElement {
       dispatch(this, NavigationEvent({ path: "/" }));
     }
   };
-
-  save(
-    prop: string,
-    type: "text" | "number" = "text",
-  ): (event: CustomEvent | InputEvent) => void {
-    return (event: CustomEvent | InputEvent): void => {
-      const isAutoTextarea =
-        (event.target as HTMLElement).tagName.toLocaleLowerCase() ===
-        AUTO_TEXTAREA_TAG_NAME;
-      const value = isAutoTextarea
-        ? (event as CustomEvent).detail.value
-        : (event.target as HTMLInputElement).value;
-      if (value === undefined) return;
-      const finalValue = type === "number" ? Number(value) : value;
-      const book = buildNestedObject(BookPartial, prop, finalValue);
-      this.bookContext.book = mergeBookProperties(this.bookContext.book!, book);
-      this.debounceHandler.debounce(() => {
-        updateBookService.fetch({
-          book,
-          name: this.bookContext.book!.id,
-        });
-        dispatch(this, SaveEvent());
-      });
-    };
-  }
 
   get tokens(): number {
     const tokenCounts = [
