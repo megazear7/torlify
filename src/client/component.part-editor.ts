@@ -16,13 +16,18 @@ import { dispatch } from "./util.events.js";
 import { updatePartService } from "../shared/service.update-part.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
 import { DebounceHandler } from "./util.debounce.js";
-import "./component.auto-textarea.js";
-import "./component.bar.js";
 import { SaveEvent } from "./event.save.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { getChapterAudioService } from "../shared/service.get-part-audio.js";
+import z from "zod";
+import "./component.auto-textarea.js";
+import "./component.bar.js";
+import { TorlifyModal } from "./component.modal.js";
+
+export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
+export type Modal = z.infer<typeof Modal>;
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
@@ -66,26 +71,74 @@ export class TorlifyPartEditor extends LitElement {
               message="${this.loadingMessage}"
             ></torlify-loading-overlay>
             <torlify-bar>
-              <button @click=${this.generateText()} class="standard-button">
-                ${this.msgText}
-              </button>
-              <button
-                @click=${(): void =>
-                  dispatch(this, WarningEvent("Not implemented"))}
-                class="standard-button"
-              >
-                Edit Part
-              </button>
-              <button @click=${this.generateAudio} class="standard-button">
-                ${this.msgAudio}
-              </button>
-              <button @click=${this.removePart()} class="standard-button">
-                Remove Part
-              </button>
-              <button @click=${this.addPart()} class="standard-button">
-                Add Part
-              </button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.download)}>Download</button>
             </torlify-bar>
+            <torlify-bar>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.move)}>Move</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.add)}>Add</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.delete)}>Delete</button>
+            </torlify-bar>
+            <torlify-modal id="${Modal.enum.generate}-modal">
+              <div slot="body">
+                <h3>Generate Part</h3>
+                <p>Generate the part?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.generateText()}">Text</button>
+                  <button class="standard-button" @click="${this.generateAudio()}">Audio</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.edit}-modal">
+              <div slot="body">
+                <h3>Edit Part</h3>
+                <p>Edit the part based on your instructions</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.edit)}">Edit</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.download}-modal">
+              <div slot="body">
+                <h3>Download Part</h3>
+                <p>Download the part text or audio.</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Text</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Audio</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.move}-modal">
+              <div slot="body">
+                <h3>Move Part</h3>
+                <p>Move this part before the previous part or after the next part?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">Before previous</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">After next</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.add}-modal">
+              <div slot="body">
+                <h3>Add Part</h3>
+                <p>Add a new part before the previous part or after the next part?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">Before previous</button>
+                  <button class="standard-button" @click="${this.addPart()}">After next</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.delete}-modal">
+              <div slot="body">
+                <h3>Delete Part</h3>
+                <p>Are you sure you want to delete this part?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.removePart()}">Delete</button>
+                  <button class="standard-button" @click="${this.closeModal(Modal.enum.delete)}">Cancel</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
             <div class="secondary-surface">
               ${this.partContext.part.audio
                 ? html`
@@ -116,27 +169,52 @@ export class TorlifyPartEditor extends LitElement {
     `;
   }
 
-  generateAudio = async (): Promise<void> => {
-    try {
-      const book = this.bookContext.book?.id;
-      const chapter = String(this.chapterContext.chapter?.number);
-      const part = String(this.partContext.part?.number);
-      if (!book || !chapter || !part) {
-        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
-      } else {
-        this.loading = true;
-        this.loadingMessage = `Generating audio for part ${part} of chapter ${chapter}`;
-        await generatePartAudioService.fetch({ book, chapter, part });
+  openModal(name: Modal): () => void {
+    return (): void => {
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      modal.open();
+    };
+  }
+
+  closeModal(name: Modal): () => void {
+    return (): void => {
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      modal.close();
+    };
+  }
+
+  notImplemented(name: Modal): () => void {
+    return (): void => {
+      this.closeModal(name)();
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
+    };
+  }
+
+  generateAudio(): () => void {
+    return async (): Promise<void> => {
+      this.closeModal(Modal.enum.generate)();
+      try {
+        const book = this.bookContext.book?.id;
+        const chapter = String(this.chapterContext.chapter?.number);
+        const part = String(this.partContext.part?.number);
+        if (!book || !chapter || !part) {
+          dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        } else {
+          this.loading = true;
+          this.loadingMessage = `Generating audio for part ${part} of chapter ${chapter}`;
+          await generatePartAudioService.fetch({ book, chapter, part });
+        }
+      } catch {
+        dispatch(this, WarningEvent("Failed to generate audio"));
+      } finally {
+        this.loading = false;
       }
-    } catch {
-      dispatch(this, WarningEvent("Failed to generate audio"));
-    } finally {
-      this.loading = false;
-    }
-  };
+    };
+  }
 
   generateText(): () => void {
     return async (): Promise<void> => {
+      this.closeModal(Modal.enum.generate)();
       const book = this.bookContext.book?.id;
       const chapter = String(this.chapterContext.chapter?.number);
       const part = String(this.partContext.part?.number);
@@ -185,6 +263,7 @@ export class TorlifyPartEditor extends LitElement {
 
   removePart(): () => void {
     return async (): Promise<void> => {
+      this.closeModal(Modal.enum.delete)();
       const book = this.bookContext.book;
       const chapter = this.chapterContext.chapter;
       const part = this.partContext.part;
@@ -252,6 +331,7 @@ export class TorlifyPartEditor extends LitElement {
 
   addPart(): () => void {
     return async (): Promise<void> => {
+      this.closeModal(Modal.enum.add)();
       const book = this.bookContext.book;
       const chapter = this.chapterContext.chapter;
       const part = this.partContext.part;

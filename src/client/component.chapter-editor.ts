@@ -96,7 +96,7 @@ export class TorlifyChapterEditor extends LitElement {
             </torlify-modal>
             <torlify-modal id="${Modal.enum.edit}-modal">
               <div slot="body">
-                <h3>Edit</h3>
+                <h3>Edit Chapter</h3>
                 <p>Edit the entire chapter based on your instructions</p>
                 <torlify-bar>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.edit)}">Edit</button>
@@ -105,7 +105,7 @@ export class TorlifyChapterEditor extends LitElement {
             </torlify-modal>
             <torlify-modal id="${Modal.enum.download}-modal">
               <div slot="body">
-                <h3>Download</h3>
+                <h3>Download Chapter</h3>
                 <p>Download the complete chapter outline, text, or audio.</p>
                 <torlify-bar>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
