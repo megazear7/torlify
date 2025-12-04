@@ -207,8 +207,8 @@ export class TorlifyBookEditor extends LitElement {
                 <h3>Delete Book</h3>
                 <p>Are you sure you want to delete this book?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.confirmDeleteBook}">Yes</button>
-                  <button class="standard-button" @click=${this.closeModal(Modal.enum.delete)}>No</button>
+                  <button class="standard-button" @click="${this.confirmDeleteBook}">Delete</button>
+                  <button class="standard-button" @click=${this.closeModal(Modal.enum.delete)}>Cancel</button>
                 </torlify-bar>
               </div>
             </torlify-modal>

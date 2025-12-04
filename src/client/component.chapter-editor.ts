@@ -16,10 +16,15 @@ import { SaveEvent } from "./event.save.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
 import { BookId, Chapter } from "../shared/type.book.js";
 import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
-import "./component.auto-textarea.js";
-import "./component.bar.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
+import z from "zod";
+import "./component.auto-textarea.js";
+import "./component.bar.js";
+import { TorlifyModal } from "./component.modal.js";
+
+export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
+export type Modal = z.infer<typeof Modal>;
 
 @customElement("torlify-chapter-editor")
 export class TorlifyChapterEditor extends LitElement {
@@ -68,6 +73,77 @@ export class TorlifyChapterEditor extends LitElement {
                 @input="${this.updateProperty("title")}"
               ></torlify-auto-textarea>
             </div>
+            <torlify-bar>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.download)}>Download</button>
+            </torlify-bar>
+            <torlify-bar>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.move)}>Move</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.add)}>Add</button>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.delete)}>Delete</button>
+            </torlify-bar>
+            <torlify-modal id="${Modal.enum.generate}-modal">
+              <div slot="body">
+                <h3>Generate Chapter</h3>
+                <p>Generate for the entire chapter?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Outline</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Text</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Audio</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.edit}-modal">
+              <div slot="body">
+                <h3>Edit</h3>
+                <p>Edit the entire chapter based on your instructions</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.edit)}">Edit</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.download}-modal">
+              <div slot="body">
+                <h3>Download</h3>
+                <p>Download the complete chapter outline, text, or audio.</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Text</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Audio</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.move}-modal">
+              <div slot="body">
+                <h3>Move Chapter</h3>
+                <p>Move this chapter before the previous chapter or after the next chapter?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">Before previous</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">After next</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.add}-modal">
+              <div slot="body">
+                <h3>Add Chapter</h3>
+                <p>Add a new chapter before the previous chapter or after the next chapter?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">Before previous</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">After next</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.delete}-modal">
+              <div slot="body">
+                <h3>Delete Chapter</h3>
+                <p>Are you sure you want to delete this chapter?</p>
+                <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Delete</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Cancel</button>
+                </torlify-bar>
+              </div>
+            </torlify-modal>
             <div class="secondary-surface">
               <h4>When</h4>
               <torlify-auto-textarea .value="${this.chapterContext.chapter.when}" @input="${this.updateProperty("when")}"></torlify-auto-textarea>
@@ -110,6 +186,27 @@ export class TorlifyChapterEditor extends LitElement {
           `
         : html`<p>Loading chapter...</p>`}
     `;
+  }
+
+  openModal(name: Modal): () => void {
+    return (): void => {
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      modal.open();
+    };
+  }
+
+  closeModal(name: Modal): () => void {
+    return (): void => {
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      modal.close();
+    };
+  }
+
+  notImplemented(name: Modal): () => void {
+    return (): void => {
+      this.closeModal(name)();
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
+    };
   }
 
   generateChapterOutline() {
