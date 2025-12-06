@@ -171,19 +171,11 @@ export const checkIcon = html`
 export const replaceIcon = html`
   <?xml version="1.0" encoding="UTF-8"?>
   <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 800">
-    <defs>
-      <style>
-        .st0 {
-          fill: #1f2328;
-          fill-rule: evenodd;
-        }
-      </style>
-    </defs>
     <path
-      class="st0"
+      fill="currentColor"
       d="M583.33,227.99v-55.66h50v150h-147.13v-50h67.48c-32.73-50.19-89.36-83.33-153.69-83.33-101.25,0-183.33,82.08-183.33,183.33h-50c0-128.87,104.47-233.33,233.33-233.33,74.39,0,140.62,34.81,183.33,88.99Z" />
     <path
-      class="st0"
+      fill="currentColor"
       d="M216.67,516.68v55.66h-50v-150h147.13v50h-67.48c32.73,50.19,89.36,83.33,153.69,83.33,101.25,0,183.33-82.08,183.33-183.33h50c0,128.87-104.47,233.33-233.33,233.33-74.39,0-140.62-34.81-183.33-88.99Z" />
   </svg>
 `;

@@ -26,6 +26,7 @@ export class TorlifyCheckbox extends LitElement {
         padding: var(--size-medium);
         transition: var(--transition-all);
         background-color: #00000033;
+        color: white;
       }
 
       .checkbox-label:hover {

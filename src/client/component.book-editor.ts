@@ -21,7 +21,7 @@ import "./component.auto-textarea.js";
 import "./component.bar.js";
 import "./component.book-field.js";
 import "./component.checkbox.js";
-import { replaceIcon } from "./icons.js";
+import { aiIcon, replaceIcon } from "./icons.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -79,12 +79,10 @@ export class TorlifyBookEditor extends LitElement {
                 <torlify-checkbox
                   off="Generate Missing Content"
                   on="Regenerate All Content"
+                  .offIcon="${aiIcon}"
+                  .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
-                  @change="${(e: Event) => {
-                    const target = e.target as HTMLInputElement;
-                    this.regenerateChecked = target.checked;
-                  }}"
-                  .onIcon="${replaceIcon}"></torlify-checkbox>
+                  @change="${this.handleRegenerateCheckedChange}"></torlify-checkbox>
                 ${this.regenerateChecked
                   ? html`
                       <p>
@@ -192,6 +190,11 @@ export class TorlifyBookEditor extends LitElement {
             <p>Loading book...</p>
           `}
     `;
+  }
+
+  handleRegenerateCheckedChange(e: Event): void {
+    const target = e.target as HTMLInputElement;
+    this.regenerateChecked = target.checked;
   }
 
   downloadOutline(): () => void {

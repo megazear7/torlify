@@ -74,12 +74,11 @@ export class TorlifyBookField extends LitElement {
 
   boolean(): TemplateResult {
     return html`
-      <div class="checkbox-group">
-        <label class="checkbox-label" for="${this.propertyId}">
-          <input type="checkbox" id="${this.propertyId}" .checked="${!!this.value}" @change=${this.save()} />
-          <span class="checkbox-text">${this.labelWithFallback()}</span>
-        </label>
-      </div>
+      <torlify-checkbox
+        .checked="${!!this.value}"
+        on=${this.labelWithFallback()}
+        off=${this.labelWithFallback()}
+        @change=${this.save()}></torlify-checkbox>
     `;
   }
 

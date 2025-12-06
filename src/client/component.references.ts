@@ -254,6 +254,10 @@ export class TorlifyReferences extends LitElement {
         width: 100%;
       }
 
+      torlify-checkbox {
+        display: inline-block;
+      }
+
       @keyframes bounce {
         0%,
         20%,
@@ -398,13 +402,11 @@ export class TorlifyReferences extends LitElement {
           <div class="checkbox-group">
             ${ReferenceUse.options.map(
               (option) => html`
-                <label class="checkbox-label">
-                  <input
-                    type="checkbox"
-                    .checked="${this.whenToUse.includes(option)}"
-                    @change="${(): void => this.toggleWhenToUse(option)}" />
-                  <span class="checkbox-text">${option}</span>
-                </label>
+                <torlify-checkbox
+                  .checked="${this.whenToUse.includes(option)}"
+                  on=${option}
+                  off=${option}
+                  @change=${(): void => this.toggleWhenToUse(option)}></torlify-checkbox>
               `,
             )}
           </div>
