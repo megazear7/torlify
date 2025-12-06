@@ -1,6 +1,6 @@
 # Torlify
 
-A book maker
+Torlify is a comprehensive book creation application that uses models to streamline the writing and publishing process. It integrates text generation models for creating the outline and writing the book as well as audio models for narration, enabling authors to produce both written books and audio books. The web-based interface allows users to create and edit books, chapters, parts, and characters, while supporting reference uploads. Features include automatic chapter outlining, part generation, and export to DOCX and MP3 formats. Built with Node.js, Express, and Lit, Torlify requires configuration of OpenAI-compatible text and audio model providers via API keys for full functionality.
 
 ## Prerequisites
 

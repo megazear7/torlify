@@ -204,8 +204,14 @@ export class TorlifyBookEditor extends LitElement {
 
   downloadAudio(): () => void {
     return async (): Promise<void> => {
-      await downloadBookAudioService.fetch({ book: this.bookContext.book!.id });
-      this.closeModal(Modal.enum.download)();
+      try {
+        await downloadBookAudioService.fetch({ book: this.bookContext.book!.id });
+      } catch (error) {
+        console.error("Error downloading audio:", error);
+        dispatch(this, WarningEvent("Failed to download audio"));
+      } finally {
+        this.closeModal(Modal.enum.download)();
+      }
     };
   }
 
