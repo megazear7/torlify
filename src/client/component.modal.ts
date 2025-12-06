@@ -33,8 +33,7 @@ export class TorlifyModal extends LitElement {
         background: var(--color-secondary-surface);
         border-radius: var(--radius-large);
         box-shadow: var(--shadow-large);
-        min-width: 30vw;
-        max-width: 50vw;
+        width: 40vw;
         max-height: 80vh;
         overflow-y: scroll;
         margin: 100px auto;

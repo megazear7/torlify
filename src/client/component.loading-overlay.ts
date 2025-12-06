@@ -193,11 +193,7 @@ export class TorlifyLoadingOverlay extends LitElement {
         </div>
         <div class="loading-snippet">
           <span class="loading-snippet-text">
-            ${this.loadingSnippet.map(
-              (letter) => html`
-                ${letter}
-              `,
-            )}
+            ${this.loadingSnippet}
           </span>
         </div>
       </div>

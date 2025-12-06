@@ -77,6 +77,7 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Generate Part</h3>
                 <p>Generate the part?</p>
                 <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
                   <button class="standard-button" @click="${this.generateText()}">Text</button>
                   <button class="standard-button" @click="${this.generateAudio()}">Audio</button>
                 </torlify-bar>
@@ -96,6 +97,7 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Download Part</h3>
                 <p>Download the part text or audio.</p>
                 <torlify-bar>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Text</button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Audio</button>
                 </torlify-bar>

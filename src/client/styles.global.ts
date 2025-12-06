@@ -170,37 +170,4 @@ export const globalStyles = css`
     max-height: 50vh;
     overflow-y: auto;
   }
-
-  .checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--size-small);
-  }
-
-  .checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: var(--size-small);
-    cursor: pointer;
-    border-radius: var(--radius-small);
-  }
-
-  .checkbox-text {
-    text-transform: capitalize;
-    padding: var(--size-medium);
-    border-radius: var(--radius-medium);
-    transition: var(--transition-all);
-  }
-
-  .checkbox-text:hover {
-    background: var(--color-2);
-  }
-
-  input[type="checkbox"] {
-    display: none;
-  }
-
-  input[type="checkbox"]:checked ~ .checkbox-text {
-    background-color: var(--color-1);
-  }
 `;
