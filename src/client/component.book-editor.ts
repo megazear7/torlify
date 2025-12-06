@@ -91,7 +91,7 @@ export class TorlifyBookEditor extends LitElement {
                 <h3>Download</h3>
                 <p>Download the complete book outline, text, or audio.</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
+                  <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
                   <button class="standard-button" @click="${this.downloadBook()}">Text</button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Audio</button>
                 </torlify-bar>
@@ -156,6 +156,34 @@ export class TorlifyBookEditor extends LitElement {
           `
         : html`<p>Loading book...</p>`}
     `;
+  }
+
+  downloadOutline(): () => void {
+    return async (): Promise<void> => {
+      const outlines: string[] = [];
+      for (const chapter of this.bookContext.book?.chapters || []) {
+        outlines.push(`# Chapter ${chapter.number}`);
+        outlines.push('');
+        for (const [index, partDescription] of chapter.outline.entries()) {
+          outlines.push(`## Part ${index + 1}`);
+          outlines.push(partDescription || "(No part description)");
+          outlines.push('');
+        }
+        if (chapter.outline.length === 0) {
+          outlines.push("(No chapter outline available)");
+          outlines.push('');
+        }
+      }
+      const text = outlines.join('\n');
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${this.bookContext.book?.title || 'book'}-outline.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+      this.closeModal(Modal.enum.download)();
+    };
   }
 
   downloadBook(): () => void {
