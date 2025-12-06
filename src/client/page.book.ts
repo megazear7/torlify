@@ -16,11 +16,10 @@ export class TorlifyBookPage extends TorlifyBookProvider {
   static override styles = [globalStyles];
 
   override render(): TemplateResult {
-    if (
-      this.bookContext.status === LoadingStatus.enum.error &&
-      !this.bookContext.book
-    ) {
-      return html`<p>Book not found.</p>`;
+    if (this.bookContext.status === LoadingStatus.enum.error && !this.bookContext.book) {
+      return html`
+        <p>Book not found.</p>
+      `;
     }
 
     return html`

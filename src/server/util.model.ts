@@ -9,26 +9,16 @@ export async function modelNames(): Promise<ModelTypeName[]> {
     .map((key) => ModelTypeName.parse(key.replace(MODEL_ENV_POSTFIX, "")));
 }
 
-export async function loadTextClient(
-  modelConfigs: ModelConfigs,
-): Promise<OpenAI> {
+export async function loadTextClient(modelConfigs: ModelConfigs): Promise<OpenAI> {
   return new OpenAI({
-    apiKey:
-      process.env[
-        `${modelConfigs.text.name.toUpperCase()}${MODEL_ENV_POSTFIX}`
-      ],
+    apiKey: process.env[`${modelConfigs.text.name.toUpperCase()}${MODEL_ENV_POSTFIX}`],
     baseURL: modelConfigs.text.endpoint,
   });
 }
 
-export async function loadAudioClient(
-  modelConfigs: ModelConfigs,
-): Promise<OpenAI> {
+export async function loadAudioClient(modelConfigs: ModelConfigs): Promise<OpenAI> {
   return new OpenAI({
-    apiKey:
-      process.env[
-        `${modelConfigs.audio.name.toUpperCase()}${MODEL_ENV_POSTFIX}`
-      ],
+    apiKey: process.env[`${modelConfigs.audio.name.toUpperCase()}${MODEL_ENV_POSTFIX}`],
     baseURL: modelConfigs.audio.endpoint,
   });
 }

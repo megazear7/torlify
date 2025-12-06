@@ -1,12 +1,7 @@
 import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query, queryAll } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import {
-  bookContext,
-  BookContext,
-  BooksContext,
-  booksContext,
-} from "./context.book.js";
+import { bookContext, BookContext, BooksContext, booksContext } from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import "./component.modal.js";
@@ -154,55 +149,40 @@ export class TorlifyBookList extends LitElement {
           <torlify-modal
             id="create-book-modal"
             @ModelSubmit="${this.handleGenerateBook}"
-            @ModelOpening=${this.handleOpenModal}
-          >
+            @ModelOpening=${this.handleOpenModal}>
             <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
               <h2>Add Book</h2>
               <torlify-auto-textarea
                 .value="${this.generateBookInstructions}"
                 @input="${this.handleGenerateBookInstructions}"
-                placeholder="${this.sampleDescription}"
-              ></torlify-auto-textarea>
+                placeholder="${this.sampleDescription}"></torlify-auto-textarea>
               <torlify-number-slider
                 min="${MINIMUM_NUMBER_OF_CHAPTERS}"
                 max="${MAXIMUM_NUMBER_OF_CHAPTERS}"
                 label="Number of Chapters"
                 .value=${this.generateBookNumberOfChapters}
-                @input="${this.handleGenerateBookNumberOfChapters}"
-              ></torlify-number-slider>
+                @input="${this.handleGenerateBookNumberOfChapters}"></torlify-number-slider>
               <torlify-bar>
-                <button
-                  class="standard-button"
-                  @click="${this.handleGenerateBook}"
-                >
-                  ${aiIcon} Generate
-                </button>
-                <button
-                  class="standard-button"
-                  @click="${this.handleCreateBook}"
-                >
-                  Create Empty
-                </button>
+                <button class="standard-button" @click="${this.handleGenerateBook}">${aiIcon} Generate</button>
+                <button class="standard-button" @click="${this.handleCreateBook}">Create Empty</button>
               </torlify-bar>
             </div>
           </torlify-modal>
         </li>
         ${this.booksContext.books?.map(
           (book) => html`
-            <li
-              class="${this.bookContext.book?.id === book.id ? "active" : ""}"
-            >
+            <li class="${this.bookContext.book?.id === book.id ? "active" : ""}">
               <a href="/book/${book.id}">${book.title}</a>
             </li>
           `,
-        ) ?? html`<li>No books found</li>`}
+        ) ??
+        html`
+          <li>No books found</li>
+        `}
       </ul>
 
-      <torlify-loading-overlay
-        .visible="${this.loading}"
-        message="${this.loadingMessage}"
-      ></torlify-loading-overlay>
+      <torlify-loading-overlay .visible="${this.loading}" message="${this.loadingMessage}"></torlify-loading-overlay>
     `;
   }
 
@@ -216,9 +196,7 @@ export class TorlifyBookList extends LitElement {
     this.generateBookInstructions = target.value;
   };
 
-  private readonly handleGenerateBookNumberOfChapters = (
-    event: Event,
-  ): void => {
+  private readonly handleGenerateBookNumberOfChapters = (event: Event): void => {
     const target = event.target as HTMLInputElement;
     this.generateBookNumberOfChapters = Number(target.value);
   };

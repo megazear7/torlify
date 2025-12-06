@@ -17,10 +17,7 @@ export const ModelTypeConfig = z.object({
   endpoint: z.string().describe("The base URL for the model API"),
   modelName: z.string().describe("The specific model name to use"),
   voice: z.string().optional().describe("Voice name for audio models"),
-  deployment: z
-    .string()
-    .optional()
-    .describe("Azure deployment name (required for Azure models)"),
+  deployment: z.string().optional().describe("Azure deployment name (required for Azure models)"),
   cost: Cost,
   usage: Usage,
 });

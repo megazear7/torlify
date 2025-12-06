@@ -17,11 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 export async function registerUploadReference(router: Router): Promise<void> {
-  router.post(
-    uploadReferenceService.path,
-    upload.single("file"),
-    (_req, res) => {
-      res.json({ success: true });
-    },
-  );
+  router.post(uploadReferenceService.path, upload.single("file"), (_req, res) => {
+    res.json({ success: true });
+  });
 }

@@ -104,8 +104,7 @@ export class TorlifyNumberSlider extends LitElement {
             min="${this.min}"
             max="${this.max}"
             .value="${this.value.toString()}"
-            @input="${this.handleInput}"
-          />
+            @input="${this.handleInput}" />
           <span class="value-display">${this.value}</span>
         </div>
       </div>
@@ -115,8 +114,6 @@ export class TorlifyNumberSlider extends LitElement {
   private readonly handleInput = (event: Event): void => {
     const target = event.target as HTMLInputElement;
     this.value = Number(target.value);
-    this.dispatchEvent(
-      new CustomEvent("input", { detail: { value: this.value } }),
-    );
+    this.dispatchEvent(new CustomEvent("input", { detail: { value: this.value } }));
   };
 }

@@ -14,10 +14,7 @@ import "./component.characters.js";
 
 @customElement("torlify-chapter-page")
 export class TorlifyChapterPage extends TorlifyChapterProvider {
-  params = parseRouteParams(
-    "/book/:bookId/chapter/:chapterId",
-    window.location.pathname,
-  );
+  params = parseRouteParams("/book/:bookId/chapter/:chapterId", window.location.pathname);
 
   static override styles = [globalStyles];
 

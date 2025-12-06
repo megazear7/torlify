@@ -9,10 +9,7 @@ import { bookOverviewPrompt } from "./prompt.book-overview.js";
 import { ChatCompletionMessageParam } from "openai/resources.js";
 import { writtenChaptersPrompt } from "./prompt.written-chapters.js";
 
-export async function generateChapterOutline(
-  book: Book,
-  chapter: Chapter,
-): Promise<Chapter> {
+export async function generateChapterOutline(book: Book, chapter: Chapter): Promise<Chapter> {
   const messages: ChatCompletionMessageParam[] = [
     ...(await bookOverviewPrompt(book)),
     ...(await charactersPrompt(book)),
@@ -20,11 +17,7 @@ export async function generateChapterOutline(
     ...(await chapterDetailsPrompt(chapter)),
     ...(await makeChapterOutlinePrompt(chapter)),
   ];
-  chapter.outline = await submitBookPrompt<ChapterOutline>(
-    book,
-    messages,
-    ChapterOutline,
-  );
+  chapter.outline = await submitBookPrompt<ChapterOutline>(book, messages, ChapterOutline);
   chapter.parts = [];
   for (let i = 0; i < chapter.outline.length; i++) {
     chapter.parts.push({ number: i + 1, text: "" });

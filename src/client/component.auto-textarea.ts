@@ -73,8 +73,7 @@ export class TorlifyAutoTextarea extends LitElement {
         placeholder="${this.placeholder}"
         .value="${this.value}"
         @input="${this.handleInput}"
-        @change="${this.handleChange}"
-      ></textarea>
+        @change="${this.handleChange}"></textarea>
     `;
   }
 
@@ -87,17 +86,13 @@ export class TorlifyAutoTextarea extends LitElement {
     const target = event.target as HTMLTextAreaElement;
     this.value = target.value;
     this.adjustHeight();
-    this.dispatchEvent(
-      new CustomEvent("input", { detail: { value: this.value } }),
-    );
+    this.dispatchEvent(new CustomEvent("input", { detail: { value: this.value } }));
   }
 
   private handleChange(event: Event): void {
     const target = event.target as HTMLTextAreaElement;
     this.value = target.value;
-    this.dispatchEvent(
-      new CustomEvent("change", { detail: { value: this.value } }),
-    );
+    this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
   }
 
   adjustHeight(): void {

@@ -8,17 +8,9 @@ export const GetBookPathParameters = z.object({
 });
 export type GetBookPathParameters = z.infer<typeof GetBookPathParameters>;
 
-export class GetBookService extends AbstractService<
-  NoBodyParams,
-  GetBookPathParameters,
-  Book
-> {
+export class GetBookService extends AbstractService<NoBodyParams, GetBookPathParameters, Book> {
   readonly type = ServiceType.enum.json;
   readonly method = HttpMethod.enum.get;
   readonly path = "/api/book/:bookId";
 }
-export const getBookService = new GetBookService(
-  NoBodyParams,
-  GetBookPathParameters,
-  Book,
-);
+export const getBookService = new GetBookService(NoBodyParams, GetBookPathParameters, Book);

@@ -1,8 +1,4 @@
-import {
-  ChatCompletionCreateParamsNonStreaming,
-  ChatCompletionMessageParam,
-  CompletionUsage,
-} from "openai/resources";
+import { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, CompletionUsage } from "openai/resources";
 import z, { ZodType } from "zod";
 import { readAppConfig } from "./service.app-config.js";
 import { loadTextClient } from "./util.model.js";
@@ -77,10 +73,7 @@ export async function getCompletion<T>(
   }
 }
 
-export async function submitPrompt<T>(
-  messages: ChatCompletionMessageParam[],
-  zod?: ZodType<T>,
-): Promise<T> {
+export async function submitPrompt<T>(messages: ChatCompletionMessageParam[], zod?: ZodType<T>): Promise<T> {
   const app = await readAppConfig();
   const completionWithUsage = await getCompletion(messages, app.model, zod);
   return completionWithUsage.completion;
@@ -100,8 +93,7 @@ export async function submitBookPrompt<T>(
     book.model.text.usage.prompt_tokens += usage?.prompt_tokens || 0;
     if (usage && usage.completion_tokens && usage.prompt_tokens) {
       const addedCost =
-        usage.completion_tokens *
-          (book.model.text.cost.outputTokenCost / 1000000) +
+        usage.completion_tokens * (book.model.text.cost.outputTokenCost / 1000000) +
         usage.prompt_tokens * (book.model.text.cost.inputTokenCost / 1000000);
       console.log("Added cost: $" + addedCost.toFixed(2));
     } else {

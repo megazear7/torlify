@@ -14,10 +14,7 @@ import { mergeBookProperties } from "../shared/util.merge-book.js";
 
 @customElement("torlify-book-field")
 export class TorlifyBookField extends LitElement {
-  static override styles = [
-    globalStyles,
-    css``,
-  ];
+  static override styles = [globalStyles, css``];
 
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })
@@ -52,27 +49,17 @@ export class TorlifyBookField extends LitElement {
     }
   }
 
-  input() : TemplateResult {
+  input(): TemplateResult {
     return html`
       <label for="${this.propertyId}">${this.labelWithFallback()}</label>
-      <input
-        type="text"
-        id="${this.propertyId}"
-        .value="${this.value}"
-        @input=${this.save()}
-      />
+      <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
     `;
   }
 
-  number() : TemplateResult {
+  number(): TemplateResult {
     return html`
       <label for="${this.propertyId}">${this.labelWithFallback()}</label>
-      <input
-        type="number"
-        id="${this.propertyId}"
-        .value="${this.value}"
-        @input=${this.save()}
-      />
+      <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
     `;
   }
 
@@ -81,23 +68,18 @@ export class TorlifyBookField extends LitElement {
       <torlify-auto-textarea
         heading="${this.heading}"
         .value="${this.value}"
-        @input="${this.save()}"
-      ></torlify-auto-textarea>
+        @input="${this.save()}"></torlify-auto-textarea>
     `;
   }
 
   boolean(): TemplateResult {
     return html`
       <div class="checkbox-group">
-      <label class="checkbox-label" for="${this.propertyId}">
-        <input
-          type="checkbox"
-          id="${this.propertyId}"
-          .checked="${!!this.value}"
-          @change=${this.save()}
-        />
-        <span class="checkbox-text">${this.labelWithFallback()}</span>
-      </label>
+        <label class="checkbox-label" for="${this.propertyId}">
+          <input type="checkbox" id="${this.propertyId}" .checked="${!!this.value}" @change=${this.save()} />
+          <span class="checkbox-text">${this.labelWithFallback()}</span>
+        </label>
+      </div>
     `;
   }
 
@@ -123,6 +105,7 @@ export class TorlifyBookField extends LitElement {
     const book = this.bookContext.book;
     if (!book) return "";
     const properties = this.property.split(".");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let value: any = book;
     for (const prop of properties) {
       value = value ? value[prop] : undefined;

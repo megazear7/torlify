@@ -1,9 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources.js";
 import { NoPathParams, RequestOptions } from "../shared/main.service.js";
-import {
-  GenerateBookParameters,
-  generateBookService,
-} from "../shared/service.generate-book.js";
+import { GenerateBookParameters, generateBookService } from "../shared/service.generate-book.js";
 import { Book, BookStub } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { readAppConfig } from "./service.app-config.js";
@@ -13,18 +10,10 @@ import { submitPrompt } from "./util.submit-prompt.js";
 import { generateChapterOutline } from "./util.generate-chapter-outline.js";
 import { generateLoadingMessages } from "./util.generate-loading-messages.js";
 
-export class GenerateBookController extends AbstractController<
-  GenerateBookParameters,
-  NoPathParams,
-  Book
-> {
-  async handler({
-    bodyParams,
-  }: RequestOptions<GenerateBookParameters, NoPathParams>): Promise<Book> {
+export class GenerateBookController extends AbstractController<GenerateBookParameters, NoPathParams, Book> {
+  async handler({ bodyParams }: RequestOptions<GenerateBookParameters, NoPathParams>): Promise<Book> {
     const appConfig = await readAppConfig();
-    const messages: ChatCompletionMessageParam[] = [
-      ...(await generateBookPrompt(bodyParams)),
-    ];
+    const messages: ChatCompletionMessageParam[] = [...(await generateBookPrompt(bodyParams))];
     const bookStub: BookStub = await submitPrompt<BookStub>(messages, BookStub);
     const book: Book = {
       ...bookStub,
@@ -71,6 +60,4 @@ export class GenerateBookController extends AbstractController<
   }
 }
 
-export const generateBookController = new GenerateBookController(
-  generateBookService,
-);
+export const generateBookController = new GenerateBookController(generateBookService);

@@ -16,23 +16,16 @@ export class UpdateChapterController extends AbstractController<
   async handler({
     bodyParams,
     pathParams,
-  }: RequestOptions<
-    UpdateChapterBodyParameters,
-    UpdateChapterPathParameters
-  >): Promise<Chapter> {
+  }: RequestOptions<UpdateChapterBodyParameters, UpdateChapterPathParameters>): Promise<Chapter> {
     const existingBook = await getBook(pathParams.book);
     const updatedBook = {
       ...existingBook,
       chapters: existingBook.chapters.map((chapter) =>
-        chapter.number === bodyParams.chapter.number
-          ? { ...chapter, ...bodyParams.chapter }
-          : chapter,
+        chapter.number === bodyParams.chapter.number ? { ...chapter, ...bodyParams.chapter } : chapter,
       ),
     };
     await saveBook(updatedBook);
-    const chapter = updatedBook.chapters.find(
-      (chapter) => chapter.number === bodyParams.chapter.number,
-    );
+    const chapter = updatedBook.chapters.find((chapter) => chapter.number === bodyParams.chapter.number);
 
     if (!chapter) {
       throw new Error("Chapter not found after update");
@@ -42,6 +35,4 @@ export class UpdateChapterController extends AbstractController<
   }
 }
 
-export const updateChapterController = new UpdateChapterController(
-  updateChapterService,
-);
+export const updateChapterController = new UpdateChapterController(updateChapterService);

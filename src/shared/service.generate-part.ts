@@ -8,22 +8,12 @@ export const GeneratePartPathParameters = z.object({
   chapter: z.string(),
   part: z.string(),
 });
-export type GeneratePartPathParameters = z.infer<
-  typeof GeneratePartPathParameters
->;
+export type GeneratePartPathParameters = z.infer<typeof GeneratePartPathParameters>;
 
-export class GeneratePartService extends AbstractService<
-  NoBodyParams,
-  GeneratePartPathParameters,
-  ChapterPart
-> {
+export class GeneratePartService extends AbstractService<NoBodyParams, GeneratePartPathParameters, ChapterPart> {
   readonly type = ServiceType.enum.json;
   readonly method = HttpMethod.enum.post;
   readonly path = "/api/book/:book/chapter/:chapter/part/:part/generate";
 }
 
-export const generatePartService = new GeneratePartService(
-  NoBodyParams,
-  GeneratePartPathParameters,
-  ChapterPart,
-);
+export const generatePartService = new GeneratePartService(NoBodyParams, GeneratePartPathParameters, ChapterPart);

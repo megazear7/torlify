@@ -1,8 +1,5 @@
 import { NoBodyParams, RequestOptions } from "../shared/main.service.js";
-import {
-  GeneratePartAudioPathParameters,
-  generatePartAudioService,
-} from "../shared/service.generate-part-audio.js";
+import { GeneratePartAudioPathParameters, generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { Chapter, ChapterPart } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { getBook } from "./util.book.js";
@@ -14,17 +11,10 @@ export class GeneratePartAudioController extends AbstractController<
   GeneratePartAudioPathParameters,
   ChapterPart
 > {
-  async handler({
-    pathParams,
-  }: RequestOptions<
-    NoBodyParams,
-    GeneratePartAudioPathParameters
-  >): Promise<ChapterPart> {
+  async handler({ pathParams }: RequestOptions<NoBodyParams, GeneratePartAudioPathParameters>): Promise<ChapterPart> {
     const book = await getBook(pathParams.book);
     const partNumber = parseInt(pathParams.part);
-    const chapter = book.chapters.find(
-      (ch: Chapter) => ch.number === parseInt(pathParams.chapter),
-    );
+    const chapter = book.chapters.find((ch: Chapter) => ch.number === parseInt(pathParams.chapter));
     if (!chapter) {
       throw new RouteError(404, "Chapter not found");
     }
@@ -37,6 +27,4 @@ export class GeneratePartAudioController extends AbstractController<
   }
 }
 
-export const generatePartAudioController = new GeneratePartAudioController(
-  generatePartAudioService,
-);
+export const generatePartAudioController = new GeneratePartAudioController(generatePartAudioService);

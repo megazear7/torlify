@@ -57,9 +57,7 @@ export abstract class AbstractService<
 
   async fetch(params?: RequestBodyType | PathParams): Promise<ResponseContent> {
     if (Array.isArray(this.path)) {
-      throw new Error(
-        "Cannot fetch from multiple paths. Specify a single path.",
-      );
+      throw new Error("Cannot fetch from multiple paths. Specify a single path.");
     }
 
     const requestConfig: RequestInit = {
@@ -99,9 +97,7 @@ export abstract class AbstractService<
 
   renderPath(params: PathParams): string {
     if (Array.isArray(this.path)) {
-      throw new Error(
-        "Cannot render path from multiple paths. Specify a single path.",
-      );
+      throw new Error("Cannot render path from multiple paths. Specify a single path.");
     }
     return renderPathname(this.path, params);
   }

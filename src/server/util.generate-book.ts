@@ -6,13 +6,9 @@ import { readAppConfig } from "./service.app-config.js";
 import { saveBook } from "./util.book.js";
 import { GenerateBookParameters } from "../shared/service.generate-book.js";
 
-export const generateBook = async (
-  params: GenerateBookParameters,
-): Promise<Book> => {
+export const generateBook = async (params: GenerateBookParameters): Promise<Book> => {
   const appConfig = await readAppConfig();
-  const messages: ChatCompletionMessageParam[] = [
-    ...(await generateBookPrompt(params)),
-  ];
+  const messages: ChatCompletionMessageParam[] = [...(await generateBookPrompt(params))];
   const book: Book = await submitPrompt<Book>(messages, Book);
   book.model.text = appConfig.model.text;
   book.model.audio = appConfig.model.audio;

@@ -11,17 +11,9 @@ export const DeleteBookPathParameters = z.object({
 });
 export type DeleteBookPathParameters = z.infer<typeof DeleteBookPathParameters>;
 
-export class DeleteBookService extends AbstractService<
-  NoBodyParams,
-  DeleteBookPathParameters,
-  DeleteBookResponse
-> {
+export class DeleteBookService extends AbstractService<NoBodyParams, DeleteBookPathParameters, DeleteBookResponse> {
   readonly type = ServiceType.enum.json;
   readonly method = HttpMethod.enum.delete;
   readonly path = "/api/book/:bookId";
 }
-export const deleteBookService = new DeleteBookService(
-  NoBodyParams,
-  DeleteBookPathParameters,
-  DeleteBookResponse,
-);
+export const deleteBookService = new DeleteBookService(NoBodyParams, DeleteBookPathParameters, DeleteBookResponse);

@@ -1,11 +1,4 @@
-import {
-  Book,
-  BookId,
-  Chapter,
-  ChapterNumber,
-  ChapterPartNumber,
-  ChapterPart,
-} from "../shared/type.book.js";
+import { Book, BookId, Chapter, ChapterNumber, ChapterPartNumber, ChapterPart } from "../shared/type.book.js";
 import { getBook, saveBook } from "./util.book.js";
 import crypto from "crypto";
 import { promises as fs } from "fs";

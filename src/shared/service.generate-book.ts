@@ -8,25 +8,14 @@ export const MAXIMUM_NUMBER_OF_CHAPTERS = 30;
 
 export const GenerateBookParameters = z.object({
   instructions: z.string(),
-  numberOfChapters: z
-    .number()
-    .min(MINIMUM_NUMBER_OF_CHAPTERS)
-    .max(MAXIMUM_NUMBER_OF_CHAPTERS),
+  numberOfChapters: z.number().min(MINIMUM_NUMBER_OF_CHAPTERS).max(MAXIMUM_NUMBER_OF_CHAPTERS),
 });
 export type GenerateBookParameters = z.infer<typeof GenerateBookParameters>;
 
-export class GenerateBookService extends AbstractService<
-  GenerateBookParameters,
-  NoPathParams,
-  Book
-> {
+export class GenerateBookService extends AbstractService<GenerateBookParameters, NoPathParams, Book> {
   readonly type = ServiceType.enum.json;
   readonly method = HttpMethod.enum.post;
   readonly path = "/api/book/generate";
 }
 
-export const generateBookService = new GenerateBookService(
-  GenerateBookParameters,
-  NoPathParams,
-  Book,
-);
+export const generateBookService = new GenerateBookService(GenerateBookParameters, NoPathParams, Book);

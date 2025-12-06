@@ -1,17 +1,6 @@
 import { promises as fs } from "fs";
 import AdmZip from "adm-zip";
-import {
-  Document,
-  Packer,
-  Paragraph,
-  TextRun,
-  Table,
-  TableRow,
-  TableCell,
-  Footer,
-  PageNumber,
-  Bookmark,
-} from "docx";
+import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, Footer, PageNumber, Bookmark } from "docx";
 import { getBook } from "./util.book.js";
 
 export async function createDocxFile(bookId: string): Promise<Buffer> {
@@ -350,9 +339,7 @@ export async function createDocxFile(bookId: string): Promise<Buffer> {
           spacing: { after: 400, before: 2600 },
         }),
         ...chapter.parts.flatMap((part) => {
-          const lines = (part.text || "")
-            .split(/\n|\\n/)
-            .filter((line: string) => !!line.trim());
+          const lines = (part.text || "").split(/\n|\\n/).filter((line: string) => !!line.trim());
           return lines.map(
             (line) =>
               new Paragraph({
@@ -423,10 +410,7 @@ export async function createDocxFile(bookId: string): Promise<Buffer> {
   const settingsXml = zip.readAsText("word/settings.xml");
 
   // Enable different odd and even pages in settings
-  const modifiedSettingsXml = settingsXml.replace(
-    /(<w:settings[^>]*>)/,
-    "$1<w:evenAndOddHeaders/>",
-  );
+  const modifiedSettingsXml = settingsXml.replace(/(<w:settings[^>]*>)/, "$1<w:evenAndOddHeaders/>");
 
   zip.updateFile("word/settings.xml", Buffer.from(modifiedSettingsXml, "utf8"));
 

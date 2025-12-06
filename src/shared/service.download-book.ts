@@ -6,9 +6,7 @@ import { BookId } from "./type.book.js";
 export const DownloadBookPathParameters = z.object({
   book: BookId,
 });
-export type DownloadBookPathParameters = z.infer<
-  typeof DownloadBookPathParameters
->;
+export type DownloadBookPathParameters = z.infer<typeof DownloadBookPathParameters>;
 
 export const DownloadBookResponse = z.object({
   success: z.boolean(),
@@ -24,12 +22,10 @@ export class DownloadBookService extends AbstractService<
   readonly method = HttpMethod.enum.get;
   readonly path = "/api/book/:book/download.docx";
 
-  override async fetch(
-    params: DownloadBookPathParameters | NoBodyParams,
-  ): Promise<DownloadBookResponse> {
+  override async fetch(params: DownloadBookPathParameters | NoBodyParams): Promise<DownloadBookResponse> {
     const response = await fetch(`/api/book/${params.book}/download.docx`);
     if (!response.ok) {
-      throw new Error("Failed to generate DOCX");
+      throw new Error("Failed to download DOCX");
     }
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);

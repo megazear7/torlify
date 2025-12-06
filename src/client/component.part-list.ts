@@ -1,14 +1,7 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import {
-  bookContext,
-  BookContext,
-  chapterContext,
-  ChapterContext,
-  PartContext,
-  partContext,
-} from "./context.book.js";
+import { bookContext, BookContext, chapterContext, ChapterContext, PartContext, partContext } from "./context.book.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import { pillStyles } from "./styles.pill.js";
@@ -40,19 +33,18 @@ export class TorlifyPartList extends LitElement {
       <ul class="pill">
         ${this.chapterContext.chapter?.parts.map(
           (_, index) => html`
-            <li
-              class="${this.partContext.part?.number === index + 1
-                ? "active"
-                : ""}"
-            >
+            <li class="${this.partContext.part?.number === index + 1 ? "active" : ""}">
               <a
-                href="/book/${this.bookContext.book?.id}/chapter/${this
-                  .chapterContext.chapter?.number}/part/${index + 1}"
-                >Part ${index + 1}</a
-              >
+                href="/book/${this.bookContext.book?.id}/chapter/${this.chapterContext.chapter?.number}/part/${index +
+                1}">
+                Part ${index + 1}
+              </a>
             </li>
           `,
-        ) ?? html`<li>No parts found</li>`}
+        ) ??
+        html`
+          <li>No parts found</li>
+        `}
       </ul>
     `;
   }

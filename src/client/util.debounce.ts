@@ -1,7 +1,4 @@
-import {
-  STANDARD_DEBOUNCE_DURATION,
-  STANDARD_FORCE_DURATION,
-} from "../shared/util.time";
+import { STANDARD_DEBOUNCE_DURATION, STANDARD_FORCE_DURATION } from "../shared/util.time";
 
 export class DebounceHandler {
   private debounceDuration: number;
@@ -9,10 +6,7 @@ export class DebounceHandler {
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
   protected registrationTime?: number;
 
-  constructor(
-    debounceDuration: number = STANDARD_DEBOUNCE_DURATION,
-    forceDuration: number = STANDARD_FORCE_DURATION,
-  ) {
+  constructor(debounceDuration: number = STANDARD_DEBOUNCE_DURATION, forceDuration: number = STANDARD_FORCE_DURATION) {
     this.debounceDuration = debounceDuration;
     this.forceDuration = forceDuration;
   }
@@ -30,10 +24,6 @@ export class DebounceHandler {
   }
 
   forceExpired(): boolean {
-    return !!(
-      this.timeoutId &&
-      this.registrationTime &&
-      Date.now() - this.registrationTime > this.forceDuration
-    );
+    return !!(this.timeoutId && this.registrationTime && Date.now() - this.registrationTime > this.forceDuration);
   }
 }

@@ -196,28 +196,18 @@ export class TorlifyPronunciations extends LitElement {
       <div class="pronunciations-container">
         <div class="pronunciations-header">
           <h4>Pronunciations</h4>
-          <button class="add-button" @click="${this.addPronunciation}">
-            ${plusIcon} Add Pronunciation
-          </button>
+          <button class="add-button" @click="${this.addPronunciation}">${plusIcon} Add Pronunciation</button>
         </div>
 
         ${pronunciations.length === 0
           ? html`
-              <div class="empty-state">
-                No pronunciations added yet started.
-              </div>
+              <div class="empty-state">No pronunciations added yet started.</div>
             `
           : html`
               <div class="pronunciations-list">
                 ${pronunciations.map(
                   (pronunciation, index) => html`
-                    <div
-                      class="pronunciation-item ${this.removingIndices.includes(
-                        index,
-                      )
-                        ? "removing"
-                        : ""}"
-                    >
+                    <div class="pronunciation-item ${this.removingIndices.includes(index) ? "removing" : ""}">
                       <div class="pronunciation-inputs">
                         <div class="pronunciation-field">
                           <label class="pronunciation-label">Match Text</label>
@@ -227,37 +217,23 @@ export class TorlifyPronunciations extends LitElement {
                             placeholder="Word or phrase to replace"
                             .value="${pronunciation.match}"
                             @input="${(e: Event): void =>
-                              this.updatePronunciation(
-                                index,
-                                "match",
-                                (e.target as HTMLInputElement).value,
-                              )}"
-                          />
+                              this.updatePronunciation(index, "match", (e.target as HTMLInputElement).value)}" />
                         </div>
                         <div class="pronunciation-field">
-                          <label class="pronunciation-label"
-                            >Replace With</label
-                          >
+                          <label class="pronunciation-label">Replace With</label>
                           <input
                             class="pronunciation-input"
                             type="text"
                             placeholder="Pronunciation replacement"
                             .value="${pronunciation.replace}"
                             @input="${(e: Event): void =>
-                              this.updatePronunciation(
-                                index,
-                                "replace",
-                                (e.target as HTMLInputElement).value,
-                              )}"
-                          />
+                              this.updatePronunciation(index, "replace", (e.target as HTMLInputElement).value)}" />
                         </div>
                       </div>
                       <button
                         class="remove-button"
-                        @click="${async (): Promise<void> =>
-                          this.removePronunciation(index)}"
-                        title="Remove pronunciation"
-                      >
+                        @click="${async (): Promise<void> => this.removePronunciation(index)}"
+                        title="Remove pronunciation">
                         ${trashIcon}
                       </button>
                     </div>
@@ -271,10 +247,7 @@ export class TorlifyPronunciations extends LitElement {
 
   private addPronunciation(): void {
     const currentPronunciations = this.bookContext.book?.pronunciation || [];
-    const newPronunciations = [
-      ...currentPronunciations,
-      { match: "", replace: "" },
-    ];
+    const newPronunciations = [...currentPronunciations, { match: "", replace: "" }];
     this.bookContext.book!.pronunciation = newPronunciations;
     this.requestUpdate();
     this.debounceHandler.debounce(() => {
@@ -292,9 +265,7 @@ export class TorlifyPronunciations extends LitElement {
     await wait(350);
     this.removingIndices = this.removingIndices.filter((i) => i !== index);
     const currentPronunciations = this.bookContext.book?.pronunciation || [];
-    const newPronunciations = currentPronunciations.filter(
-      (_, i) => i !== index,
-    );
+    const newPronunciations = currentPronunciations.filter((_, i) => i !== index);
     this.bookContext.book = {
       ...this.bookContext.book!,
       pronunciation: newPronunciations,
@@ -308,11 +279,7 @@ export class TorlifyPronunciations extends LitElement {
     });
   }
 
-  private updatePronunciation(
-    index: number,
-    field: "match" | "replace",
-    value: string,
-  ): void {
+  private updatePronunciation(index: number, field: "match" | "replace", value: string): void {
     const currentPronunciations = this.bookContext.book?.pronunciation || [];
     const newPronunciations = currentPronunciations.map((pronunciation, i) =>
       i === index ? { ...pronunciation, [field]: value } : pronunciation,

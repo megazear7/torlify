@@ -26,11 +26,7 @@ export class TorlifyApp extends LitElement {
   currentRoute: RouteConfig | null = this.determineRouteName();
 
   @property({ type: String }) toastMessage = "";
-  @property({ type: String }) toastType:
-    | "error"
-    | "warning"
-    | "success"
-    | "info" = "info";
+  @property({ type: String }) toastType: "error" | "warning" | "success" | "info" = "info";
   @property({ type: Boolean }) toastVisible = false;
   @query("torlify-toast") toast!: TorlifyToast;
   @query("torlify-save-indicator") saveIndicator!: TorlifySaveIndicator;
@@ -66,18 +62,30 @@ export class TorlifyApp extends LitElement {
       ? ((): TemplateResult => {
           switch (this.currentRoute!.name) {
             case RouteName.enum.home:
-              return html`<torlify-home-page></torlify-home-page>`;
+              return html`
+                <torlify-home-page></torlify-home-page>
+              `;
             case RouteName.enum.book:
-              return html`<torlify-book-page></torlify-book-page>`;
+              return html`
+                <torlify-book-page></torlify-book-page>
+              `;
             case RouteName.enum.chapter:
-              return html`<torlify-chapter-page></torlify-chapter-page>`;
+              return html`
+                <torlify-chapter-page></torlify-chapter-page>
+              `;
             case RouteName.enum.part:
-              return html`<torlify-part-page></torlify-part-page>`;
+              return html`
+                <torlify-part-page></torlify-part-page>
+              `;
             default:
-              return html`<torlify-not-found-page></torlify-not-found-page>`;
+              return html`
+                <torlify-not-found-page></torlify-not-found-page>
+              `;
           }
         })()
-      : html`<torlify-not-found-page></torlify-not-found-page>`;
+      : html`
+          <torlify-not-found-page></torlify-not-found-page>
+        `;
 
     return html`
       ${pageContent}
@@ -85,8 +93,7 @@ export class TorlifyApp extends LitElement {
         .message="${this.toastMessage}"
         .type="${this.toastType}"
         .visible="${this.toastVisible}"
-        @close="${this.handleToastClose}"
-      ></torlify-toast>
+        @close="${this.handleToastClose}"></torlify-toast>
       <torlify-save-indicator></torlify-save-indicator>
     `;
   }

@@ -19,15 +19,9 @@ export abstract class TorlifyPartProvider extends TorlifyChapterProvider {
 
   override async load(): Promise<void> {
     await super.load();
-    const params = parseRouteParams(
-      "/book/:bookId/chapter/:chapterId/part/:partId",
-      window.location.pathname,
-      true,
-    );
+    const params = parseRouteParams("/book/:bookId/chapter/:chapterId/part/:partId", window.location.pathname, true);
     this.partContext = {
-      part:
-        this.chapterContext.chapter?.parts[Number(params.partId) - 1] ||
-        undefined,
+      part: this.chapterContext.chapter?.parts[Number(params.partId) - 1] || undefined,
       status: LoadingStatus.enum.success,
     };
   }

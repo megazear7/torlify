@@ -4,11 +4,7 @@ import { BookMinimalInfoList } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { listBooks } from "./util.book.js";
 
-export class ListBooksController extends AbstractController<
-  NoBodyParams,
-  NoPathParams,
-  BookMinimalInfoList
-> {
+export class ListBooksController extends AbstractController<NoBodyParams, NoPathParams, BookMinimalInfoList> {
   async handler(): Promise<BookMinimalInfoList> {
     return await listBooks();
   }

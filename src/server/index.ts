@@ -17,6 +17,4 @@ server.use(router);
 server.use(notFound);
 server.use(errorHandler);
 
-server.listen(env.APP_PORT, () =>
-  console.log(`Example app listening on port ${env.APP_PORT}`),
-);
+server.listen(env.APP_PORT, () => console.log(`Example app listening on port ${env.APP_PORT}`));

@@ -7,17 +7,13 @@ import { BookId } from "./type.book.js";
 export const UploadReferenceBodyParameters = z.object({
   file: z.any(),
 });
-export type UploadReferenceBodyParameters = z.infer<
-  typeof UploadReferenceBodyParameters
->;
+export type UploadReferenceBodyParameters = z.infer<typeof UploadReferenceBodyParameters>;
 
 export const UploadReferencePathParameters = z.object({
   book: BookId,
   filename: z.string(),
 });
-export type UploadReferencePathParameters = z.infer<
-  typeof UploadReferencePathParameters
->;
+export type UploadReferencePathParameters = z.infer<typeof UploadReferencePathParameters>;
 
 export const UploadReferenceResponse = z.object({
   success: z.boolean(),

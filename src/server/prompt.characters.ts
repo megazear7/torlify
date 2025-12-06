@@ -2,9 +2,7 @@ import { ChatCompletionMessageParam } from "openai/resources";
 import { Book } from "../shared/type.book.js";
 import { MessageType } from "../shared/type.model.js";
 
-export const charactersPrompt = async (
-  book: Book,
-): Promise<ChatCompletionMessageParam[]> => {
+export const charactersPrompt = async (book: Book): Promise<ChatCompletionMessageParam[]> => {
   return book.characters && book.characters.length > 0
     ? [
         {

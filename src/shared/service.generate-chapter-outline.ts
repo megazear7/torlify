@@ -7,9 +7,7 @@ export const GenerateChapterOutlinePathParameters = z.object({
   book: BookId,
   chapter: z.string(),
 });
-export type GenerateChapterOutlinePathParameters = z.infer<
-  typeof GenerateChapterOutlinePathParameters
->;
+export type GenerateChapterOutlinePathParameters = z.infer<typeof GenerateChapterOutlinePathParameters>;
 
 export class GenerateChapterOutlineService extends AbstractService<
   NoBodyParams,

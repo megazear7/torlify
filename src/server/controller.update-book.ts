@@ -9,18 +9,11 @@ import { mergeBookProperties } from "../shared/util.merge-book.js";
 import { AbstractController } from "./main.controller.js";
 import { getBook, saveBook } from "./util.book.js";
 
-export class UpdateBookController extends AbstractController<
-  UpdateBookBodyParameters,
-  UpdateBookPathParameters,
-  Book
-> {
+export class UpdateBookController extends AbstractController<UpdateBookBodyParameters, UpdateBookPathParameters, Book> {
   async handler({
     bodyParams,
     pathParams,
-  }: RequestOptions<
-    UpdateBookBodyParameters,
-    UpdateBookPathParameters
-  >): Promise<Book> {
+  }: RequestOptions<UpdateBookBodyParameters, UpdateBookPathParameters>): Promise<Book> {
     const existingBook = await getBook(pathParams.name);
     const updatedBook = mergeBookProperties(existingBook, bodyParams.book);
     await saveBook(updatedBook);

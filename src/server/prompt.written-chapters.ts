@@ -8,11 +8,7 @@ export const writtenChaptersPrompt = async (
 ): Promise<ChatCompletionMessageParam[]> => {
   const priorChapters = book.chapters.slice(0, chapterBeingWritten.number - 1);
   return priorChapters
-    .filter(
-      (chapter) =>
-        chapter.parts.length > 0 &&
-        chapter.number != chapterBeingWritten.number,
-    )
+    .filter((chapter) => chapter.parts.length > 0 && chapter.number != chapterBeingWritten.number)
     .map((chapter) => ({
       role: MessageType.enum.user,
       content: `

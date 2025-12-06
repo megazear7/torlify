@@ -13,19 +13,12 @@ export class GenerateChapterOutlineController extends AbstractController<
   GenerateChapterOutlinePathParameters,
   Chapter
 > {
-  async handler({
-    pathParams,
-  }: RequestOptions<
-    NoBodyParams,
-    GenerateChapterOutlinePathParameters
-  >): Promise<Chapter> {
+  async handler({ pathParams }: RequestOptions<NoBodyParams, GenerateChapterOutlinePathParameters>): Promise<Chapter> {
     const book = await getBook(pathParams.book);
     if (!book) {
       throw new Error("Book not found");
     }
-    const chapter = book.chapters.find(
-      (c) => c.number === parseInt(pathParams.chapter),
-    );
+    const chapter = book.chapters.find((c) => c.number === parseInt(pathParams.chapter));
     if (!chapter) {
       throw new Error("Chapter not found");
     }
@@ -33,5 +26,4 @@ export class GenerateChapterOutlineController extends AbstractController<
   }
 }
 
-export const generateChapterOutlineController =
-  new GenerateChapterOutlineController(generateChapterOutlineService);
+export const generateChapterOutlineController = new GenerateChapterOutlineController(generateChapterOutlineService);

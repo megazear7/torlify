@@ -84,9 +84,7 @@ export class TorlifyToast extends LitElement {
     return html`
       <div class="toast-content">
         <div>${this.message}</div>
-        <button class="close-button" @click="${this.handleClose}">
-          ${xIcon}
-        </button>
+        <button class="close-button" @click="${this.handleClose}">${xIcon}</button>
       </div>
     `;
   }

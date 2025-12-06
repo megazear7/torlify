@@ -8,9 +8,7 @@ export const GetChapterAudioPathParameters = z.object({
   chapter: z.string(),
   part: z.string(),
 });
-export type GetChapterAudioPathParameters = z.infer<
-  typeof GetChapterAudioPathParameters
->;
+export type GetChapterAudioPathParameters = z.infer<typeof GetChapterAudioPathParameters>;
 
 export const GetChapterAudioResponse = z.object({
   success: z.boolean(),
@@ -26,13 +24,9 @@ export class GetChapterAudioService extends AbstractService<
   readonly method = HttpMethod.enum.get;
   readonly path = "/api/book/:book/chapter/:chapter/part/:part/audio";
 
-  override async fetch(
-    params: GetChapterAudioPathParameters | NoBodyParams,
-  ): Promise<GetChapterAudioResponse> {
+  override async fetch(params: GetChapterAudioPathParameters | NoBodyParams): Promise<GetChapterAudioResponse> {
     console.log("GetChapterAudioService.fetch called", params);
-    throw new Error(
-      "Not implemented on client. This endpoint is meant to be used with audio streaming.",
-    );
+    throw new Error("Not implemented on client. This endpoint is meant to be used with audio streaming.");
   }
 }
 

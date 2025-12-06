@@ -17,9 +17,7 @@ export const ScrollToEventData = z.object({
 });
 export type ScrollToEventData = z.infer<typeof ScrollToEventData>;
 
-export const ScrollToEvent = (
-  detail: ScrollToEventDetail,
-): ScrollToEventData => ({
+export const ScrollToEvent = (detail: ScrollToEventDetail): ScrollToEventData => ({
   name: ScrollToEventName.value,
   detail,
 });

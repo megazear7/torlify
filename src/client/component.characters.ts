@@ -197,24 +197,18 @@ export class TorlifyCharacters extends LitElement {
       <div class="characters-container">
         <div class="characters-header">
           <h4>Characters</h4>
-          <button class="add-button" @click="${this.addCharacter}">
-            ${plusIcon} Add Character
-          </button>
+          <button class="add-button" @click="${this.addCharacter}">${plusIcon} Add Character</button>
         </div>
 
         ${characters.length === 0
-          ? html` <div class="empty-state">No characters added yet</div> `
+          ? html`
+              <div class="empty-state">No characters added yet</div>
+            `
           : html`
               <div class="characters-list">
                 ${characters.map(
                   (character, index) => html`
-                    <div
-                      class="character-item ${this.removingIndices.includes(
-                        index,
-                      )
-                        ? "removing"
-                        : ""}"
-                    >
+                    <div class="character-item ${this.removingIndices.includes(index) ? "removing" : ""}">
                       <div class="character-inputs">
                         <div class="character-field">
                           <label class="character-label">Character Name</label>
@@ -224,12 +218,7 @@ export class TorlifyCharacters extends LitElement {
                             placeholder="Enter character name"
                             .value="${character.name}"
                             @input="${(e: Event): void =>
-                              this.updateCharacter(
-                                index,
-                                "name",
-                                (e.target as HTMLInputElement).value,
-                              )}"
-                          />
+                              this.updateCharacter(index, "name", (e.target as HTMLInputElement).value)}" />
                         </div>
                         <div class="character-field">
                           <label class="character-label">Instructions</label>
@@ -240,16 +229,13 @@ export class TorlifyCharacters extends LitElement {
                                 index,
                                 "instructions",
                                 (e.target as HTMLTextAreaElement).value,
-                              )}"
-                          ></torlify-auto-textarea>
+                              )}"></torlify-auto-textarea>
                         </div>
                       </div>
                       <button
                         class="remove-button"
-                        @click="${async (): Promise<void> =>
-                          this.removeCharacter(index)}"
-                        title="Remove character"
-                      >
+                        @click="${async (): Promise<void> => this.removeCharacter(index)}"
+                        title="Remove character">
                         ${trashIcon}
                       </button>
                     </div>
@@ -263,10 +249,7 @@ export class TorlifyCharacters extends LitElement {
 
   private addCharacter(): void {
     const currentCharacters = this.bookContext.book?.characters || [];
-    const newCharacters = [
-      ...currentCharacters,
-      { name: "", instructions: "" },
-    ];
+    const newCharacters = [...currentCharacters, { name: "", instructions: "" }];
     this.bookContext.book = {
       ...this.bookContext.book!,
       characters: newCharacters,
@@ -301,11 +284,7 @@ export class TorlifyCharacters extends LitElement {
     });
   }
 
-  private updateCharacter(
-    index: number,
-    field: "name" | "instructions",
-    value: string,
-  ): void {
+  private updateCharacter(index: number, field: "name" | "instructions", value: string): void {
     const currentCharacters = this.bookContext.book?.characters || [];
     const newCharacters = currentCharacters.map((character, i) =>
       i === index ? { ...character, [field]: value } : character,

@@ -14,9 +14,7 @@ export const NavigationEventData = z.object({
 });
 export type NavigationEventData = z.infer<typeof NavigationEventData>;
 
-export const NavigationEvent = (
-  detail: NavigationEventDetail,
-): NavigationEventData => ({
+export const NavigationEvent = (detail: NavigationEventDetail): NavigationEventData => ({
   name: NavigationEventName.value,
   detail,
 });

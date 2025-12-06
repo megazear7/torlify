@@ -23,8 +23,4 @@ export class UpdatePartService extends AbstractService<
   readonly method = HttpMethod.enum.post;
   readonly path = "/api/book/:book/chapter/:chapter/part";
 }
-export const updatePartService = new UpdatePartService(
-  UpdatePartBodyParameters,
-  UpdatePartPathParameters,
-  ChapterPart,
-);
+export const updatePartService = new UpdatePartService(UpdatePartBodyParameters, UpdatePartPathParameters, ChapterPart);

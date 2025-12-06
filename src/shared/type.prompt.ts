@@ -12,10 +12,7 @@ export type Response = z.infer<typeof Response>;
 export const ModelName = z.string().min(1).describe("The name of an ai model");
 export type ModelName = z.infer<typeof ModelName>;
 
-export const UsageTokens = z
-  .number()
-  .min(0)
-  .describe("The number of tokens used of all types.");
+export const UsageTokens = z.number().min(0).describe("The number of tokens used of all types.");
 export type UsageTokens = z.infer<typeof UsageTokens>;
 
 export const Usage = z.object({
@@ -24,10 +21,7 @@ export const Usage = z.object({
 });
 export type Usage = z.infer<typeof Usage>;
 
-export const InputTokenCost = z
-  .number()
-  .min(0)
-  .describe("The cost in dollars per certain number of input tokens.");
+export const InputTokenCost = z.number().min(0).describe("The cost in dollars per certain number of input tokens.");
 export type InputTokenCost = z.infer<typeof InputTokenCost>;
 
 export const InputTokenCount = z
@@ -36,10 +30,7 @@ export const InputTokenCount = z
   .describe("The number of input tokens to use when counting input cost.");
 export type InputTokenCount = z.infer<typeof InputTokenCount>;
 
-export const OutputTokenCost = z
-  .number()
-  .min(0)
-  .describe("The cost in dollars per certain number of output tokens.");
+export const OutputTokenCost = z.number().min(0).describe("The cost in dollars per certain number of output tokens.");
 export type OutputTokenCost = z.infer<typeof OutputTokenCost>;
 
 export const OutputTokenCount = z

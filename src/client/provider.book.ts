@@ -20,11 +20,7 @@ export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
 
   override async load(): Promise<void> {
     await super.load();
-    const params = parseRouteParams(
-      "/book/:bookId",
-      window.location.pathname,
-      true,
-    );
+    const params = parseRouteParams("/book/:bookId", window.location.pathname, true);
     this.bookContext = {
       book: await getBookService.fetch({ bookId: params.bookId }),
       status: LoadingStatus.enum.success,

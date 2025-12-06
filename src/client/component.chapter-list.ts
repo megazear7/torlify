@@ -115,7 +115,9 @@ export class TorlifyChapterList extends LitElement {
     const book = this.bookContext.book;
 
     if (!book) {
-      return html`<p>No book selected.</p>`;
+      return html`
+        <p>No book selected.</p>
+      `;
     }
 
     return html`
@@ -124,28 +126,25 @@ export class TorlifyChapterList extends LitElement {
           (chapter, chapterIndex) => html`
             <div class="chapter-item">
               <div class="chapter-label">
-                <a href="/book/${book.id}/chapter/${chapterIndex + 1}"
-                  >Chapter ${chapterIndex + 1}</a
-                >
+                <a href="/book/${book.id}/chapter/${chapterIndex + 1}">Chapter ${chapterIndex + 1}</a>
               </div>
               <div class="parts-list">
                 ${chapter.parts.map(
                   (part, partIndex) => html`
                     <a
-                      class="part-item ${chapter.parts.length === 1
-                        ? "single-part"
-                        : ""} ${part.audio ? "has-audio" : ""} ${part.text
-                        ? "has-text"
-                        : ""}"
-                      href="/book/${book.id}/chapter/${chapterIndex +
-                      1}/part/${partIndex + 1}"
-                    ></a>
+                      class="part-item ${chapter.parts.length === 1 ? "single-part" : ""} ${part.audio
+                        ? "has-audio"
+                        : ""} ${part.text ? "has-text" : ""}"
+                      href="/book/${book.id}/chapter/${chapterIndex + 1}/part/${partIndex + 1}"></a>
                   `,
                 )}
               </div>
             </div>
           `,
-        ) ?? html`<div>No chapters found</div>`}
+        ) ??
+        html`
+          <div>No chapters found</div>
+        `}
       </div>
     `;
   }

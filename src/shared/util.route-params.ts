@@ -16,11 +16,7 @@ import { RouteParams } from "./type.route-params.js";
  * // params.bookId // string
  * // params.chapterId // string
  */
-export function parseRouteParams<T extends string>(
-  pattern: T,
-  pathname: string,
-  fuzzyMatch = false,
-): RouteParams<T> {
+export function parseRouteParams<T extends string>(pattern: T, pathname: string, fuzzyMatch = false): RouteParams<T> {
   if (pattern.includes("{")) {
     return {} as RouteParams<T>;
   }

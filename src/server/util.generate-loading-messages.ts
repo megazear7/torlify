@@ -1,9 +1,7 @@
 import { BookOverview, LoadingMessages } from "../shared/type.book.js";
 import { submitPrompt } from "./util.submit-prompt.js";
 
-export async function generateLoadingMessages(
-  book: BookOverview,
-): Promise<LoadingMessages> {
+export async function generateLoadingMessages(book: BookOverview): Promise<LoadingMessages> {
   const messages: LoadingMessages = await submitPrompt<LoadingMessages>(
     [
       {

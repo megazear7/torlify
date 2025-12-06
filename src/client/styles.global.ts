@@ -115,7 +115,8 @@ export const globalStyles = css`
     border-radius: var(--radius-large);
   }
 
-  input[type="text"], input[type="number"] {
+  input[type="text"],
+  input[type="number"] {
     width: 100%;
     box-sizing: border-box;
     padding: var(--size-large);
@@ -129,14 +130,16 @@ export const globalStyles = css`
     margin-bottom: var(--size-large);
   }
 
-  input[type="text"]:focus, input[type="number"]:focus {
+  input[type="text"]:focus,
+  input[type="number"]:focus {
     outline: none;
     border-color: var(--color-1);
     box-shadow: var(--shadow-active);
     background: var(--color-secondary-surface-active);
   }
 
-  input[type="text"]::placeholder, input[type="number"]::placeholder {
+  input[type="text"]::placeholder,
+  input[type="number"]::placeholder {
     color: var(--color-grey-transparent);
   }
 

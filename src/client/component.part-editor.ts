@@ -1,14 +1,7 @@
 import { consume } from "@lit/context";
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import {
-  bookContext,
-  BookContext,
-  ChapterContext,
-  chapterContext,
-  PartContext,
-  partContext,
-} from "./context.book.js";
+import { bookContext, BookContext, ChapterContext, chapterContext, PartContext, partContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { WarningEvent } from "./event.warning.js";
@@ -68,8 +61,7 @@ export class TorlifyPartEditor extends LitElement {
         ? html`
             <torlify-loading-overlay
               .visible="${this.loading}"
-              message="${this.loadingMessage}"
-            ></torlify-loading-overlay>
+              message="${this.loadingMessage}"></torlify-loading-overlay>
             <torlify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
@@ -114,7 +106,9 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Move Part</h3>
                 <p>Move this part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">Before previous</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">
+                    Before previous
+                  </button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">After next</button>
                 </torlify-bar>
               </div>
@@ -124,7 +118,9 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Add Part</h3>
                 <p>Add a new part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">Before previous</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">
+                    Before previous
+                  </button>
                   <button class="standard-button" @click="${this.addPart()}">After next</button>
                 </torlify-bar>
               </div>
@@ -149,23 +145,22 @@ export class TorlifyPartEditor extends LitElement {
                         book: this.bookContext.book!.id,
                         chapter: String(this.chapterContext.chapter!.number),
                         part: String(this.partContext.part!.number),
-                      })}"
-                    >
-                      <source
-                        src="${this.partContext.part.audio}"
-                        type="audio/mpeg"
-                      />
+                      })}">
+                      <source src="${this.partContext.part.audio}" type="audio/mpeg" />
                       Your browser does not support the audio element.
                     </audio>
                   `
-                : html` <p>No audio available</p> `}
+                : html`
+                    <p>No audio available</p>
+                  `}
               <torlify-auto-textarea
                 .value="${this.partContext.part.text}"
-                @input=${this.handleTextChange()}
-              ></torlify-auto-textarea>
+                @input=${this.handleTextChange()}></torlify-auto-textarea>
             </div>
           `
-        : html`<p>Loading part...</p>`}
+        : html`
+            <p>Loading part...</p>
+          `}
     `;
   }
 
@@ -273,9 +268,7 @@ export class TorlifyPartEditor extends LitElement {
         return;
       }
 
-      const partIndex = chapter.parts.findIndex(
-        (p) => p.number === part.number,
-      );
+      const partIndex = chapter.parts.findIndex((p) => p.number === part.number);
       if (partIndex === -1) {
         dispatch(this, WarningEvent("Part not found in chapter"));
         return;
@@ -303,9 +296,7 @@ export class TorlifyPartEditor extends LitElement {
 
         // Navigate to appropriate part
         const newPartNumber = partIndex > 0 ? partIndex : 1;
-        const targetPart = chapter.parts.find(
-          (p) => p.number === newPartNumber,
-        );
+        const targetPart = chapter.parts.find((p) => p.number === newPartNumber);
 
         if (targetPart) {
           dispatch(
@@ -341,9 +332,7 @@ export class TorlifyPartEditor extends LitElement {
         return;
       }
 
-      const partIndex = chapter.parts.findIndex(
-        (p) => p.number === part.number,
-      );
+      const partIndex = chapter.parts.findIndex((p) => p.number === part.number);
       if (partIndex === -1) {
         dispatch(this, WarningEvent("Part not found in chapter"));
         return;

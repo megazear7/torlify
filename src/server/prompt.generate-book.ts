@@ -2,9 +2,7 @@ import { ChatCompletionMessageParam } from "openai/resources";
 import { MessageType } from "../shared/type.model.js";
 import { GenerateBookParameters } from "../shared/service.generate-book.js";
 
-export const generateBookPrompt = async (
-  params: GenerateBookParameters,
-): Promise<ChatCompletionMessageParam[]> => [
+export const generateBookPrompt = async (params: GenerateBookParameters): Promise<ChatCompletionMessageParam[]> => [
   {
     role: MessageType.enum.system,
     content: `

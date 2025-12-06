@@ -17,10 +17,7 @@ export const errorHandler = (
   _next: NextFunction, //eslint-disable-line @typescript-eslint/no-unused-vars
 ): void => {
   if (err instanceof RouteError) {
-    console.error(
-      ` -> Route error ${err.statusCode}: ${req.path}`,
-      err.message,
-    );
+    console.error(` -> Route error ${err.statusCode}: ${req.path}`, err.message);
     const responseBody: ErrorResponse = { error: err.message };
     res.status(err.statusCode).json(responseBody);
     return;
@@ -42,8 +39,6 @@ export const errorHandler = (
       res.status(500).json(responseBody);
     }
   } else {
-    res
-      .status(500)
-      .send(`<html><body><h1>500 Internal Server Error</h1></body></html>`);
+    res.status(500).send(`<html><body><h1>500 Internal Server Error</h1></body></html>`);
   }
 };

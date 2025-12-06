@@ -6,16 +6,12 @@ import z from "zod";
 export const UpdateChapterPathParameters = z.object({
   book: BookId,
 });
-export type UpdateChapterPathParameters = z.infer<
-  typeof UpdateChapterPathParameters
->;
+export type UpdateChapterPathParameters = z.infer<typeof UpdateChapterPathParameters>;
 
 export const UpdateChapterBodyParameters = z.object({
   chapter: ChapterPartial,
 });
-export type UpdateChapterBodyParameters = z.infer<
-  typeof UpdateChapterBodyParameters
->;
+export type UpdateChapterBodyParameters = z.infer<typeof UpdateChapterBodyParameters>;
 
 export class UpdateChapterService extends AbstractService<
   UpdateChapterBodyParameters,

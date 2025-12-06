@@ -26,23 +26,14 @@ export function formatNumber(
   const [integerPart, decimalPart] = fixedValue.split(".");
 
   // Add thousands separators
-  const formattedInteger = integerPart.replace(
-    /\B(?=(\d{3})+(?!\d))/g,
-    thousandsSeparator,
-  );
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSeparator);
 
   // Construct the number part
-  let result =
-    decimals > 0
-      ? `${formattedInteger}${decimalSeparator}${decimalPart}`
-      : formattedInteger;
+  let result = decimals > 0 ? `${formattedInteger}${decimalSeparator}${decimalPart}` : formattedInteger;
 
   // Add currency symbol
   if (currency) {
-    result =
-      currencyPosition === "before"
-        ? `${currency} ${result}`
-        : `${result} ${currency}`;
+    result = currencyPosition === "before" ? `${currency} ${result}` : `${result} ${currency}`;
   }
 
   return result;

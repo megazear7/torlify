@@ -13,17 +13,9 @@ export const UpdateBookBodyParameters = z.object({
 });
 export type UpdateBookBodyParameters = z.infer<typeof UpdateBookBodyParameters>;
 
-export class UpdateBookService extends AbstractService<
-  UpdateBookBodyParameters,
-  UpdateBookPathParameters,
-  Book
-> {
+export class UpdateBookService extends AbstractService<UpdateBookBodyParameters, UpdateBookPathParameters, Book> {
   readonly type = ServiceType.enum.json;
   readonly method = HttpMethod.enum.put;
   readonly path = "/api/book/:name";
 }
-export const updateBookService = new UpdateBookService(
-  UpdateBookBodyParameters,
-  UpdateBookPathParameters,
-  Book,
-);
+export const updateBookService = new UpdateBookService(UpdateBookBodyParameters, UpdateBookPathParameters, Book);

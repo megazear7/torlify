@@ -111,24 +111,21 @@ export class TorlifyBookmarkTabs extends LitElement {
           class="bookmark-button book"
           ?disabled=${!bookAvailable}
           @click=${this.handleBookClick}
-          title="Scroll to Book"
-        >
+          title="Scroll to Book">
           B
         </button>
         <button
           class="bookmark-button chapter"
           ?disabled=${!chapterAvailable}
           @click=${this.handleChapterClick}
-          title="Scroll to Chapter"
-        >
+          title="Scroll to Chapter">
           C
         </button>
         <button
           class="bookmark-button part"
           ?disabled=${!partAvailable}
           @click=${this.handlePartClick}
-          title="Scroll to Part"
-        >
+          title="Scroll to Part">
           P
         </button>
       </div>

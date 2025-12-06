@@ -5,17 +5,11 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-export async function ask(
-  question: string,
-  defaultAnswer?: string,
-): Promise<string> {
+export async function ask(question: string, defaultAnswer?: string): Promise<string> {
   return new Promise((resolve) => {
-    rl.question(
-      question + (defaultAnswer ? ` (default: ${defaultAnswer})` : "") + ": ",
-      (answer) => {
-        resolve(answer || defaultAnswer || "");
-      },
-    );
+    rl.question(question + (defaultAnswer ? ` (default: ${defaultAnswer})` : "") + ": ", (answer) => {
+      resolve(answer || defaultAnswer || "");
+    });
   });
 }
 

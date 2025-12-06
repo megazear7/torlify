@@ -1,9 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources.js";
 import { NoBodyParams, RequestOptions } from "../shared/main.service.js";
-import {
-  GeneratePartPathParameters,
-  generatePartService,
-} from "../shared/service.generate-part.js";
+import { GeneratePartPathParameters, generatePartService } from "../shared/service.generate-part.js";
 import {
   Book,
   BookChapterPartText,
@@ -26,22 +23,11 @@ import { promises as fs } from "fs";
 import { fixPlotPrompt } from "./prompt.fix-plot.js";
 import { fixQualityPrompt } from "./prompt.fix-quality.js";
 
-export class GeneratePartController extends AbstractController<
-  NoBodyParams,
-  GeneratePartPathParameters,
-  ChapterPart
-> {
-  async handler({
-    pathParams,
-  }: RequestOptions<
-    NoBodyParams,
-    GeneratePartPathParameters
-  >): Promise<ChapterPart> {
+export class GeneratePartController extends AbstractController<NoBodyParams, GeneratePartPathParameters, ChapterPart> {
+  async handler({ pathParams }: RequestOptions<NoBodyParams, GeneratePartPathParameters>): Promise<ChapterPart> {
     const book = await getBook(pathParams.book);
     const partNumber = parseInt(pathParams.part);
-    const chapter = book.chapters.find(
-      (ch: Chapter) => ch.number === parseInt(pathParams.chapter),
-    );
+    const chapter = book.chapters.find((ch: Chapter) => ch.number === parseInt(pathParams.chapter));
     if (!chapter) {
       throw new RouteError(404, "Chapter not found");
     }
@@ -52,35 +38,12 @@ export class GeneratePartController extends AbstractController<
 
     await fs.rm(`debug/generate-part`, { recursive: true, force: true });
     await fs.mkdir(`debug/generate-part`, { recursive: true });
-    const authoredPart = await authorPart(
-      book,
-      chapter,
-      partNumber,
-      partDescription,
-    );
+    const authoredPart = await authorPart(book, chapter, partNumber, partDescription);
     await fs.writeFile(`debug/generate-part/authored-part.txt`, authoredPart);
-    const fixedPlotPart = await fixPlot(
-      book,
-      chapter,
-      partNumber,
-      partDescription,
-      authoredPart,
-    );
-    await fs.writeFile(
-      `debug/generate-part/fixed-plot-part.txt`,
-      fixedPlotPart,
-    );
-    const fixedQualityPart = await fixQuality(
-      book,
-      chapter,
-      partNumber,
-      partDescription,
-      fixedPlotPart,
-    );
-    await fs.writeFile(
-      `debug/generate-part/fixed-quality-part.txt`,
-      fixedQualityPart,
-    );
+    const fixedPlotPart = await fixPlot(book, chapter, partNumber, partDescription, authoredPart);
+    await fs.writeFile(`debug/generate-part/fixed-plot-part.txt`, fixedPlotPart);
+    const fixedQualityPart = await fixQuality(book, chapter, partNumber, partDescription, fixedPlotPart);
+    await fs.writeFile(`debug/generate-part/fixed-quality-part.txt`, fixedQualityPart);
 
     chapter.parts[partNumber - 1] = {
       number: parseInt(pathParams.part),
@@ -135,6 +98,4 @@ async function fixQuality(
   return await submitPrompt<string>(history);
 }
 
-export const generatePartController = new GeneratePartController(
-  generatePartService,
-);
+export const generatePartController = new GeneratePartController(generatePartService);

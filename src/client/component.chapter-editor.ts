@@ -1,12 +1,7 @@
 import { consume } from "@lit/context";
 import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import {
-  BookContext,
-  bookContext,
-  chapterContext,
-  ChapterContext,
-} from "./context.book.js";
+import { BookContext, bookContext, chapterContext, ChapterContext } from "./context.book.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { dispatch } from "./util.events.js";
@@ -172,13 +167,14 @@ export class TorlifyChapterEditor extends LitElement {
                 (item, index) => html`
                   <torlify-auto-textarea
                     .value="${item}"
-                    @input="${this.updateProperty("outline", index)}"
-                  ></torlify-auto-textarea>
+                    @input="${this.updateProperty("outline", index)}"></torlify-auto-textarea>
                 `,
               )}
             </div>
           `
-        : html`<p>Loading chapter...</p>`}
+        : html`
+            <p>Loading chapter...</p>
+          `}
     `;
   }
 
@@ -252,25 +248,14 @@ export class TorlifyChapterEditor extends LitElement {
     };
   }
 
-  updateProperty(
-    property: keyof Chapter,
-    index?: number,
-  ): (event: CustomEvent | InputEvent) => void {
+  updateProperty(property: keyof Chapter, index?: number): (event: CustomEvent | InputEvent) => void {
     return (event: CustomEvent | InputEvent): void => {
-      const isAutoTextarea =
-        (event.target as HTMLElement).tagName.toLocaleLowerCase() ===
-        AUTO_TEXTAREA_TAG_NAME;
-      const value = isAutoTextarea
-        ? (event as CustomEvent).detail.value
-        : (event.target as HTMLInputElement).value;
+      const isAutoTextarea = (event.target as HTMLElement).tagName.toLocaleLowerCase() === AUTO_TEXTAREA_TAG_NAME;
+      const value = isAutoTextarea ? (event as CustomEvent).detail.value : (event.target as HTMLInputElement).value;
       if (value === undefined) return;
       const chapter = this.chapterContext.chapter!;
       if (!chapter) return;
-      if (
-        property === "minParts" ||
-        property === "maxParts" ||
-        property === "partLength"
-      ) {
+      if (property === "minParts" || property === "maxParts" || property === "partLength") {
         chapter[property] = Number(value);
       } else if (
         property === "how" ||

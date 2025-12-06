@@ -19,6 +19,7 @@ import "./component.bar.js";
 import "./component.book-field.js";
 import { Chapter, ChapterPart } from "../shared/type.book.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
+import { downloadBookAudioService } from "../shared/service.download-book-audio.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -54,7 +55,9 @@ export class TorlifyBookEditor extends LitElement {
     return html`
       ${this.bookContext.book
         ? html`
-            <torlify-loading-overlay .visible=${this.loading} message="${this.loadingMessage}"></torlify-loading-overlay>
+            <torlify-loading-overlay
+              .visible=${this.loading}
+              message="${this.loadingMessage}"></torlify-loading-overlay>
             <torlify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
@@ -93,7 +96,7 @@ export class TorlifyBookEditor extends LitElement {
                 <torlify-bar>
                   <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
                   <button class="standard-button" @click="${this.downloadBook()}">Text</button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Audio</button>
+                  <button class="standard-button" @click="${this.downloadAudio()}">Audio</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -120,7 +123,11 @@ export class TorlifyBookEditor extends LitElement {
                 <h3>Audio Model Configuration</h3>
                 <torlify-book-field property="model.audio.name"></torlify-book-field>
                 <torlify-book-field property="model.audio.modelName"></torlify-book-field>
-                <p><a href="https://platform.openai.com/docs/guides/text-to-speech/voice-options#voice-options">OpenAI Voice options</a></p>
+                <p>
+                  <a href="https://platform.openai.com/docs/guides/text-to-speech/voice-options#voice-options">
+                    OpenAI Voice options
+                  </a>
+                </p>
                 <torlify-book-field property="model.audio.voice"></torlify-book-field>
                 <torlify-book-field property="model.audio.endpoint"></torlify-book-field>
                 <torlify-book-field property="model.audio.cost.inputTokenCost" type="number"></torlify-book-field>
@@ -154,7 +161,9 @@ export class TorlifyBookEditor extends LitElement {
               <torlify-book-field property="instructions.audio" type="textarea"></torlify-book-field>
             </div>
           `
-        : html`<p>Loading book...</p>`}
+        : html`
+            <p>Loading book...</p>
+          `}
     `;
   }
 
@@ -163,23 +172,23 @@ export class TorlifyBookEditor extends LitElement {
       const outlines: string[] = [];
       for (const chapter of this.bookContext.book?.chapters || []) {
         outlines.push(`# Chapter ${chapter.number}`);
-        outlines.push('');
+        outlines.push("");
         for (const [index, partDescription] of chapter.outline.entries()) {
           outlines.push(`## Part ${index + 1}`);
           outlines.push(partDescription || "(No part description)");
-          outlines.push('');
+          outlines.push("");
         }
         if (chapter.outline.length === 0) {
           outlines.push("(No chapter outline available)");
-          outlines.push('');
+          outlines.push("");
         }
       }
-      const text = outlines.join('\n');
-      const blob = new Blob([text], { type: 'text/plain' });
+      const text = outlines.join("\n");
+      const blob = new Blob([text], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `${this.bookContext.book?.title || 'book'}-outline.md`;
+      a.download = `${this.bookContext.book?.title || "book"}-outline.md`;
       a.click();
       URL.revokeObjectURL(url);
       this.closeModal(Modal.enum.download)();
@@ -189,6 +198,13 @@ export class TorlifyBookEditor extends LitElement {
   downloadBook(): () => void {
     return async (): Promise<void> => {
       await downloadBookService.fetch({ book: this.bookContext.book!.id });
+      this.closeModal(Modal.enum.download)();
+    };
+  }
+
+  downloadAudio(): () => void {
+    return async (): Promise<void> => {
+      await downloadBookAudioService.fetch({ book: this.bookContext.book!.id });
       this.closeModal(Modal.enum.download)();
     };
   }
@@ -219,13 +235,10 @@ export class TorlifyBookEditor extends LitElement {
     this.loading = true;
     this.loadingMessage = "Generating remaining content";
     try {
-      for (let chapter of this.bookContext.book!.chapters) {
+      for (const chapter of this.bookContext.book!.chapters) {
         await callback(chapter);
       }
-      dispatch(
-        this,
-        NavigationEvent({ path: `/book/${this.bookContext.book!.id}` }),
-      );
+      dispatch(this, NavigationEvent({ path: `/book/${this.bookContext.book!.id}` }));
     } catch (error) {
       console.error("Error generating remaining content:", error);
       dispatch(this, WarningEvent("Failed to generate remaining content"));
@@ -246,7 +259,6 @@ export class TorlifyBookEditor extends LitElement {
     this.generate(async (chapter: Chapter) => await this.generateAudiosForChapter(chapter));
   };
 
-
   async generateOutlineForChapter(chapter: Chapter): Promise<void> {
     this.loading = true;
     this.loadingMessage = `Generating outline for chapter ${chapter.number}`;
@@ -257,21 +269,21 @@ export class TorlifyBookEditor extends LitElement {
         chapter: String(chapter.number),
       });
     }
-  };
+  }
 
   async generatePartsForChapter(chapter: Chapter): Promise<void> {
     await this.generateOutlineForChapter(chapter);
     for (const part of chapter.parts) {
       await this.generatePartForChapter(chapter, part);
     }
-  };
+  }
 
   async generateAudiosForChapter(chapter: Chapter): Promise<void> {
     await this.generateOutlineForChapter(chapter);
     for (const part of chapter.parts) {
       await this.generateAudioForChapter(chapter, part);
     }
-  };
+  }
 
   async generatePartForChapter(chapter: Chapter, part: ChapterPart): Promise<void> {
     if (!part.text || part.text.trim() === "") {
@@ -340,21 +352,14 @@ export class TorlifyBookEditor extends LitElement {
       (this.bookContext.book?.model.audio.cost.inputTokenCost || 0) *
       oneMillionth;
 
-    return (
-      textCompletionCost +
-      textPromptCost +
-      audioCompletionCost +
-      audioPromptCost
-    );
+    return textCompletionCost + textPromptCost + audioCompletionCost + audioPromptCost;
   }
 
   get words(): number {
     return (
       this.bookContext.book?.chapters.reduce((acc, chapter) => {
         const partWords = chapter.parts.reduce((partAcc, part) => {
-          const wordsInPart = part.text
-            ? part.text.trim().split(/\s+/).length
-            : 0;
+          const wordsInPart = part.text ? part.text.trim().split(/\s+/).length : 0;
           return partAcc + wordsInPart;
         }, 0);
         return acc + partWords;

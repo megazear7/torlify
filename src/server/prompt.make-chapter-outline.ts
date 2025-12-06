@@ -1,9 +1,7 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Chapter } from "../shared/type.book.js";
 
-export const makeChapterOutlinePrompt = async (
-  chapter: Chapter,
-): Promise<ChatCompletionMessageParam[]> => [
+export const makeChapterOutlinePrompt = async (chapter: Chapter): Promise<ChatCompletionMessageParam[]> => [
   {
     role: "user",
     content: `

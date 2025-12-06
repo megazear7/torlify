@@ -8,9 +8,7 @@ export const GeneratePartAudioPathParameters = z.object({
   chapter: z.string(),
   part: z.string(),
 });
-export type GeneratePartAudioPathParameters = z.infer<
-  typeof GeneratePartAudioPathParameters
->;
+export type GeneratePartAudioPathParameters = z.infer<typeof GeneratePartAudioPathParameters>;
 
 export class GeneratePartAudioService extends AbstractService<
   NoBodyParams,

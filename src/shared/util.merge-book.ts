@@ -1,9 +1,6 @@
 import { Book, BookPartial } from "./type.book";
 
-export function mergeBookProperties(
-  existingBook: Book,
-  newBookData: BookPartial,
-): Book {
+export function mergeBookProperties(existingBook: Book, newBookData: BookPartial): Book {
   return {
     ...existingBook,
     ...newBookData,

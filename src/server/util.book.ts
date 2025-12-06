@@ -44,9 +44,5 @@ export const saveBook = async (book: Book): Promise<void> => {
   await fs.mkdir(path, { recursive: true });
   await fs.mkdir(`${path}/audio`, { recursive: true });
   await fs.mkdir(`${path}/references`, { recursive: true });
-  await fs.writeFile(
-    `${path}/index.json`,
-    JSON.stringify(book, null, 2),
-    "utf-8",
-  );
+  await fs.writeFile(`${path}/index.json`, JSON.stringify(book, null, 2), "utf-8");
 };

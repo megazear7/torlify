@@ -8,6 +8,8 @@ export class TorlifyNotFoundPage extends LitElement {
   static override styles = [globalStyles];
 
   override render(): TemplateResult {
-    return html`<h1>Not Found!</h1>`;
+    return html`
+      <h1>Not Found!</h1>
+    `;
   }
 }

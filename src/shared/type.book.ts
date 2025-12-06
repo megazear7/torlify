@@ -62,34 +62,21 @@ export const BookChapterPartText = z
   );
 export type BookChapterPartText = z.infer<typeof BookChapterPartText>;
 
-export const PropertyText = z
-  .string()
-  .describe("Content for a property of the book.");
+export const PropertyText = z.string().describe("Content for a property of the book.");
 export type PropertyText = z.infer<typeof PropertyText>;
 
-export const BookAudio = z
-  .string()
-  .uuid()
-  .describe("The audio for a part of a chapter of the book.");
+export const BookAudio = z.string().uuid().describe("The audio for a part of a chapter of the book.");
 export type BookAudio = z.infer<typeof BookAudio>;
 
-export const BookChapterPartAudio = z
-  .string()
-  .uuid()
-  .describe("The audio for a part of a chapter of the book.");
+export const BookChapterPartAudio = z.string().uuid().describe("The audio for a part of a chapter of the book.");
 export type BookChapterPartAudio = z.infer<typeof BookChapterPartAudio>;
 
-export const ChapterPartTitle = z
-  .string()
-  .min(1)
-  .describe("The name of the chapter part");
+export const ChapterPartTitle = z.string().min(1).describe("The name of the chapter part");
 export type ChapterPartTitle = z.infer<typeof ChapterPartTitle>;
 
 export const ChapterPartDescription = z
   .string()
-  .describe(
-    "Details about the events that take place. This should be plain text without formatting or markdown.",
-  );
+  .describe("Details about the events that take place. This should be plain text without formatting or markdown.");
 export type ChapterPartDescription = z.infer<typeof ChapterPartDescription>;
 
 export const ChapterOutline = ChapterPartDescription.array();
@@ -103,10 +90,7 @@ export const ChapterPartLength = z
   );
 export type ChapterPartLength = z.infer<typeof ChapterPartLength>;
 
-export const ChapterPartNumber = z
-  .number()
-  .min(1)
-  .describe("The chapter part number starting from 1");
+export const ChapterPartNumber = z.number().min(1).describe("The chapter part number starting from 1");
 export type ChapterPartNumber = z.infer<typeof ChapterPartNumber>;
 
 export const ChapterPart = z.object({
@@ -119,15 +103,10 @@ export type ChapterPart = z.infer<typeof ChapterPart>;
 export const ChapterParts = ChapterPart.array();
 export type ChapterParts = z.infer<typeof ChapterParts>;
 
-export const BookChapterText = z
-  .string()
-  .describe("A written part of a chapter of the book.");
+export const BookChapterText = z.string().describe("A written part of a chapter of the book.");
 export type BookChapterText = z.infer<typeof BookChapterText>;
 
-export const BookChapterAudio = z
-  .string()
-  .base64()
-  .describe("The audio for a part of a chapter of the book.");
+export const BookChapterAudio = z.string().base64().describe("The audio for a part of a chapter of the book.");
 export type BookChapterAudio = z.infer<typeof BookChapterAudio>;
 
 export const CreatedChapter = z.object({
@@ -139,54 +118,31 @@ export type CreatedChapter = z.infer<typeof CreatedChapter>;
 export const ChapterTitle = z.string().describe("The title of the chapter.");
 export type ChapterTitle = z.infer<typeof ChapterTitle>;
 
-export const ChapterWhen = z
-  .string()
-  .describe("When the chapter takes place in the story.");
+export const ChapterWhen = z.string().describe("When the chapter takes place in the story.");
 export type ChapterWhen = z.infer<typeof ChapterWhen>;
 
-export const ChapterWhere = z
-  .string()
-  .describe("Where the chapter takes place in the setting of the book.");
+export const ChapterWhere = z.string().describe("Where the chapter takes place in the setting of the book.");
 export type ChapterWhere = z.infer<typeof ChapterWhere>;
 
-export const ChapterWhat = z
-  .string()
-  .describe(
-    "What happens in the chapter. This shoud be as detailed as possible.",
-  );
+export const ChapterWhat = z.string().describe("What happens in the chapter. This shoud be as detailed as possible.");
 export type ChapterWhat = z.infer<typeof ChapterWhat>;
 
-export const ChapterWhy = z
-  .string()
-  .describe("Why the chapter is included in the plot of the book.");
+export const ChapterWhy = z.string().describe("Why the chapter is included in the plot of the book.");
 export type ChapterWhy = z.infer<typeof ChapterWhy>;
 
-export const ChapterHow = z
-  .string()
-  .describe("Specify what characters perspective is the chapter written from.");
+export const ChapterHow = z.string().describe("Specify what characters perspective is the chapter written from.");
 export type ChapterHow = z.infer<typeof ChapterHow>;
 
-export const ChapterWho = z
-  .string()
-  .describe("Which characters are involved in the chapter.");
+export const ChapterWho = z.string().describe("Which characters are involved in the chapter.");
 export type ChapterWho = z.infer<typeof ChapterWho>;
 
-export const ChapterMinParts = z
-  .number()
-  .min(1)
-  .describe("The minumum number of parts for the chapter");
+export const ChapterMinParts = z.number().min(1).describe("The minumum number of parts for the chapter");
 export type ChapterMinParts = z.infer<typeof ChapterMinParts>;
 
-export const ChapterMaxParts = z
-  .number()
-  .min(2)
-  .describe("The maximum number of parts for the chapter");
+export const ChapterMaxParts = z.number().min(2).describe("The maximum number of parts for the chapter");
 export type ChapterMaxParts = z.infer<typeof ChapterMaxParts>;
 
-export const ChapterNumber = z
-  .number()
-  .min(1)
-  .describe("The chapter number starting from 1");
+export const ChapterNumber = z.number().min(1).describe("The chapter number starting from 1");
 export type ChapterNumber = z.infer<typeof ChapterNumber>;
 
 export const ChapterStub = z.object({
@@ -237,16 +193,12 @@ export type Instructions = z.infer<typeof Instructions>;
 
 export const PronunciationMatch = z
   .string()
-  .describe(
-    "Text to match on when looking for words to change in order to control the pronunciation in the audio.",
-  );
+  .describe("Text to match on when looking for words to change in order to control the pronunciation in the audio.");
 export type PronunciationMatch = z.infer<typeof PronunciationMatch>;
 
 export const PronunciationReplace = z
   .string()
-  .describe(
-    "Text to replace the match with in order to control the pronunciation in the audio.",
-  );
+  .describe("Text to replace the match with in order to control the pronunciation in the audio.");
 export type PronunciationReplace = z.infer<typeof PronunciationReplace>;
 
 export const Pronunciation = z.object({
@@ -298,9 +250,7 @@ export const Book = BookStub.extend({
   loadingMessages: LoadingMessages,
   model: ModelConfigs,
   details: BookDetails.optional(),
-  references: BookReference.array().describe(
-    "A list of reference files to use when writing the book.",
-  ),
+  references: BookReference.array().describe("A list of reference files to use when writing the book."),
 });
 export type Book = z.infer<typeof Book>;
 

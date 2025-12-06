@@ -299,13 +299,13 @@ export class TorlifyReferences extends LitElement {
       <div class="references-container">
         <div class="references-header">
           <h4>References</h4>
-          <button class="add-button" @click="${this.addReference}">
-            ${plusIcon} Add Reference
-          </button>
+          <button class="add-button" @click="${this.addReference}">${plusIcon} Add Reference</button>
         </div>
 
         ${references.length === 0
-          ? html`<div class="empty-state">No references added yet</div>`
+          ? html`
+              <div class="empty-state">No references added yet</div>
+            `
           : html`
               <div class="references-list">
                 ${references.map(
@@ -315,8 +315,12 @@ export class TorlifyReferences extends LitElement {
                         <div class="reference-file">${reference.file}</div>
                         <div class="reference-meta">
                           ${reference.instructions
-                            ? html`<div>${reference.instructions}</div>`
-                            : html`<div>No instructions provided</div>`}
+                            ? html`
+                                <div>${reference.instructions}</div>
+                              `
+                            : html`
+                                <div>No instructions provided</div>
+                              `}
                           <div class="reference-when-to-use">
                             ${reference.whenToUse.map(
                               (use) => html`
@@ -327,16 +331,10 @@ export class TorlifyReferences extends LitElement {
                         </div>
                       </div>
                       <div class="reference-actions">
-                        <button
-                          class="action-button edit-button"
-                          @click="${(): void => this.editReference(index)}"
-                        >
+                        <button class="action-button edit-button" @click="${(): void => this.editReference(index)}">
                           ${editIcon}
                         </button>
-                        <button
-                          class="action-button remove-button"
-                          @click="${(): void => this.removeReference(index)}"
-                        >
+                        <button class="action-button remove-button" @click="${(): void => this.removeReference(index)}">
                           ${trashIcon}
                         </button>
                       </div>
@@ -363,29 +361,21 @@ export class TorlifyReferences extends LitElement {
               id="file-input"
               class="file-input"
               type="file"
-              @change="${(e: Event): void =>
-                this.handleFileSelect(e.target as HTMLInputElement)}"
-              accept=".txt,.md,.pdf,.doc,.docx"
-            />
+              @change="${(e: Event): void => this.handleFileSelect(e.target as HTMLInputElement)}"
+              accept=".txt,.md,.pdf,.doc,.docx" />
             <label for="file-input">
               <div class="file-upload-content">
                 ${this.selectedFile
                   ? html`
                       <div class="file-selected">
                         <div>${this.selectedFile.name}</div>
-                        <div>
-                          ${this.formatFileSize(this.selectedFile.size)}
-                        </div>
+                        <div>${this.formatFileSize(this.selectedFile.size)}</div>
                       </div>
                     `
                   : html`
                       <div class="file-upload-placeholder">
-                        <div class="upload-text">
-                          Click to select or drag and drop
-                        </div>
-                        <div class="upload-hint">
-                          Supports: TXT, MD, PDF, DOC, DOCX
-                        </div>
+                        <div class="upload-text">Click to select or drag and drop</div>
+                        <div class="upload-hint">Supports: TXT, MD, PDF, DOC, DOCX</div>
                       </div>
                     `}
               </div>
@@ -400,8 +390,7 @@ export class TorlifyReferences extends LitElement {
             .value="${this.instructions}"
             @input="${this.handleInstructionsInput}"
             placeholder="Instructions for using this reference"
-            rows="3"
-          ></textarea>
+            rows="3"></textarea>
         </div>
 
         <div class="form-group">
@@ -413,8 +402,7 @@ export class TorlifyReferences extends LitElement {
                   <input
                     type="checkbox"
                     .checked="${this.whenToUse.includes(option)}"
-                    @change="${(): void => this.toggleWhenToUse(option)}"
-                  />
+                    @change="${(): void => this.toggleWhenToUse(option)}" />
                   <span class="checkbox-text">${option}</span>
                 </label>
               `,
@@ -452,8 +440,7 @@ export class TorlifyReferences extends LitElement {
   }
 
   private editReference(index: number): void {
-    this.instructions =
-      this.bookContext.book?.references[index]?.instructions || "";
+    this.instructions = this.bookContext.book?.references[index]?.instructions || "";
     this.whenToUse = this.bookContext.book?.references[index]?.whenToUse || [];
     this.editingIndex = index;
     this.selectedFile = null;
@@ -563,9 +550,7 @@ export class TorlifyReferences extends LitElement {
   private setSelectedFile(file: File | null): void {
     this.selectedFile = file;
     if (this.bookContext.book?.references[this.editingIndex!]) {
-      this.bookContext.book.references[this.editingIndex!].file = file
-        ? file.name
-        : "";
+      this.bookContext.book.references[this.editingIndex!].file = file ? file.name : "";
     }
     this.requestUpdate();
   }

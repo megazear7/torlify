@@ -1,8 +1,5 @@
 import { NoPathParams, RequestOptions } from "../shared/main.service.js";
-import {
-  CreateBookParameters,
-  createBookService,
-} from "../shared/service.create-book.js";
+import { CreateBookParameters, createBookService } from "../shared/service.create-book.js";
 import { Book } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { readAppConfig } from "./service.app-config.js";
@@ -10,14 +7,8 @@ import { saveBook } from "./util.book.js";
 import { submitPrompt } from "./util.submit-prompt.js";
 import { promises as fs } from "fs";
 
-export class CreateBookController extends AbstractController<
-  CreateBookParameters,
-  NoPathParams,
-  Book
-> {
-  async handler({
-    bodyParams,
-  }: RequestOptions<CreateBookParameters, NoPathParams>): Promise<Book> {
+export class CreateBookController extends AbstractController<CreateBookParameters, NoPathParams, Book> {
+  async handler({ bodyParams }: RequestOptions<CreateBookParameters, NoPathParams>): Promise<Book> {
     const appConfig = await readAppConfig();
     const title: string = await submitPrompt([
       {

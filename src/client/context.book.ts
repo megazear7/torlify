@@ -1,10 +1,5 @@
 import { createContext } from "@lit/context";
-import {
-  Book,
-  BookMinimalInfo,
-  Chapter,
-  ChapterPart,
-} from "../shared/type.book.js";
+import { Book, BookMinimalInfo, Chapter, ChapterPart } from "../shared/type.book.js";
 import z from "zod";
 import { LoadingStatus } from "../shared/type.loading.js";
 
