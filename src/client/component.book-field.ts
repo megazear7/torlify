@@ -76,8 +76,7 @@ export class TorlifyBookField extends LitElement {
     return html`
       <torlify-checkbox
         .checked="${!!this.value}"
-        on=${this.labelWithFallback()}
-        off=${this.labelWithFallback()}
+        text=${this.labelWithFallback()}
         @change=${this.save()}></torlify-checkbox>
     `;
   }

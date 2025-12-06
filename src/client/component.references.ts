@@ -403,9 +403,8 @@ export class TorlifyReferences extends LitElement {
             ${ReferenceUse.options.map(
               (option) => html`
                 <torlify-checkbox
+                  text=${option}
                   .checked="${this.whenToUse.includes(option)}"
-                  on=${option}
-                  off=${option}
                   @change=${(): void => this.toggleWhenToUse(option)}></torlify-checkbox>
               `,
             )}

@@ -44,10 +44,13 @@ export class TorlifyCheckbox extends LitElement {
   ];
 
   @property({ type: String })
-  off = "Off";
+  text: string = "Checkbox";
 
   @property({ type: String })
-  on = "On";
+  off: string | null = null;
+
+  @property({ type: String })
+  on: string | null = null;
 
   @property({ type: String, attribute: false })
   onIcon = checkIcon;
@@ -64,7 +67,7 @@ export class TorlifyCheckbox extends LitElement {
         <label class="checkbox-label ${this.checked ? "checked" : ""}" for="checkbox">
           <input type="checkbox" id="checkbox" .checked="${this.checked}" @change="${this.handleChange}" />
           ${this.checked ? this.onIcon : this.offIcon}
-          <span class="checkbox-text">${this.checked ? this.on : this.off}</span>
+          <span class="checkbox-text">${this.checked ? this.on || this.text : this.off || this.text}</span>
         </label>
       </div>
     `;
