@@ -1,6 +1,7 @@
 import { ErrorResponse, HttpMethod } from "./type.http.js";
 import { renderPathname } from "./util.route-params.js";
 import z, { ZodObject, ZodType } from "zod";
+import { ONE_DAY_IN_MS } from "./util.time.js";
 
 export const NoBodyParams = z.object({}).strict();
 export type NoBodyParams = z.infer<typeof NoBodyParams>;
@@ -60,8 +61,11 @@ export abstract class AbstractService<
       throw new Error("Cannot fetch from multiple paths. Specify a single path.");
     }
 
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), ONE_DAY_IN_MS);
     const requestConfig: RequestInit = {
       method: this.method.toUpperCase(),
+      signal: controller.signal,
     };
     let path = this.path;
     if (params) {
@@ -83,6 +87,7 @@ export abstract class AbstractService<
       path = renderPathname(this.path, mappedPathParams);
     }
     const res = await fetch(path, requestConfig);
+    clearTimeout(id);
     if (res.status >= 400) {
       const errorResponse = ErrorResponse.parse(await res.json());
       throw new Error(errorResponse.error);

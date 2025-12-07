@@ -240,6 +240,7 @@ export class TorlifyChapterEditor extends LitElement {
         dispatch(this, WarningEvent("Chapter outline is already generated"));
         return;
       }
+      this.closeModal(Modal.enum.generate)();
       this.loading = true;
       this.loadingMessage = "Generating chapter outline";
       try {
@@ -272,6 +273,7 @@ export class TorlifyChapterEditor extends LitElement {
         dispatch(this, WarningEvent("Chapter outline must be complete before generating parts"));
         return;
       }
+      this.closeModal(Modal.enum.generate)();
       this.loading = true;
       this.loadingMessage = "Generating chapter parts";
       for (const part of chapter.parts || []) {
@@ -303,6 +305,7 @@ export class TorlifyChapterEditor extends LitElement {
         dispatch(this, WarningEvent("No audio voice selected. Please update this configuration."));
         return;
       }
+      this.closeModal(Modal.enum.generate)();
       this.loading = true;
       this.loadingMessage = `Generating audio for chapter ${chapter.number} with the ${book.model.audio.voice} voice`;
       for (const part of chapter.parts) {

@@ -6,15 +6,16 @@ import { env } from "./main.env.js";
 import "./main.errors.js";
 import { notFound } from "./main.not-found.js";
 
-const server = express();
+const app = express();
 
-server.use(express.json({ limit: "10mb" }));
-server.use(express.static("dist/client"));
-server.use(express.static("dist/shared"));
-server.use(express.static("src/static"));
-server.use(loggingMiddleware);
-server.use(router);
-server.use(notFound);
-server.use(errorHandler);
+app.use(express.json({ limit: "10mb" }));
+app.use(express.static("dist/client"));
+app.use(express.static("dist/shared"));
+app.use(express.static("src/static"));
+app.use(loggingMiddleware);
+app.use(router);
+app.use(notFound);
+app.use(errorHandler);
 
-server.listen(env.APP_PORT, () => console.log(`Example app listening on port ${env.APP_PORT}`));
+const server = app.listen(env.APP_PORT, () => console.log(`Example app listening on port ${env.APP_PORT}`));
+server.timeout = 0; // Disable server timeout for long-running requests
