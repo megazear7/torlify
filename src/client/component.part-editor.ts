@@ -18,6 +18,7 @@ import z from "zod";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { TorlifyModal } from "./component.modal.js";
+import { aiIcon, replaceIcon } from "./icons.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -50,6 +51,9 @@ export class TorlifyPartEditor extends LitElement {
   @property({ type: String })
   public loadingMessage: string = "Loading";
 
+  @property({ type: Boolean })
+  public regenerateChecked: boolean = false;
+
   @query("#part-audio")
   partAudioElement!: HTMLAudioElement;
 
@@ -75,9 +79,22 @@ export class TorlifyPartEditor extends LitElement {
             <torlify-modal id="${Modal.enum.generate}-modal">
               <div slot="body">
                 <h3>Generate Part</h3>
-                <p>Generate the part?</p>
+                <torlify-checkbox
+                  off="Generate Missing Content"
+                  on="Regenerate All Content"
+                  .offIcon="${aiIcon}"
+                  .onIcon="${replaceIcon}"
+                  .checked="${this.regenerateChecked}"
+                  @change="${this.handleRegenerateCheckedChange}"></torlify-checkbox>
+                ${this.regenerateChecked
+                  ? html`
+                      <p>The part will be regenerated, replacing any existing content.</p>
+                    `
+                  : html`
+                      <p>The part will be generated only if content is missing.</p>
+                    `}
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
+                  <button class="standard-button" @click="${this.generateOutline()}">Outline</button>
                   <button class="standard-button" @click="${this.generateText()}">Text</button>
                   <button class="standard-button" @click="${this.generateAudio()}">Audio</button>
                 </torlify-bar>
@@ -166,6 +183,11 @@ export class TorlifyPartEditor extends LitElement {
     `;
   }
 
+  handleRegenerateCheckedChange(e: Event): void {
+    const target = e.target as HTMLInputElement;
+    this.regenerateChecked = target.checked;
+  }
+
   openModal(name: Modal): () => void {
     return (): void => {
       const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
@@ -187,52 +209,90 @@ export class TorlifyPartEditor extends LitElement {
     };
   }
 
-  generateAudio(): () => void {
+  generateOutline(): () => void {
     return async (): Promise<void> => {
-      this.closeModal(Modal.enum.generate)();
-      try {
-        const book = this.bookContext.book?.id;
-        const chapter = String(this.chapterContext.chapter?.number);
-        const part = String(this.partContext.part?.number);
-        if (!book || !chapter || !part) {
-          dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
-        } else {
-          this.loading = true;
-          this.loadingMessage = `Generating audio for part ${part} of chapter ${chapter}`;
-          await generatePartAudioService.fetch({ book, chapter, part });
-        }
-      } catch {
-        dispatch(this, WarningEvent("Failed to generate audio"));
-      } finally {
-        this.loading = false;
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+      if (!book || !chapter || !part) {
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
       }
+      const hasOutline = chapter.outline[part.number - 1]?.trim() !== "";
+      if (!this.regenerateChecked && hasOutline) {
+        dispatch(this, WarningEvent("Part already has an outline."));
+        return;
+      }
+      dispatch(this, WarningEvent("Outline generation not implemented yet"));
     };
   }
 
   generateText(): () => void {
     return async (): Promise<void> => {
-      this.closeModal(Modal.enum.generate)();
-      const book = this.bookContext.book?.id;
-      const chapter = String(this.chapterContext.chapter?.number);
-      const part = String(this.partContext.part?.number);
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
       if (!book || !chapter || !part) {
         dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
         return;
       }
+      const hasText = !!part.text && part.text.trim() !== "";
+      if (!this.regenerateChecked && hasText) {
+        dispatch(this, WarningEvent("Part already has text."));
+        return;
+      }
+      this.closeModal(Modal.enum.generate)();
+      this.loading = true;
+      this.loadingMessage = `Generating text for part ${part.number} of chapter ${chapter.number}`;
       try {
-        this.loading = true;
-        this.loadingMessage = `Generating text for part ${part} of chapter ${chapter}`;
-        const newPart = await generatePartService.fetch({
-          book,
-          chapter,
-          part,
+        this.partContext.part = await generatePartService.fetch({
+          book: book.id,
+          chapter: String(chapter.number),
+          part: String(part.number),
         });
-        this.partContext.part = newPart;
       } catch {
         dispatch(this, WarningEvent("Failed to generate part"));
-      } finally {
-        this.loading = false;
       }
+      this.loading = false;
+    };
+  }
+
+  generateAudio(): () => void {
+    return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+      if (!book || !chapter || !part) {
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+      const hasAudio = !!part.audio;
+      if (!this.regenerateChecked && hasAudio) {
+        dispatch(this, WarningEvent("Part already has audio."));
+        return;
+      }
+      const hasText = !!part.text && part.text.trim() !== "";
+      if (!hasText) {
+        dispatch(this, WarningEvent("Part must have text before generating audio."));
+        return;
+      }
+      if (!book.model.audio.voice) {
+        dispatch(this, WarningEvent("No audio voice selected. Please update this configuration."));
+        return;
+      }
+      this.closeModal(Modal.enum.generate)();
+      this.loading = true;
+      this.loadingMessage = `Generating audio for part ${part.number} of chapter ${chapter.number} with the ${book.model.audio.voice} voice`;
+      try {
+        await generatePartAudioService.fetch({
+          book: book.id,
+          chapter: String(chapter.number),
+          part: String(part.number),
+        });
+      } catch {
+        dispatch(this, WarningEvent("Failed to generate audio"));
+      }
+      this.loading = false;
     };
   }
 

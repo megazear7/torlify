@@ -299,8 +299,12 @@ export class TorlifyChapterEditor extends LitElement {
         dispatch(this, WarningEvent("All chapter parts already have audio"));
         return;
       }
+      if (!book.model.audio.voice) {
+        dispatch(this, WarningEvent("No audio voice selected. Please update this configuration."));
+        return;
+      }
       this.loading = true;
-      this.loadingMessage = `Generating audio for chapter ${chapter.number}`;
+      this.loadingMessage = `Generating audio for chapter ${chapter.number} with the ${book.model.audio.voice} voice`;
       for (const part of chapter.parts) {
         await this.generateAudioForChapterPart(this.regenerateChecked, book, chapter, part);
       }
@@ -338,10 +342,6 @@ export class TorlifyChapterEditor extends LitElement {
   ): Promise<void> {
     const hasAudio = !!part.audio;
     if (!regenerate && hasAudio) {
-      return;
-    }
-    if (!book.model.audio.voice) {
-      dispatch(this, WarningEvent("No audio voice selected. Please update this configuration."));
       return;
     }
     this.loadingMessage = `Generating audio for part ${part.number} of chapter ${chapter.number} with the ${book.model.audio.voice} voice `;
