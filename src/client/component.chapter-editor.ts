@@ -9,7 +9,7 @@ import { WarningEvent } from "./event.warning.js";
 import { DebounceHandler } from "./util.debounce.js";
 import { SaveEvent } from "./event.save.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
-import { BookId, Chapter } from "../shared/type.book.js";
+import { Book, BookId, Chapter, ChapterPart } from "../shared/type.book.js";
 import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
@@ -17,6 +17,8 @@ import z from "zod";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { TorlifyModal } from "./component.modal.js";
+import { aiIcon, replaceIcon } from "./icons.js";
+import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -50,6 +52,9 @@ export class TorlifyChapterEditor extends LitElement {
   @property({ type: String })
   public loadingMessage: string = "Loading";
 
+  @property({ type: Boolean })
+  public regenerateChecked: boolean = false;
+
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
@@ -81,11 +86,29 @@ export class TorlifyChapterEditor extends LitElement {
             <torlify-modal id="${Modal.enum.generate}-modal">
               <div slot="body">
                 <h3>Generate Chapter</h3>
-                <p>Generate for the entire chapter?</p>
+                <torlify-checkbox
+                  off="Generate Missing Content"
+                  on="Regenerate All Content"
+                  .offIcon="${aiIcon}"
+                  .onIcon="${replaceIcon}"
+                  .checked="${this.regenerateChecked}"
+                  @change="${this.handleRegenerateCheckedChange}"></torlify-checkbox>
+                ${
+                  this.regenerateChecked
+                    ? html`
+                        <p>All content for the entire chapter will be generated, replacing any existing content.</p>
+                      `
+                    : html`
+                        <p>
+                          All missing content will be generated for the entire chapter but no existing content will be
+                          replaced.
+                        </p>
+                      `
+                }
                 <torlify-bar>
                   <button class="standard-button" @click="${this.generateOutline()}">Outline</button>
                   <button class="standard-button" @click="${this.generateParts()}">Text</button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.generate)}">Audio</button>
+                  <button class="standard-button" @click="${this.generateAudio()}">Audio</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -178,6 +201,11 @@ export class TorlifyChapterEditor extends LitElement {
     `;
   }
 
+  handleRegenerateCheckedChange(e: Event): void {
+    const target = e.target as HTMLInputElement;
+    this.regenerateChecked = target.checked;
+  }
+
   openModal(name: Modal): () => void {
     return (): void => {
       const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
@@ -202,19 +230,23 @@ export class TorlifyChapterEditor extends LitElement {
   generateOutline() {
     return async (): Promise<void> => {
       const book = this.bookContext.book?.id;
-      const chapter = String(this.chapterContext.chapter?.number);
+      const chapter = this.chapterContext.chapter;
       if (!book || !chapter) {
         dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const allOutlineGenerated = chapter.outline.every((item) => item && item.trim() !== "");
+      if (!this.regenerateChecked && allOutlineGenerated) {
+        dispatch(this, WarningEvent("Chapter outline is already generated"));
         return;
       }
       this.loading = true;
       this.loadingMessage = "Generating chapter outline";
       try {
-        const updatedChapter = await generateChapterOutlineService.fetch({
+        this.chapterContext.chapter = await generateChapterOutlineService.fetch({
           book,
-          chapter,
+          chapter: String(chapter.number),
         });
-        this.chapterContext.chapter!.outline = updatedChapter.outline;
       } catch {
         dispatch(this, WarningEvent("Failed to generate outline"));
       }
@@ -224,28 +256,104 @@ export class TorlifyChapterEditor extends LitElement {
 
   generateParts() {
     return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      if (!book || !chapter) {
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const allPartsGenerated = chapter.parts.every((part) => part.text && part.text.trim() !== "") ?? false;
+      if (!this.regenerateChecked && allPartsGenerated) {
+        dispatch(this, WarningEvent("All chapter parts are already generated"));
+        return;
+      }
+      const hasIncompleteOutline = chapter.outline.some((item) => !item || item.trim() === "");
+      if (hasIncompleteOutline) {
+        dispatch(this, WarningEvent("Chapter outline must be complete before generating parts"));
+        return;
+      }
       this.loading = true;
-      for (const part of this.chapterContext.chapter?.parts || []) {
-        const book = this.bookContext.book?.id;
-        const chapter = String(this.chapterContext.chapter?.number);
-        if (!book || !chapter) {
-          dispatch(this, WarningEvent("Book or chapter not loaded"));
-          this.loading = false;
-          return;
-        }
-        try {
-          const newPart = await generatePartService.fetch({
-            book,
-            chapter,
-            part: String(part.number),
-          });
-          this.chapterContext.chapter!.parts[part.number - 1] = newPart;
-        } catch {
-          dispatch(this, WarningEvent("Failed to generate part"));
-        }
+      this.loadingMessage = "Generating chapter parts";
+      for (const part of chapter.parts || []) {
+        await this.generateTextForChapterPart(this.regenerateChecked, book, chapter, part);
       }
       this.loading = false;
     };
+  }
+
+  generateAudio() {
+    return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      if (!book || !chapter) {
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const hasNoTextParts = chapter.parts.some((part) => !part.text || part.text.trim() === "");
+      if (hasNoTextParts) {
+        dispatch(this, WarningEvent("All chapter parts must have text before generating audio"));
+        return;
+      }
+      const hasAllAudioParts = chapter.parts.every((part) => !!part.audio);
+      if (!this.regenerateChecked && hasAllAudioParts) {
+        dispatch(this, WarningEvent("All chapter parts already have audio"));
+        return;
+      }
+      this.loading = true;
+      this.loadingMessage = `Generating audio for chapter ${chapter.number}`;
+      for (const part of chapter.parts) {
+        await this.generateAudioForChapterPart(this.regenerateChecked, book, chapter, part);
+      }
+      this.loading = false;
+    };
+  }
+
+  async generateTextForChapterPart(
+    regenerate: boolean,
+    book: Book,
+    chapter: Chapter,
+    part: ChapterPart,
+  ): Promise<void> {
+    const hasText = !!part.text && part.text.trim() !== "";
+    if (!regenerate && hasText) {
+      return;
+    }
+    this.loadingMessage = `Generating part ${part.number} of chapter ${chapter.number}`;
+    try {
+      this.chapterContext.chapter!.parts[part.number - 1] = await generatePartService.fetch({
+        book: book.id,
+        chapter: String(chapter.number),
+        part: String(part.number),
+      });
+    } catch {
+      dispatch(this, WarningEvent("Failed to generate part"));
+    }
+  }
+
+  async generateAudioForChapterPart(
+    regenerate: boolean,
+    book: Book,
+    chapter: Chapter,
+    part: ChapterPart,
+  ): Promise<void> {
+    const hasAudio = !!part.audio;
+    if (!regenerate && hasAudio) {
+      return;
+    }
+    if (!book.model.audio.voice) {
+      dispatch(this, WarningEvent("No audio voice selected. Please update this configuration."));
+      return;
+    }
+    this.loadingMessage = `Generating audio for part ${part.number} of chapter ${chapter.number} with the ${book.model.audio.voice} voice `;
+    try {
+      await generatePartAudioService.fetch({
+        book: book.id,
+        chapter: String(chapter.number),
+        part: String(part.number),
+      });
+    } catch {
+      dispatch(this, WarningEvent("Failed to generate audio"));
+    }
   }
 
   updateProperty(property: keyof Chapter, index?: number): (event: CustomEvent | InputEvent) => void {

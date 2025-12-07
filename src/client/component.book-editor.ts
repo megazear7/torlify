@@ -75,7 +75,7 @@ export class TorlifyBookEditor extends LitElement {
             </torlify-bar>
             <torlify-modal id="${Modal.enum.generate}-modal">
               <div slot="body">
-                <h3>Generate</h3>
+                <h3>Generate Book</h3>
                 <torlify-checkbox
                   off="Generate Missing Content"
                   on="Regenerate All Content"
@@ -298,7 +298,7 @@ export class TorlifyBookEditor extends LitElement {
 
   generateAudio(regenerate: boolean): () => Promise<void> {
     return async (): Promise<void> => {
-      this.generate(async (chapter: Chapter) => await this.generateAudiosForChapter(regenerate, chapter));
+      this.generate(async (chapter: Chapter) => await this.generateAudioForChapter(regenerate, chapter));
     };
   }
 
@@ -315,20 +315,19 @@ export class TorlifyBookEditor extends LitElement {
   }
 
   async generatePartsForChapter(regenerate: boolean, chapter: Chapter): Promise<void> {
-    // When generating parts, only regenerate the outline if needed even if regenerate is true
-    // Since regenerate true in this function means that the user asked to regenerate the parts, not the outline
-    await this.generateOutlineForChapter(false, chapter);
+    const hasNoOutline = chapter.parts.some((part) => !part.text || part.text.trim() === "");
+    if (hasNoOutline) {
+      dispatch(this, WarningEvent(`Outline required to generate parts for chapter ${chapter.number}`));
+      return;
+    }
     for (const part of chapter.parts) {
       await this.generatePartForChapter(regenerate, chapter, part);
     }
   }
 
-  async generateAudiosForChapter(regenerate: boolean, chapter: Chapter): Promise<void> {
-    // When generating parts, only regenerate the outline if needed even if regenerate is true
-    // Since regenerate true in this function means that the user asked to regenerate the audio, not the outline
-    await this.generateOutlineForChapter(false, chapter);
+  async generateAudioForChapter(regenerate: boolean, chapter: Chapter): Promise<void> {
     for (const part of chapter.parts) {
-      await this.generateAudioForChapter(regenerate, chapter, part);
+      await this.generateAudioForChapterPart(regenerate, chapter, part);
     }
   }
 
@@ -345,20 +344,26 @@ export class TorlifyBookEditor extends LitElement {
     }
   }
 
-  async generateAudioForChapter(regenerate: boolean, chapterObj: Chapter, partObj: ChapterPart): Promise<void> {
+  async generateAudioForChapterPart(regenerate: boolean, chapterObj: Chapter, partObj: ChapterPart): Promise<void> {
     const book = this.bookContext.book?.id;
     const chapter = String(chapterObj.number);
     const part = String(partObj.number);
     const hasNoAudio = !partObj.audio || partObj.audio.trim() === "";
-    if (hasNoAudio || regenerate) {
-      if (!book || !chapter || !part) {
-        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
-      } else {
-        this.loading = true;
-        this.loadingMessage = `Generating audio for part ${part} of chapter ${chapter}`;
-        await generatePartAudioService.fetch({ book, chapter, part });
-      }
+    if (partObj.text === undefined || partObj.text.trim() === "") {
+      dispatch(this, WarningEvent(`Cannot generate audio for part ${part} of chapter ${chapter} without text`));
+      return;
     }
+    if (!hasNoAudio && !regenerate) {
+      dispatch(this, WarningEvent(`Audio already exists for part ${part} of chapter ${chapter}`));
+      return;
+    }
+    if (!book || !chapter || !part) {
+      dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+      return;
+    }
+    this.loading = true;
+    this.loadingMessage = `Generating audio for part ${part} of chapter ${chapter}`;
+    await generatePartAudioService.fetch({ book, chapter, part });
   }
 
   confirmDeleteBook = async (): Promise<void> => {
