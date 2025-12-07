@@ -19,6 +19,7 @@ import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { TorlifyModal } from "./component.modal.js";
 import { aiIcon, replaceIcon } from "./icons.js";
+import { generatePartOutlineService } from "../shared/service.generate-part-outline.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -223,7 +224,22 @@ export class TorlifyPartEditor extends LitElement {
         dispatch(this, WarningEvent("Part already has an outline."));
         return;
       }
-      dispatch(this, WarningEvent("Outline generation not implemented yet"));
+      this.closeModal(Modal.enum.generate)();
+      this.loading = true;
+      this.loadingMessage = `Generating outline for part ${part.number} of chapter ${chapter.number}`;
+      try {
+        this.chapterContext.chapter = await generatePartOutlineService.fetch({
+          book: book.id,
+          chapter: String(chapter.number),
+          part: String(part.number),
+        });
+        // TODO: The page should automatically render but for some reason that is not working
+        // For now, we navigate to the part to show updated outline
+        dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}/part/${part.number}` }));
+      } catch {
+        dispatch(this, WarningEvent("Failed to generate outline"));
+      }
+      this.loading = false;
     };
   }
 

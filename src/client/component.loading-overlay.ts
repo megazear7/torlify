@@ -243,7 +243,7 @@ export class TorlifyLoadingOverlay extends LitElement {
             snippet = this.pickNewSnippet();
             this.loadingSnippetElement.classList.remove("fly-away");
           }, 1000);
-        }, 8000);
+        }, 6000);
       }
 
       // Add next character
@@ -257,7 +257,7 @@ export class TorlifyLoadingOverlay extends LitElement {
   private pickNewSnippet(): string {
     const messages = this.bookContext.book!.loadingMessages;
     const randomIndex = Math.floor(Math.random() * messages.length);
-    return messages[randomIndex];
+    return messages[randomIndex].replace("...", "") + "...";
   }
 
   close(): void {

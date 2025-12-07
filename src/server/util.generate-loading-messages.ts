@@ -7,7 +7,7 @@ export async function generateLoadingMessages(book: BookOverview): Promise<Loadi
       {
         role: "system",
         content:
-          "You are a loading message generator for a book maker app that writes funny and engaging loading messages based on a provided book description. Each message should be 3-8 words long, be an action with a verb, and should not include commas.",
+          "You are a loading message generator for a book maker app that writes funny and engaging loading messages based on a provided book description. Each message should be 3-8 words long, be an action with a verb, and should not include commas. It should not end with an ellipses.",
       },
       {
         role: "user",
