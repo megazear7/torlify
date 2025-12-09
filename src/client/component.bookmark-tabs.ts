@@ -11,7 +11,7 @@ import {
   chapterContext,
   PartContext,
   partContext,
-} from "./context.book.js";
+} from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { ScrollToEvent } from "./event.scroll-to.js";
 import { dispatch } from "./util.events.js";

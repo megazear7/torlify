@@ -1,7 +1,7 @@
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import { bookContext, BookContext, chapterContext, ChapterContext, PartContext, partContext } from "./context.book.js";
+import { bookContext, BookContext, chapterContext, ChapterContext, PartContext, partContext } from "./context.js";
 import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import { pillStyles } from "./styles.pill.js";

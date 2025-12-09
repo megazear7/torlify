@@ -3,7 +3,7 @@ import { customElement, property, query } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { globalStyles } from "./styles.global.js";
 import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
-import { BookContext, bookContext } from "./context.book.js";
+import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { consume } from "@lit/context";
 

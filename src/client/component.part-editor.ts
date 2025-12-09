@@ -1,7 +1,7 @@
 import { consume } from "@lit/context";
 import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { bookContext, BookContext, ChapterContext, chapterContext, PartContext, partContext } from "./context.book.js";
+import { bookContext, BookContext, ChapterContext, chapterContext, PartContext, partContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { WarningEvent } from "./event.warning.js";

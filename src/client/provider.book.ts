@@ -1,6 +1,6 @@
 import { provide } from "@lit/context";
 import { property } from "lit/decorators.js";
-import { BookContext, bookContext } from "./context.book.js";
+import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { getBookService } from "../shared/service.get-book.js";

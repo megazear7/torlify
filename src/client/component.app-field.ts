@@ -2,23 +2,19 @@ import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
-import { bookContext, BookContext } from "./context.js";
+import { AppContext, appContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { SaveEvent } from "./event.save.js";
 import { dispatch } from "./util.events.js";
-import { updateBookService } from "../shared/service.update-book.js";
 import { DebounceHandler } from "./util.debounce.js";
-import { buildNestedObject } from "../shared/util.property.js";
-import { BookPartial } from "../shared/type.book.js";
-import { mergeBookProperties } from "../shared/util.merge-book.js";
 
-@customElement("torlify-book-field")
-export class TorlifyBookField extends LitElement {
+@customElement("torlify-app-field")
+export class TorlifyAppField extends LitElement {
   static override styles = [globalStyles, css``];
 
-  @consume({ context: bookContext, subscribe: true })
+  @consume({ context: appContext, subscribe: true })
   @property({ attribute: false })
-  public bookContext: BookContext = {
+  public appContext: AppContext = {
     status: LoadingStatus.enum.idle,
   };
 
@@ -100,11 +96,11 @@ export class TorlifyBookField extends LitElement {
 
   get value(): string | number {
     // this.property is something like "title" or "model.text.name"
-    const book = this.bookContext.book;
-    if (!book) return "";
+    const app = this.appContext.app;
+    if (!app) return "";
     const properties = this.property.split(".");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let value: any = book;
+    let value: any = app;
     for (const prop of properties) {
       value = value ? value[prop] : undefined;
     }
@@ -118,13 +114,12 @@ export class TorlifyBookField extends LitElement {
     return (event: CustomEvent | InputEvent): void => {
       const value = this.getValueFromEvent(event);
       if (value === undefined) return;
-      const book = buildNestedObject(BookPartial, this.property, value);
-      this.bookContext.book = mergeBookProperties(this.bookContext.book!, book);
+      // TODO
+      // const app = buildNestedObject(AppPartial, this.property, value);
+      // this.appContext.app = mergeAppProperties(this.appContext.app!, app);
       this.debounceHandler.debounce(() => {
-        updateBookService.fetch({
-          book,
-          name: this.bookContext.book!.id,
-        });
+        // TODO
+        // updateAppService.fetch({ app });
         dispatch(this, SaveEvent());
       });
     };

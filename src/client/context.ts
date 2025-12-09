@@ -2,6 +2,15 @@ import { createContext } from "@lit/context";
 import { Book, BookMinimalInfo, Chapter, ChapterPart } from "../shared/type.book.js";
 import z from "zod";
 import { LoadingStatus } from "../shared/type.loading.js";
+import { AppConfig } from "../shared/type.app.js";
+
+export const AppContext = z.object({
+  app: AppConfig.optional(),
+  status: LoadingStatus,
+  error: z.string().optional(),
+});
+export type AppContext = z.infer<typeof AppContext>;
+export const appContext = createContext<AppContext>("app");
 
 export const BooksContext = z.object({
   books: BookMinimalInfo.array().optional(),

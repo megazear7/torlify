@@ -1,6 +1,6 @@
 import { provide } from "@lit/context";
 import { property } from "lit/decorators.js";
-import { ChapterContext, chapterContext } from "./context.book.js";
+import { ChapterContext, chapterContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { TorlifyBookProvider } from "./provider.book.js";

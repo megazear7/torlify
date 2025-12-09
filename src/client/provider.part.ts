@@ -3,7 +3,7 @@ import { property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { TorlifyChapterProvider } from "./provider.chapter.js";
-import { PartContext, partContext } from "./context.book.js";
+import { PartContext, partContext } from "./context.js";
 
 export abstract class TorlifyPartProvider extends TorlifyChapterProvider {
   @provide({ context: partContext })

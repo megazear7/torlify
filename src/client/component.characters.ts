@@ -2,7 +2,7 @@ import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
-import { BookContext, bookContext } from "./context.book.js";
+import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { dispatch } from "./util.events.js";
 import { plusIcon, trashIcon } from "./icons.js";
