@@ -315,7 +315,7 @@ export class TorlifyBookEditor extends LitElement {
   }
 
   async generatePartsForChapter(regenerate: boolean, chapter: Chapter): Promise<void> {
-    const hasNoOutline = chapter.parts.some((part) => !part.text || part.text.trim() === "");
+    const hasNoOutline = chapter.outline.some((partDescription) => !partDescription || partDescription.trim() === "");
     if (hasNoOutline) {
       dispatch(this, WarningEvent(`Outline required to generate parts for chapter ${chapter.number}`));
       return;
