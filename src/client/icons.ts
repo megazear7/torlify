@@ -179,3 +179,17 @@ export const replaceIcon = html`
       d="M216.67,516.68v55.66h-50v-150h147.13v50h-67.48c32.73,50.19,89.36,83.33,153.69,83.33,101.25,0,183.33-82.08,183.33-183.33h50c0,128.87-104.47,233.33-233.33,233.33-74.39,0-140.62-34.81-183.33-88.99Z" />
   </svg>
 `;
+
+export const infoIcon = html`
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    fill="currentColor"
+    aria-hidden="true">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" />
+    <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    <circle cx="12" cy="8" r="1" fill="currentColor" />
+  </svg>
+`;

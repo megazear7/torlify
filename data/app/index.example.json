@@ -19,10 +19,11 @@
             "name": "openai",
             "endpoint": "https://api.openai.com/v1",
             "modelName": "gpt-audio-2025-08-28",
+            "voice": "ash",
             "cost": {
-                "inputTokenCost": 0,
+                "inputTokenCost": 2.50,
                 "inputTokenCount": 0,
-                "outputTokenCost": 0,
+                "outputTokenCost": 64.00,
                 "outputTokenCount": 0
             },
             "usage": {

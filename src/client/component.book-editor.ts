@@ -17,11 +17,11 @@ import z from "zod";
 import { Chapter, ChapterPart } from "../shared/type.book.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { downloadBookAudioService } from "../shared/service.download-book-audio.js";
+import { aiIcon, replaceIcon } from "./icons.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import "./component.book-field.js";
 import "./component.checkbox.js";
-import { aiIcon, replaceIcon } from "./icons.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;

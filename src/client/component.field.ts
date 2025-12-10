@@ -2,19 +2,49 @@ import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
-import { AppContext, appContext } from "./context.js";
+import { AppContext, appContext, BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { SaveEvent } from "./event.save.js";
 import { dispatch } from "./util.events.js";
 import { DebounceHandler } from "./util.debounce.js";
+import { Book, BookPartial } from "../shared/type.book.js";
+import { AppConfig, AppConfigPartial } from "../shared/type.app.js";
+import { buildNestedObject } from "../shared/util.property.js";
+import { mergeBookProperties } from "../shared/util.merge-book.js";
+import { updateBookService } from "../shared/service.update-book.js";
+import { mergeAppProperties } from "../shared/util.merge-app.js";
+import { updateAppService } from "../shared/service.update-app.js";
+import { infoIcon } from "./icons.js";
 
-@customElement("torlify-app-field")
-export class TorlifyAppField extends LitElement {
-  static override styles = [globalStyles, css``];
+@customElement("torlify-field")
+export class TorlifyField extends LitElement {
+  static override styles = [
+    globalStyles,
+    css`
+      label {
+        display: flex;
+        align-items: center;
+        gap: var(--size-small);
+        color: var(--color-primary-text);
+        margin-bottom: var(--size-small);
+      }
+
+      label .field-help {
+        display: flex;
+        align-items: center;
+      }
+    `,
+  ];
 
   @consume({ context: appContext, subscribe: true })
   @property({ attribute: false })
   public appContext: AppContext = {
+    status: LoadingStatus.enum.idle,
+  };
+
+  @consume({ context: bookContext, subscribe: true })
+  @property({ attribute: false })
+  public bookContext: BookContext = {
     status: LoadingStatus.enum.idle,
   };
 
@@ -26,6 +56,9 @@ export class TorlifyAppField extends LitElement {
 
   @property({ type: String })
   public label: string = "";
+
+  @property({ type: String })
+  public help: string = "";
 
   @property({ type: String })
   public heading: "h2" | "" = "";
@@ -47,20 +80,21 @@ export class TorlifyAppField extends LitElement {
 
   input(): TemplateResult {
     return html`
-      <label for="${this.propertyId}">${this.labelWithFallback()}</label>
+      <label for="${this.propertyId}">${this.labelWithFallback()}${this.renderHelp()}</label>
       <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
     `;
   }
 
   number(): TemplateResult {
     return html`
-      <label for="${this.propertyId}">${this.labelWithFallback()}</label>
+      <label for="${this.propertyId}">${this.labelWithFallback()}${this.renderHelp()}</label>
       <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
     `;
   }
 
   textarea(): TemplateResult {
     return html`
+      ${this.renderHelp()}
       <torlify-auto-textarea
         heading="${this.heading}"
         .value="${this.value}"
@@ -70,6 +104,7 @@ export class TorlifyAppField extends LitElement {
 
   boolean(): TemplateResult {
     return html`
+      ${this.renderHelp()}
       <torlify-checkbox
         .checked="${!!this.value}"
         text=${this.labelWithFallback()}
@@ -77,8 +112,20 @@ export class TorlifyAppField extends LitElement {
     `;
   }
 
-  labelWithFallback(): string {
-    if (this.label) return this.label;
+  renderHelp(): TemplateResult {
+    if (this.help) {
+      return html`
+        <span class="field-help" title=${this.help}>${infoIcon}</span>
+      `;
+    }
+    return html``;
+  }
+
+  labelWithFallback(): TemplateResult {
+    if (this.label)
+      return html`
+        <span>${this.label}</span>
+      `;
     // Derive label from property
     const parts = this.property.split(".");
     const lastPart = parts[parts.length - 1];
@@ -87,7 +134,9 @@ export class TorlifyAppField extends LitElement {
       .replace(/([A-Z])/g, " $1")
       .replace(/_/g, " ")
       .replace(/\b\w/g, (char) => char.toUpperCase());
-    return title;
+    return html`
+      <span>${title}</span>
+    `;
   }
 
   get propertyId(): string {
@@ -95,12 +144,12 @@ export class TorlifyAppField extends LitElement {
   }
 
   get value(): string | number {
+    const context = this.getContext();
     // this.property is something like "title" or "model.text.name"
-    const app = this.appContext.app;
-    if (!app) return "";
-    const properties = this.property.split(".");
+    if (!context) return "";
+    const properties = this.contextualProperty.split(".");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let value: any = app;
+    let value: any = context;
     for (const prop of properties) {
       value = value ? value[prop] : undefined;
     }
@@ -110,18 +159,36 @@ export class TorlifyAppField extends LitElement {
     return value || "";
   }
 
+  getContext(): AppConfig | Book | undefined {
+    return this.property.startsWith("book.") ? this.bookContext.book : this.appContext.app;
+  }
+
+  get contextualProperty(): string {
+    return this.property.startsWith("book.") ? this.property.split("book.")[1] : this.property.split("app.")[1];
+  }
+
   save(): (event: CustomEvent | InputEvent) => void {
     return (event: CustomEvent | InputEvent): void => {
       const value = this.getValueFromEvent(event);
       if (value === undefined) return;
-      // TODO
-      // const app = buildNestedObject(AppPartial, this.property, value);
-      // this.appContext.app = mergeAppProperties(this.appContext.app!, app);
-      this.debounceHandler.debounce(() => {
-        // TODO
-        // updateAppService.fetch({ app });
-        dispatch(this, SaveEvent());
-      });
+      if (this.property.startsWith("book.")) {
+        const book = buildNestedObject(BookPartial, this.contextualProperty, value);
+        this.bookContext.book = mergeBookProperties(this.bookContext.book!, book);
+        this.debounceHandler.debounce(() => {
+          updateBookService.fetch({
+            book,
+            name: this.bookContext.book!.id,
+          });
+          dispatch(this, SaveEvent());
+        });
+      } else {
+        const app = buildNestedObject(AppConfigPartial, this.contextualProperty, value);
+        this.appContext.app = mergeAppProperties(this.appContext.app!, app);
+        this.debounceHandler.debounce(() => {
+          updateAppService.fetch({ app });
+          dispatch(this, SaveEvent());
+        });
+      }
     };
   }
 

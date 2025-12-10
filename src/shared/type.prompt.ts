@@ -21,22 +21,16 @@ export const Usage = z.object({
 });
 export type Usage = z.infer<typeof Usage>;
 
-export const InputTokenCost = z.number().min(0).describe("The cost in dollars per certain number of input tokens.");
+export const InputTokenCost = z.number().min(0).describe("The cost in dollars per million input tokens.");
 export type InputTokenCost = z.infer<typeof InputTokenCost>;
 
-export const InputTokenCount = z
-  .number()
-  .min(0)
-  .describe("The number of input tokens to use when counting input cost.");
+export const InputTokenCount = z.number().min(0).describe("The number of input tokens used.");
 export type InputTokenCount = z.infer<typeof InputTokenCount>;
 
-export const OutputTokenCost = z.number().min(0).describe("The cost in dollars per certain number of output tokens.");
+export const OutputTokenCost = z.number().min(0).describe("The cost in dollars per million output tokens.");
 export type OutputTokenCost = z.infer<typeof OutputTokenCost>;
 
-export const OutputTokenCount = z
-  .number()
-  .min(0)
-  .describe("The number of output tokens to use when counting output cost.");
+export const OutputTokenCount = z.number().min(0).describe("The number of output tokens used.");
 export type OutputTokenCount = z.infer<typeof OutputTokenCount>;
 
 export const Cost = z.object({

@@ -1,7 +1,7 @@
 import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
-import { TorlifyBookListProvider } from "./provider.book-list.js";
 import { globalStyles } from "./styles.global.js";
+import { TorlifyBookListProvider } from "./provider.book-list.js";
 import "./component.book-list.js";
 import "./component.app-config.js";
 
