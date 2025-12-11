@@ -6,10 +6,28 @@ import { AppContext, appContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { TorlifyModal } from "./component.modal.js";
 import "./component.field.js";
+import "./component.spinner.js";
+import { appPingModelService } from "../shared/service.app-ping-model.js";
+import { dispatch } from "./util.events.js";
+import { SuccessEvent } from "./event.success.js";
+import { WarningEvent } from "./event.warning.js";
 
 @customElement("torlify-app-config")
 export class TorlifyAppConfig extends LitElement {
-  static override styles = [globalStyles, css``];
+  static override styles = [
+    globalStyles,
+    css`
+      .loading-button {
+        display: flex;
+        align-items: center;
+        gap: var(--size-small);
+      }
+
+      .loading-button.loading:hover {
+        background-color: var(--color-secondary-bold);
+      }
+    `,
+  ];
 
   @consume({ context: appContext, subscribe: true })
   @property({ attribute: false })
@@ -20,6 +38,9 @@ export class TorlifyAppConfig extends LitElement {
   @query("#config")
   public configElement!: TorlifyModal;
 
+  @property({ type: Boolean })
+  public testConnectivityLoading = false;
+
   override render(): TemplateResult {
     return html`
       <button class="standard-button" @click="${this.openConfig()}">Configure</button>
@@ -27,6 +48,18 @@ export class TorlifyAppConfig extends LitElement {
         <div slot="body">
           <h2>App Configuration</h2>
           <h3>Text Model Configuration</h3>
+          <button
+            class="standard-button small loading-button ${this.testConnectivityLoading ? "loading" : ""}"
+            @click="${this.testConnectivity}"
+            ?disabled="${this.testConnectivityLoading}">
+            <span>Test Connectivity</span>
+            ${this.testConnectivityLoading
+              ? html`
+                  <torlify-spinner size="18"></torlify-spinner>
+                `
+              : ""}
+          </button>
+          <br />
           <torlify-field property="app.model.text.name"></torlify-field>
           <torlify-field property="app.model.text.modelName"></torlify-field>
           <torlify-field property="app.model.text.endpoint"></torlify-field>
@@ -65,5 +98,18 @@ export class TorlifyAppConfig extends LitElement {
     return (): void => {
       this.configElement.open();
     };
+  }
+
+  async testConnectivity(): Promise<void> {
+    try {
+      this.testConnectivityLoading = true;
+      const response = await appPingModelService.fetch();
+      dispatch(this, SuccessEvent(response));
+    } catch (error) {
+      console.error("Connectivity test failed:", error);
+      dispatch(this, WarningEvent("Model did not respond."));
+    } finally {
+      this.testConnectivityLoading = false;
+    }
   }
 }

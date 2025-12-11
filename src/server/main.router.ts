@@ -19,6 +19,7 @@ import { generatePartAudioController } from "./controller.generate-part-audio.js
 import { registerGetChapterAudio } from "./controller.get-part-audio.js";
 import { registerDownloadBookAudio } from "./controller.download-book-audio.js";
 import { generatePartOutlineController } from "./controller.generate-part-outline.js";
+import { appPingModelController } from "./controller.app-ping-model.js";
 
 const router = express.Router();
 
@@ -42,5 +43,6 @@ registerUploadReference(router);
 registerDownloadBook(router);
 registerDownloadBookAudio(router);
 registerGetChapterAudio(router);
+appPingModelController.register(router);
 
 export { router };

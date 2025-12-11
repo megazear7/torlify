@@ -115,6 +115,11 @@ export const globalStyles = css`
     border-radius: var(--radius-large);
   }
 
+  button.standard-button.small {
+    padding: var(--size-small) var(--size-medium);
+    font-size: calc(var(--font-medium) * 0.85);
+  }
+
   input[type="text"],
   input[type="number"] {
     width: 100%;
