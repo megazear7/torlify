@@ -68,6 +68,9 @@ export class TorlifyBookEditor extends LitElement {
   @property({ type: Boolean })
   public testConnectivityLoading = false;
 
+  @property({ type: Boolean })
+  public downloadingAudio = false;
+
   override render(): TemplateResult {
     return html`
       ${this.bookContext.book
@@ -133,7 +136,18 @@ export class TorlifyBookEditor extends LitElement {
                 <torlify-bar>
                   <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
                   <button class="standard-button" @click="${this.downloadBook()}">Text</button>
-                  <button class="standard-button" @click="${this.downloadAudio()}">Audio</button>
+                  <button
+                    class="standard-button"
+                    @click="${this.downloadAudio()}"
+                    class="standard-button loading-button ${this.downloadingAudio ? "loading" : ""}"
+                    ?disabled="${this.downloadingAudio}">
+                    Audio
+                    ${this.downloadingAudio
+                      ? html`
+                          <torlify-spinner size="18"></torlify-spinner>
+                        `
+                      : ""}
+                  </button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -261,7 +275,9 @@ export class TorlifyBookEditor extends LitElement {
   downloadAudio(): () => void {
     return async (): Promise<void> => {
       try {
+        this.downloadingAudio = true;
         await downloadBookAudioService.fetch({ book: this.bookContext.book!.id });
+        this.downloadingAudio = false;
       } catch (error) {
         console.error("Error downloading audio:", error);
         dispatch(this, WarningEvent("Failed to download audio"));
