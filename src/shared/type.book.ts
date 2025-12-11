@@ -11,6 +11,11 @@ export const BookId = z
   );
 export type BookId = z.infer<typeof BookId>;
 
+export const BookLastUpdated = z
+  .number()
+  .describe("The timestamp when the book was last edited as provided by Date.now()");
+export type BookLastUpdated = z.infer<typeof BookLastUpdated>;
+
 export const BookTitle = z.string().min(1).describe("The title of the book");
 export type BookTitle = z.infer<typeof BookTitle>;
 
@@ -28,6 +33,7 @@ export type TokenCost = z.infer<typeof TokenCost>;
 
 export const BookMinimalInfo = z.object({
   id: BookId,
+  lastUpdated: BookLastUpdated.optional(),
   title: BookTitle,
   chapterCount: ChapterCount,
   wordCount: WordCount,
@@ -262,6 +268,7 @@ export const BookStub = z
 export type BookStub = z.infer<typeof BookStub>;
 
 export const Book = BookStub.extend({
+  lastUpdated: BookLastUpdated.optional(),
   chapters: Chapter.array(),
   loadingMessages: LoadingMessages,
   model: ModelConfigs,

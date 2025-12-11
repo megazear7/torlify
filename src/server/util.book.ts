@@ -27,25 +27,34 @@ export const getBook = async (id: BookId): Promise<Book> => {
 export const listBooks = async (): Promise<BookMinimalInfoList> => {
   await fs.mkdir("data/books", { recursive: true });
   const paths = await fs.readdir("data/books");
-  return await Promise.all(
-    paths
-      .filter((id) => !id.startsWith("."))
-      .map(async (id) => {
-        const book = await getBook(BookId.parse(id));
-        const minimalInfo: BookMinimalInfo = {
-          id: BookId.parse(id),
-          title: book.title,
-          chapterCount: book.chapters.length,
-          wordCount: countWords(book),
-          tokenCount: countTokens(book),
-          cost: cost(book),
-        };
-        return minimalInfo;
-      }),
-  );
+  return (
+    await Promise.all(
+      paths
+        .filter((id) => !id.startsWith("."))
+        .map(async (id) => {
+          const book = await getBook(BookId.parse(id));
+          const minimalInfo: BookMinimalInfo = {
+            id: BookId.parse(id),
+            lastUpdated: book.lastUpdated,
+            title: book.title,
+            chapterCount: book.chapters.length,
+            wordCount: countWords(book),
+            tokenCount: countTokens(book),
+            cost: cost(book),
+          };
+          return minimalInfo;
+        }),
+    )
+  ).sort((a, b) => {
+    if (a.lastUpdated == null && b.lastUpdated == null) return 0;
+    if (a.lastUpdated == null) return 1;
+    if (b.lastUpdated == null) return -1;
+    return b.lastUpdated - a.lastUpdated;
+  });
 };
 
 export const saveBook = async (book: Book): Promise<void> => {
+  book.lastUpdated = Date.now();
   const path = `data/books/${book.id}`;
   await fs.mkdir(path, { recursive: true });
   await fs.mkdir(`${path}/audio`, { recursive: true });

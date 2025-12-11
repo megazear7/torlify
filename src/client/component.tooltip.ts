@@ -63,10 +63,10 @@ export class TorlifyTooltip extends LitElement {
   @property({ type: Boolean })
   visible: boolean = false;
 
-  @query('.trigger')
+  @query(".trigger")
   private triggerElement!: HTMLElement;
 
-  @query('.tooltip')
+  @query(".tooltip")
   private tooltipElement!: HTMLElement;
 
   private showTimeout?: number;
@@ -104,7 +104,7 @@ export class TorlifyTooltip extends LitElement {
 
     // Position above the trigger, centered horizontally
     const top = rect.top - 40 - 8; // Estimate tooltip height + gap
-    const left = rect.left + (rect.width / 2) - 75; // Half of 150px width
+    const left = rect.left + rect.width / 2 - 75; // Half of 150px width
 
     this.tooltipElement.style.top = `${Math.max(10, top)}px`; // Keep it on screen
     this.tooltipElement.style.left = `${Math.max(10, left)}px`; // Keep it on screen
@@ -128,16 +128,10 @@ export class TorlifyTooltip extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <span
-        class="trigger"
-        @mouseenter=${this.handleMouseEnter}
-        @mouseleave=${this.handleMouseLeave}
-      >
+      <span class="trigger" @mouseenter=${this.handleMouseEnter} @mouseleave=${this.handleMouseLeave}>
         <slot></slot>
       </span>
-      <div class="tooltip ${this.visible ? 'visible' : ''}" style="position: fixed;">
-        ${this.content}
-      </div>
+      <div class="tooltip ${this.visible ? "visible" : ""}" style="position: fixed;">${this.content}</div>
     `;
   }
 }

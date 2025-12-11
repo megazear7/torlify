@@ -133,10 +133,10 @@ export class TorlifyBookTable extends LitElement {
   };
 
   @property()
-  sortColumn: string = "title";
+  sortColumn: string = "lastUpdated";
 
   @property()
-  sortDirection: "asc" | "desc" = "asc";
+  sortDirection: "asc" | "desc" = "desc";
 
   private handleSort(column: string): void {
     if (this.sortColumn === column) {
