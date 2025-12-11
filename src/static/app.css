@@ -16,6 +16,13 @@ html {
   --color-success: rgb(56, 173, 56);
   --color-grey-transparent: rgba(200, 200, 200, 0.3);
 
+  --size-3x: 60px;
+  --size-4x: 100px;
+  --size-5x: 150px;
+  --size-6x: 200px;
+  --size-7x: 250px;
+  --size-8x: 300px;
+
   --size-xxl: 48px;
   --size-xl: 32px;
   --size-large: 20px;

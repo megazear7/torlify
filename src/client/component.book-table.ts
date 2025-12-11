@@ -6,6 +6,8 @@ import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import { pillStyles } from "./styles.pill.js";
 import { formatNumber } from "../shared/util.number.js";
+import { infoIcon } from "./icons.js";
+import "./component.tooltip.js";
 
 @customElement("torlify-book-table")
 export class TorlifyBookTable extends LitElement {
@@ -18,9 +20,9 @@ export class TorlifyBookTable extends LitElement {
         border-collapse: collapse;
         background-color: var(--color-secondary-surface);
         border-radius: var(--radius-medium);
-        overflow: hidden;
         box-shadow: var(--shadow-normal);
         margin: var(--size-medium) 0;
+        border-radius: var(--radius-medium);
       }
 
       th {
@@ -33,11 +35,27 @@ export class TorlifyBookTable extends LitElement {
         cursor: pointer;
       }
 
+      tr th:first-child {
+        border-top-left-radius: var(--radius-medium);
+      }
+
+      tr th:last-child {
+        border-top-right-radius: var(--radius-medium);
+      }
+
       td {
         padding: var(--size-medium);
         border-bottom: 1px solid var(--color-secondary-surface-active);
         color: var(--color-primary-text);
         font-size: var(--font-medium);
+      }
+
+      tbody tr:last-child td:first-child {
+        border-bottom-left-radius: var(--radius-medium);
+      }
+
+      tbody tr:last-child td:last-child {
+        border-bottom-right-radius: var(--radius-medium);
       }
 
       tbody tr {
@@ -74,16 +92,36 @@ export class TorlifyBookTable extends LitElement {
       .totals-row {
         background-color: var(--color-secondary-bold);
         font-weight: bold;
+        border-radius: 0 0 var(--radius-medium) var(--radius-medium);
       }
 
       .totals-row td {
         color: var(--color-secondary-text);
+        border-bottom: none;
       }
 
       tbody tr.totals-row:hover {
         background-color: var(--color-secondary-bold);
         transform: none;
         box-shadow: var(--shadow-hover);
+      }
+
+      torlify-tooltip {
+        margin-left: var(--size-small);
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .info-icon {
+        display: inline-block;
+        color: var(--color-secondary-text);
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .info-icon svg {
+        width: 100%;
+        height: 100%;
       }
     `,
   ];
@@ -136,6 +174,7 @@ export class TorlifyBookTable extends LitElement {
     const totalWords = sortedBooks.reduce((sum, book) => sum + book.wordCount, 0);
     const totalTokens = sortedBooks.reduce((sum, book) => sum + book.tokenCount, 0);
     const totalCost = sortedBooks.reduce((sum, book) => sum + book.cost, 0);
+    const averageEfficiency = totalWords > 0 ? (totalCost / totalWords) * 10000 : 0;
 
     return html`
       <table>
@@ -145,7 +184,15 @@ export class TorlifyBookTable extends LitElement {
             <th @click=${() => this.handleSort("chapterCount")}>Chapters${this.getSortIndicator("chapterCount")}</th>
             <th @click=${() => this.handleSort("wordCount")}>Words${this.getSortIndicator("wordCount")}</th>
             <th @click=${() => this.handleSort("tokenCount")}>Tokens${this.getSortIndicator("tokenCount")}</th>
-            <th @click=${() => this.handleSort("cost")}>Cost (USD)${this.getSortIndicator("cost")}</th>
+            <th @click=${() => this.handleSort("efficiency")}>
+              <div style="display: flex; align-items: center;">
+                <span>Efficiency${this.getSortIndicator("efficiency")}</span>
+                <torlify-tooltip content="Cost per 10,000 Words">
+                  <span class="info-icon">${infoIcon}</span>
+                </torlify-tooltip>
+              </div>
+            </th>
+            <th @click=${() => this.handleSort("cost")}>Cost ${this.getSortIndicator("cost")}</th>
           </tr>
         </thead>
         <tbody>
@@ -157,6 +204,13 @@ export class TorlifyBookTable extends LitElement {
                     <td>${formatNumber(book.chapterCount, { decimals: 0 })}</td>
                     <td>${formatNumber(book.wordCount, { decimals: 0 })}</td>
                     <td>${formatNumber(book.tokenCount, { decimals: 0 })}</td>
+                    <td>
+                      ${formatNumber(book.wordCount > 0 ? (book.cost / book.wordCount) * 10000 : 0, {
+                        decimals: 4,
+                        currency: "$",
+                        currencyPosition: "before",
+                      })}
+                    </td>
                     <td>${formatNumber(book.cost, { decimals: 4, currency: "$", currencyPosition: "before" })}</td>
                   </tr>
                 `,
@@ -171,6 +225,9 @@ export class TorlifyBookTable extends LitElement {
                   <td>${formatNumber(totalChapters, { decimals: 0 })}</td>
                   <td>${formatNumber(totalWords, { decimals: 0 })}</td>
                   <td>${formatNumber(totalTokens, { decimals: 0 })}</td>
+                  <td>
+                    ${formatNumber(averageEfficiency, { decimals: 4, currency: "$", currencyPosition: "before" })}
+                  </td>
                   <td>${formatNumber(totalCost, { decimals: 4, currency: "$", currencyPosition: "before" })}</td>
                 </tr>
               `
