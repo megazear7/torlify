@@ -226,9 +226,9 @@ export class TorlifyBookTable extends LitElement {
                   <td>${formatNumber(totalWords, { decimals: 0 })}</td>
                   <td>${formatNumber(totalTokens, { decimals: 0 })}</td>
                   <td>
-                    ${formatNumber(averageEfficiency, { decimals: 4, currency: "$", currencyPosition: "before" })}
+                    ${formatNumber(averageEfficiency, { decimals: 2, currency: "$", currencyPosition: "before" })}
                   </td>
-                  <td>${formatNumber(totalCost, { decimals: 4, currency: "$", currencyPosition: "before" })}</td>
+                  <td>${formatNumber(totalCost, { decimals: 2, currency: "$", currencyPosition: "before" })}</td>
                 </tr>
               `
             : ""}

@@ -25,6 +25,8 @@ export class TorlifyAppConfig extends LitElement {
 
       .loading-button.loading:hover {
         background-color: var(--color-secondary-bold);
+        box-shadow: var(--shadow-normal);
+        transform: none;
       }
     `,
   ];

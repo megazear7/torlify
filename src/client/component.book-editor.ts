@@ -23,6 +23,8 @@ import "./component.bar.js";
 import "./component.book-field.js";
 import "./component.checkbox.js";
 import { cost, countTokens, countWords } from "../shared/util.book.js";
+import { SuccessEvent } from "./event.success.js";
+import { bookPingModelService } from "../shared/service.book-ping-model.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -38,6 +40,12 @@ export class TorlifyBookEditor extends LitElement {
         margin-top: var(--size-medium);
         font-size: var(--font-small);
         color: var(--color-secondary-text);
+      }
+
+      .loading-button.loading:hover {
+        background-color: var(--color-secondary-bold);
+        box-shadow: var(--shadow-normal);
+        transform: none;
       }
     `,
   ];
@@ -56,6 +64,9 @@ export class TorlifyBookEditor extends LitElement {
 
   @property({ type: Boolean })
   public regenerateChecked: boolean = false;
+
+  @property({ type: Boolean })
+  public testConnectivityLoading = false;
 
   override render(): TemplateResult {
     return html`
@@ -141,6 +152,17 @@ export class TorlifyBookEditor extends LitElement {
               <div slot="body">
                 <h2>Configure</h2>
                 <h3>Text Model Configuration</h3>
+                <button
+                  class="standard-button small loading-button ${this.testConnectivityLoading ? "loading" : ""}"
+                  @click="${this.testConnectivity}"
+                  ?disabled="${this.testConnectivityLoading}">
+                  <span>Test Connectivity</span>
+                  ${this.testConnectivityLoading
+                    ? html`
+                        <torlify-spinner size="18"></torlify-spinner>
+                      `
+                    : ""}
+                </button>
                 <torlify-book-field property="model.text.name"></torlify-book-field>
                 <torlify-book-field property="model.text.modelName"></torlify-book-field>
                 <torlify-book-field property="model.text.endpoint"></torlify-book-field>
@@ -380,6 +402,19 @@ export class TorlifyBookEditor extends LitElement {
     } finally {
       this.closeModal(Modal.enum.delete);
       dispatch(this, NavigationEvent({ path: "/" }));
+    }
+  };
+
+  testConnectivity = async (): Promise<void> => {
+    try {
+      this.testConnectivityLoading = true;
+      const response = await bookPingModelService.fetch({ book: this.bookContext.book!.id });
+      dispatch(this, SuccessEvent(response));
+    } catch (error) {
+      console.error("Connectivity test failed:", error);
+      dispatch(this, WarningEvent("Model did not respond."));
+    } finally {
+      this.testConnectivityLoading = false;
     }
   };
 
