@@ -1,6 +1,6 @@
 import { Book } from "../shared/type.book.js";
 import { getPartAudioPath } from "./util.get-part-audio-path.js";
-import { createReadStream, promises as fs } from "fs";
+import { concatMp3Files } from "./util.audio.js";
 
 export async function createMp3File(book: Book): Promise<Buffer> {
   let gapFound = false;
@@ -15,9 +15,5 @@ export async function createMp3File(book: Book): Promise<Buffer> {
     }
   }
 
-  // TODO: Concatenate audio files from audioPaths into a single MP3 buffer
-
-  await fs.stat(audioPaths[0]);
-  const stream = createReadStream(audioPaths[0]);
-  return stream.read();
+  return concatMp3Files(audioPaths);
 }
