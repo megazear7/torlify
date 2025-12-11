@@ -30,6 +30,7 @@ export class TorlifyBookTable extends LitElement {
         text-align: left;
         font-weight: bold;
         font-size: var(--font-small);
+        cursor: pointer;
       }
 
       td {
@@ -78,28 +79,65 @@ export class TorlifyBookTable extends LitElement {
     status: LoadingStatus.enum.idle,
   };
 
+  @property()
+  sortColumn: string = "title";
+
+  @property()
+  sortDirection: "asc" | "desc" = "asc";
+
+  private handleSort(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = "asc";
+    }
+    this.requestUpdate();
+  }
+
+  private getSortIndicator(column: string): string {
+    if (this.sortColumn !== column) return "";
+    return this.sortDirection === "asc" ? " ↑" : " ↓";
+  }
+
   override render(): TemplateResult {
+    const sortedBooks = this.booksContext.books
+      ? [...this.booksContext.books].sort((a, b) => {
+          const aVal = a[this.sortColumn as keyof typeof a];
+          const bVal = b[this.sortColumn as keyof typeof b];
+          if (typeof aVal === 'string') {
+            return this.sortDirection === 'asc'
+              ? (aVal as string).localeCompare(bVal as string)
+              : (bVal as string).localeCompare(aVal as string);
+          } else {
+            return this.sortDirection === 'asc'
+              ? (aVal as number) - (bVal as number)
+              : (bVal as number) - (aVal as number);
+          }
+        })
+      : [];
+
     return html`
       <table>
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Chapters</th>
-            <th>Words</th>
-            <th>Tokens</th>
-            <th>Cost (USD)</th>
+            <th @click=${() => this.handleSort('title')}>Title${this.getSortIndicator('title')}</th>
+            <th @click=${() => this.handleSort('chapterCount')}>Chapters${this.getSortIndicator('chapterCount')}</th>
+            <th @click=${() => this.handleSort('wordCount')}>Words${this.getSortIndicator('wordCount')}</th>
+            <th @click=${() => this.handleSort('tokenCount')}>Tokens${this.getSortIndicator('tokenCount')}</th>
+            <th @click=${() => this.handleSort('cost')}>Cost${this.getSortIndicator('cost')}</th>
           </tr>
         </thead>
         <tbody>
-          ${this.booksContext.books
-            ? this.booksContext.books.map(
+          ${sortedBooks.length > 0
+            ? sortedBooks.map(
                 (book) => html`
                   <tr>
                     <td><a href="/book/${book.id}">${book.title}</a></td>
                     <td>${formatNumber(book.chapterCount, { decimals: 0 })}</td>
                     <td>${formatNumber(book.wordCount, { decimals: 0 })}</td>
                     <td>${formatNumber(book.tokenCount, { decimals: 0 })}</td>
-                    <td>${formatNumber(book.cost, { decimals: 4, currency: "$", currencyPosition: "before" })}</td>
+                    <td>${formatNumber(book.cost, { decimals: 2, currency: "$", currencyPosition: "before" })}</td>
                   </tr>
                 `,
               )
