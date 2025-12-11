@@ -22,6 +22,7 @@ import "./component.auto-textarea.js";
 import "./component.bar.js";
 import "./component.book-field.js";
 import "./component.checkbox.js";
+import { cost, countTokens, countWords } from "../shared/util.book.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -380,46 +381,14 @@ export class TorlifyBookEditor extends LitElement {
   };
 
   get tokens(): number {
-    const tokenCounts = [
-      this.bookContext.book?.model.text.usage.completion_tokens || 0,
-      this.bookContext.book?.model.text.usage.prompt_tokens || 0,
-      this.bookContext.book?.model.audio.usage.completion_tokens || 0,
-      this.bookContext.book?.model.audio.usage.prompt_tokens || 0,
-    ];
-    return tokenCounts.reduce((acc, curr) => acc + curr, 0);
+    return countTokens(this.bookContext.book!);
   }
 
   get cost(): number {
-    const oneMillionth = 1 / 1000000;
-    const textCompletionCost =
-      (this.bookContext.book?.model.text.usage.completion_tokens || 0) *
-      (this.bookContext.book?.model.text.cost.outputTokenCost || 0) *
-      oneMillionth;
-    const textPromptCost =
-      (this.bookContext.book?.model.text.usage.prompt_tokens || 0) *
-      (this.bookContext.book?.model.text.cost.inputTokenCost || 0) *
-      oneMillionth;
-    const audioCompletionCost =
-      (this.bookContext.book?.model.audio.usage.completion_tokens || 0) *
-      (this.bookContext.book?.model.audio.cost.outputTokenCost || 0) *
-      oneMillionth;
-    const audioPromptCost =
-      (this.bookContext.book?.model.audio.usage.prompt_tokens || 0) *
-      (this.bookContext.book?.model.audio.cost.inputTokenCost || 0) *
-      oneMillionth;
-
-    return textCompletionCost + textPromptCost + audioCompletionCost + audioPromptCost;
+    return cost(this.bookContext.book!);
   }
 
   get words(): number {
-    return (
-      this.bookContext.book?.chapters.reduce((acc, chapter) => {
-        const partWords = chapter.parts.reduce((partAcc, part) => {
-          const wordsInPart = part.text ? part.text.trim().split(/\s+/).length : 0;
-          return partAcc + wordsInPart;
-        }, 0);
-        return acc + partWords;
-      }, 0) || 0
-    );
+    return countWords(this.bookContext.book!);
   }
 }

@@ -14,9 +14,25 @@ export type BookId = z.infer<typeof BookId>;
 export const BookTitle = z.string().min(1).describe("The title of the book");
 export type BookTitle = z.infer<typeof BookTitle>;
 
+export const ChapterCount = z.number().min(1).describe("The number of chapters in the book");
+export type ChapterCount = z.infer<typeof ChapterCount>;
+
+export const WordCount = z.number().min(0).describe("The number of words in the book");
+export type WordCount = z.infer<typeof WordCount>;
+
+export const TokenCount = z.number().min(0).describe("The number of tokens used to generate the book");
+export type TokenCount = z.infer<typeof TokenCount>;
+
+export const TokenCost = z.number().min(0).describe("The total cost of all tokens.");
+export type TokenCost = z.infer<typeof TokenCost>;
+
 export const BookMinimalInfo = z.object({
   id: BookId,
   title: BookTitle,
+  chapterCount: ChapterCount,
+  wordCount: WordCount,
+  tokenCount: TokenCount,
+  cost: TokenCost,
 });
 export type BookMinimalInfo = z.infer<typeof BookMinimalInfo>;
 

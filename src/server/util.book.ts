@@ -1,7 +1,8 @@
-import { Book, BookId, BookMinimalInfoList } from "../shared/type.book.js";
+import { Book, BookId, BookMinimalInfo, BookMinimalInfoList } from "../shared/type.book.js";
 import { promises as fs } from "fs";
 import { fileExists } from "./util.fs.js";
 import { RouteError } from "./util.route.js";
+import { cost, countTokens, countWords } from "../shared/util.book.js";
 
 export const getBook = async (id: BookId): Promise<Book> => {
   const path = `data/books/${id}/index.json`;
@@ -31,10 +32,15 @@ export const listBooks = async (): Promise<BookMinimalInfoList> => {
       .filter((id) => !id.startsWith("."))
       .map(async (id) => {
         const book = await getBook(BookId.parse(id));
-        return {
+        const minimalInfo: BookMinimalInfo = {
           id: BookId.parse(id),
           title: book.title,
+          chapterCount: book.chapters.length,
+          wordCount: countWords(book),
+          tokenCount: countTokens(book),
+          cost: cost(book),
         };
+        return minimalInfo;
       }),
   );
 };

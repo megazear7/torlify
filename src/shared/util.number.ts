@@ -33,7 +33,7 @@ export function formatNumber(
 
   // Add currency symbol
   if (currency) {
-    result = currencyPosition === "before" ? `${currency} ${result}` : `${result} ${currency}`;
+    result = currencyPosition === "before" ? `${currency}${result}` : `${result}${currency}`;
   }
 
   return result;

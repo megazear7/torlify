@@ -149,7 +149,7 @@ export class TorlifyBookList extends LitElement {
   override render(): TemplateResult {
     return html`
       <ul class="pill">
-        <li><a href="/">${homeIcon}</a></li>
+        <li><a href="/">${homeIcon}&nbsp;Home</a></li>
         <li>
           <torlify-modal
             id="create-book-modal"
