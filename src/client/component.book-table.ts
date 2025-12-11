@@ -70,6 +70,21 @@ export class TorlifyBookTable extends LitElement {
       a:hover {
         color: var(--color-1);
       }
+
+      .totals-row {
+        background-color: var(--color-secondary-bold);
+        font-weight: bold;
+      }
+
+      .totals-row td {
+        color: var(--color-secondary-text);
+      }
+
+      tbody tr.totals-row:hover {
+        background-color: var(--color-secondary-bold);
+        transform: none;
+        box-shadow: var(--shadow-hover);
+      }
     `,
   ];
 
@@ -85,7 +100,7 @@ export class TorlifyBookTable extends LitElement {
   @property()
   sortDirection: "asc" | "desc" = "asc";
 
-  private handleSort(column: string) {
+  private handleSort(column: string): void {
     if (this.sortColumn === column) {
       this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
     } else {
@@ -105,27 +120,32 @@ export class TorlifyBookTable extends LitElement {
       ? [...this.booksContext.books].sort((a, b) => {
           const aVal = a[this.sortColumn as keyof typeof a];
           const bVal = b[this.sortColumn as keyof typeof b];
-          if (typeof aVal === 'string') {
-            return this.sortDirection === 'asc'
+          if (typeof aVal === "string") {
+            return this.sortDirection === "asc"
               ? (aVal as string).localeCompare(bVal as string)
               : (bVal as string).localeCompare(aVal as string);
           } else {
-            return this.sortDirection === 'asc'
+            return this.sortDirection === "asc"
               ? (aVal as number) - (bVal as number)
               : (bVal as number) - (aVal as number);
           }
         })
       : [];
 
+    const totalChapters = sortedBooks.reduce((sum, book) => sum + book.chapterCount, 0);
+    const totalWords = sortedBooks.reduce((sum, book) => sum + book.wordCount, 0);
+    const totalTokens = sortedBooks.reduce((sum, book) => sum + book.tokenCount, 0);
+    const totalCost = sortedBooks.reduce((sum, book) => sum + book.cost, 0);
+
     return html`
       <table>
         <thead>
           <tr>
-            <th @click=${() => this.handleSort('title')}>Title${this.getSortIndicator('title')}</th>
-            <th @click=${() => this.handleSort('chapterCount')}>Chapters${this.getSortIndicator('chapterCount')}</th>
-            <th @click=${() => this.handleSort('wordCount')}>Words${this.getSortIndicator('wordCount')}</th>
-            <th @click=${() => this.handleSort('tokenCount')}>Tokens${this.getSortIndicator('tokenCount')}</th>
-            <th @click=${() => this.handleSort('cost')}>Cost${this.getSortIndicator('cost')}</th>
+            <th @click=${() => this.handleSort("title")}>Title${this.getSortIndicator("title")}</th>
+            <th @click=${() => this.handleSort("chapterCount")}>Chapters${this.getSortIndicator("chapterCount")}</th>
+            <th @click=${() => this.handleSort("wordCount")}>Words${this.getSortIndicator("wordCount")}</th>
+            <th @click=${() => this.handleSort("tokenCount")}>Tokens${this.getSortIndicator("tokenCount")}</th>
+            <th @click=${() => this.handleSort("cost")}>Cost (USD)${this.getSortIndicator("cost")}</th>
           </tr>
         </thead>
         <tbody>
@@ -137,13 +157,24 @@ export class TorlifyBookTable extends LitElement {
                     <td>${formatNumber(book.chapterCount, { decimals: 0 })}</td>
                     <td>${formatNumber(book.wordCount, { decimals: 0 })}</td>
                     <td>${formatNumber(book.tokenCount, { decimals: 0 })}</td>
-                    <td>${formatNumber(book.cost, { decimals: 2, currency: "$", currencyPosition: "before" })}</td>
+                    <td>${formatNumber(book.cost, { decimals: 4, currency: "$", currencyPosition: "before" })}</td>
                   </tr>
                 `,
               )
             : html`
                 <p>Error loading books.</p>
               `}
+          ${sortedBooks.length > 0
+            ? html`
+                <tr class="totals-row">
+                  <td>Total</td>
+                  <td>${formatNumber(totalChapters, { decimals: 0 })}</td>
+                  <td>${formatNumber(totalWords, { decimals: 0 })}</td>
+                  <td>${formatNumber(totalTokens, { decimals: 0 })}</td>
+                  <td>${formatNumber(totalCost, { decimals: 4, currency: "$", currencyPosition: "before" })}</td>
+                </tr>
+              `
+            : ""}
         </tbody>
       </table>
     `;
