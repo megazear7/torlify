@@ -9,64 +9,68 @@ import { formatNumber } from "../shared/util.number.js";
 
 @customElement("torlify-book-table")
 export class TorlifyBookTable extends LitElement {
-  static override styles = [globalStyles, pillStyles, css`
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: var(--color-secondary-surface);
-      border-radius: var(--radius-medium);
-      overflow: hidden;
-      box-shadow: var(--shadow-normal);
-      margin: var(--size-medium) 0;
-    }
+  static override styles = [
+    globalStyles,
+    pillStyles,
+    css`
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: var(--color-secondary-surface);
+        border-radius: var(--radius-medium);
+        overflow: hidden;
+        box-shadow: var(--shadow-normal);
+        margin: var(--size-medium) 0;
+      }
 
-    th {
-      background-color: var(--color-secondary-bold);
-      color: var(--color-secondary-text);
-      padding: var(--size-medium);
-      text-align: left;
-      font-weight: bold;
-      font-size: var(--font-small);
-    }
+      th {
+        background-color: var(--color-secondary-bold);
+        color: var(--color-secondary-text);
+        padding: var(--size-medium);
+        text-align: left;
+        font-weight: bold;
+        font-size: var(--font-small);
+      }
 
-    td {
-      padding: var(--size-medium);
-      border-bottom: 1px solid var(--color-secondary-surface-active);
-      color: var(--color-primary-text);
-      font-size: var(--font-medium);
-    }
+      td {
+        padding: var(--size-medium);
+        border-bottom: 1px solid var(--color-secondary-surface-active);
+        color: var(--color-primary-text);
+        font-size: var(--font-medium);
+      }
 
-    tbody tr {
-      transition: var(--transition-all);
-    }
+      tbody tr {
+        transition: var(--transition-all);
+      }
 
-    tbody tr:hover {
-      background-color: var(--color-secondary-surface-active);
-      transform: var(--transform-hover);
-      box-shadow: var(--shadow-hover);
-    }
+      tbody tr:hover {
+        background-color: var(--color-secondary-surface-active);
+        transform: var(--transform-hover);
+        box-shadow: var(--shadow-hover);
+      }
 
-    th:last-child,
-    td:last-child {
-      text-align: right;
-    }
+      th:last-child,
+      td:last-child {
+        text-align: right;
+      }
 
-    p {
-      color: var(--color-error);
-      text-align: center;
-      padding: var(--size-large);
-    }
+      p {
+        color: var(--color-error);
+        text-align: center;
+        padding: var(--size-large);
+      }
 
-    a {
-      color: var(--color-primary-text);
-      text-decoration: none;
-      transition: var(--transition-all);
-    }
+      a {
+        color: var(--color-primary-text);
+        text-decoration: none;
+        transition: var(--transition-all);
+      }
 
-    a:hover {
-      color: var(--color-1);
-    }
-  `];
+      a:hover {
+        color: var(--color-1);
+      }
+    `,
+  ];
 
   @consume({ context: booksContext, subscribe: true })
   @property({ attribute: false })
