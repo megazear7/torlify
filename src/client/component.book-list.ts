@@ -13,7 +13,9 @@ import { dispatch } from "./util.events.js";
 import {
   generateBookService,
   MAXIMUM_NUMBER_OF_CHAPTERS,
+  MAXIMUM_PART_LENGTH,
   MINIMUM_NUMBER_OF_CHAPTERS,
+  MINIMUM_PART_LENGTH,
 } from "../shared/service.generate-book.js";
 import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
@@ -52,6 +54,9 @@ export class TorlifyBookList extends LitElement {
 
   @property({ type: Number })
   generateBookNumberOfChapters = 3;
+
+  @property({ type: Number })
+  generateBookPartLength = 600;
 
   @property({ type: String })
   sampleDescription: string = "";
@@ -152,7 +157,7 @@ export class TorlifyBookList extends LitElement {
             @ModelOpening=${this.handleOpenModal}>
             <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
-              <h2>Add Book</h2>
+              <h2>Create Book</h2>
               <torlify-auto-textarea
                 .value="${this.generateBookInstructions}"
                 @input="${this.handleGenerateBookInstructions}"
@@ -163,6 +168,12 @@ export class TorlifyBookList extends LitElement {
                 label="Number of Chapters"
                 .value=${this.generateBookNumberOfChapters}
                 @input="${this.handleGenerateBookNumberOfChapters}"></torlify-number-slider>
+              <torlify-number-slider
+                min="${MINIMUM_PART_LENGTH}"
+                max="${MAXIMUM_PART_LENGTH}"
+                label="Part Length"
+                .value=${this.generateBookPartLength}
+                @input="${this.handleGenerateBookPartLength}"></torlify-number-slider>
               <torlify-bar>
                 <button class="standard-button" @click="${this.handleGenerateBook}">${aiIcon} Generate</button>
                 <button class="standard-button" @click="${this.handleCreateBook}">Create Empty</button>
@@ -201,6 +212,11 @@ export class TorlifyBookList extends LitElement {
     this.generateBookNumberOfChapters = Number(target.value);
   };
 
+  private readonly handleGenerateBookPartLength = (event: Event): void => {
+    const target = event.target as HTMLInputElement;
+    this.generateBookPartLength = Number(target.value);
+  };
+
   private readonly handleCreateBook = async (): Promise<void> => {
     this.createBookModal.close();
     this.loading = true;
@@ -209,6 +225,7 @@ export class TorlifyBookList extends LitElement {
       const book = await createBookService.fetch({
         instructions: this.generateBookInstructions || this.sampleDescription,
         numberOfChapters: this.generateBookNumberOfChapters,
+        partLength: this.generateBookPartLength,
       });
       dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
     } catch (error) {
@@ -227,6 +244,7 @@ export class TorlifyBookList extends LitElement {
       const book = await generateBookService.fetch({
         instructions: this.generateBookInstructions || this.sampleDescription,
         numberOfChapters: this.generateBookNumberOfChapters,
+        partLength: this.generateBookPartLength,
       });
       dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
     } catch {

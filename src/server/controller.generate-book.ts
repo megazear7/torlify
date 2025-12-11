@@ -21,7 +21,7 @@ export class GenerateBookController extends AbstractController<GenerateBookParam
         ...chapter,
         minParts: 2,
         maxParts: 4,
-        partLength: 800,
+        partLength: bodyParams.partLength,
         outline: [],
         parts: [],
       })),

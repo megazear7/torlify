@@ -76,7 +76,7 @@ export class CreateBookController extends AbstractController<CreateBookParameter
         why: "",
         how: "",
         who: "",
-        partLength: 0,
+        partLength: bodyParams.partLength,
       });
     }
     await fs.mkdir(`data/books/${book.id}`, { recursive: true });
