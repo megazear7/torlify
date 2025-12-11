@@ -4,7 +4,7 @@ import { customElement, property } from "lit/decorators.js";
 import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
-import { formatNumber } from "../shared/util.number.js";
+import { checkCompletion, formatDate, formatNumber } from "../shared/util.number.js";
 import { dispatch } from "./util.events.js";
 import { WarningEvent } from "./event.warning.js";
 import { downloadBookService } from "../shared/service.download-book.js";
@@ -173,9 +173,12 @@ export class TorlifyBookEditor extends LitElement {
             <div class="secondary-surface">
               <torlify-book-field property="title" type="textarea" heading="h2"></torlify-book-field>
               <div class="stats">
+                <span>${checkCompletion(this.bookContext.book)}% complete</span>
                 <span>${formatNumber(this.tokens)} tokens</span>
                 <span>$${formatNumber(this.cost, { decimals: 2 })}</span>
                 <span>${formatNumber(this.words)} words</span>
+                <span>Created on ${formatDate(this.bookContext.book.createdAt)}</span>
+                <span>Last updated on ${formatDate(this.bookContext.book.updatedAt)}</span>
               </div>
             </div>
             <div class="secondary-surface">

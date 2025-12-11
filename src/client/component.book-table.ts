@@ -133,7 +133,7 @@ export class TorlifyBookTable extends LitElement {
   };
 
   @property()
-  sortColumn: string = "lastUpdated";
+  sortColumn: string = "updatedAt";
 
   @property()
   sortDirection: "asc" | "desc" = "desc";

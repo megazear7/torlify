@@ -35,7 +35,7 @@ export const listBooks = async (): Promise<BookMinimalInfoList> => {
           const book = await getBook(BookId.parse(id));
           const minimalInfo: BookMinimalInfo = {
             id: BookId.parse(id),
-            lastUpdated: book.lastUpdated,
+            updatedAt: book.updatedAt,
             title: book.title,
             chapterCount: book.chapters.length,
             wordCount: countWords(book),
@@ -46,15 +46,15 @@ export const listBooks = async (): Promise<BookMinimalInfoList> => {
         }),
     )
   ).sort((a, b) => {
-    if (a.lastUpdated == null && b.lastUpdated == null) return 0;
-    if (a.lastUpdated == null) return 1;
-    if (b.lastUpdated == null) return -1;
-    return b.lastUpdated - a.lastUpdated;
+    if (a.updatedAt == null && b.updatedAt == null) return 0;
+    if (a.updatedAt == null) return 1;
+    if (b.updatedAt == null) return -1;
+    return b.updatedAt - a.updatedAt;
   });
 };
 
 export const saveBook = async (book: Book): Promise<void> => {
-  book.lastUpdated = Date.now();
+  book.updatedAt = Date.now();
   const path = `data/books/${book.id}`;
   await fs.mkdir(path, { recursive: true });
   await fs.mkdir(`${path}/audio`, { recursive: true });

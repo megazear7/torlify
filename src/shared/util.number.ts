@@ -1,3 +1,5 @@
+import { Book, Chapter, ChapterPart, ChapterPartDescription } from "./type.book";
+
 export function formatNumber(
   value: number,
   options: {
@@ -37,4 +39,50 @@ export function formatNumber(
   }
 
   return result;
+}
+
+export function formatDate(timestamp: number | undefined): string {
+  if (!timestamp) return "Unknown";
+  const date = new Date(timestamp);
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+export function checkCompletion(book: Book): number {
+  if (!book || !book.chapters || book.chapters.length === 0) {
+    return 0;
+  }
+
+  const totalParts = book.chapters.reduce((sum: number, chapter: Chapter) => {
+    return sum + (chapter.parts ? chapter.parts.length : 0);
+  }, 0);
+
+  const denominator = totalParts * 2;
+
+  const outlinedParts = book.chapters.reduce((sum: number, chapter: Chapter) => {
+    if (chapter.outline && chapter.outline.length > 0) {
+      return (
+        sum + chapter.outline.filter((outline: ChapterPartDescription) => outline && outline.trim().length > 0).length
+      );
+    }
+    return sum;
+  }, 0);
+
+  const writtenParts = book.chapters.reduce((sum: number, chapter: Chapter) => {
+    if (chapter.parts && chapter.parts.length > 0) {
+      return (
+        sum + chapter.parts.filter((part: ChapterPart) => part.text && part.text.trim().length > 0 && part.audio).length
+      );
+    }
+    return sum;
+  }, 0);
+
+  const numerator = outlinedParts + writtenParts;
+
+  const completionPercentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
+
+  return Math.round(completionPercentage);
 }

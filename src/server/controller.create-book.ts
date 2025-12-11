@@ -21,7 +21,8 @@ export class CreateBookController extends AbstractController<CreateBookParameter
       .replace(/[^a-z0-9]/gi, "-")
       .toLowerCase();
     const book: Book = {
-      lastUpdated: Date.now(),
+      updatedAt: Date.now(),
+      createdAt: Date.now(),
       id: name,
       title: title,
       overview: bodyParams.instructions, // Yes this mismatches, but it's intentional
