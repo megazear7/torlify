@@ -42,13 +42,13 @@ export class TorlifyChapterEditor extends LitElement {
       .nav-button {
         position: fixed;
         bottom: var(--size-large);
-        width: var(--size-xl);
-        height: var(--size-xl);
+        width: calc(var(--size-xl) * 1.5);
+        height: calc(var(--size-xl) * 1.5);
         border-radius: 50%;
         border: none;
         background-color: var(--color-primary);
         color: var(--color-primary-text);
-        font-size: var(--font-large);
+        font-size: var(--font-xl);
         cursor: pointer;
         box-shadow: var(--shadow-normal);
         z-index: 1000;
@@ -70,11 +70,11 @@ export class TorlifyChapterEditor extends LitElement {
       }
 
       .nav-button.previous {
-        left: var(--size-large);
+        left: var(--size-xl);
       }
 
       .nav-button.next {
-        right: var(--size-large);
+        right: var(--size-xl);
       }
     `,
   ];
