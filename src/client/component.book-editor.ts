@@ -314,30 +314,62 @@ export class TorlifyBookEditor extends LitElement {
       document.addEventListener("keydown", this.handleKeyDown);
       try {
         const steps: Step[] = [];
-        for (const chapter of this.bookContext.book!.chapters) {
-          // TODO: Get the sub steps for each chapter based on the content type
-          steps.push({
-            status: StepStatus.enum.pending,
-            message: `Generate ${type} for chapter ${chapter.number}`,
-            action: chapter.number - 1,
-          });
+        if (type === BookContentType.enum.outline) {
+          for (const chapter of this.bookContext.book!.chapters) {
+            steps.push({
+              status: StepStatus.enum.pending,
+              message: `Generate outline for chapter ${chapter.number}`,
+              action: { chapterIndex: chapter.number - 1 },
+            });
+          }
+        } else if (type === BookContentType.enum.text) {
+          for (const chapter of this.bookContext.book!.chapters) {
+            for (const part of chapter.parts) {
+              steps.push({
+                status: StepStatus.enum.pending,
+                message: `Generate text for chapter ${chapter.number} part ${part.number}`,
+                action: { chapterIndex: chapter.number - 1, partIndex: part.number - 1 },
+              });
+            }
+          }
+        } else if (type === BookContentType.enum.audio) {
+          for (const chapter of this.bookContext.book!.chapters) {
+            for (const part of chapter.parts) {
+              steps.push({
+                status: StepStatus.enum.pending,
+                message: `Generate audio for chapter ${chapter.number} part ${part.number}`,
+                action: { chapterIndex: chapter.number - 1, partIndex: part.number - 1 },
+              });
+            }
+          }
         }
         this.loadingOverlay.steps = steps;
         for (const step of this.loadingOverlay.steps) {
           step.status = StepStatus.enum.progress;
           this.loadingOverlay.requestUpdate();
-          const action = step.action;
-          if (action === undefined) {
+          const action = step.action as { chapterIndex: number; partIndex?: number };
+          if (action === undefined || action.chapterIndex === undefined) {
             dispatch(this, WarningEvent("Invalid step action"));
             return;
           }
           if (this.loading) {
+            const chapter = this.bookContext.book!.chapters[action.chapterIndex];
             if (type === BookContentType.enum.outline) {
-              await this.generateOutlineForChapter(regenerate, this.bookContext.book!.chapters[action]);
+              await this.generateOutlineForChapter(regenerate, chapter);
             } else if (type === BookContentType.enum.text) {
-              await this.generatePartsForChapter(regenerate, this.bookContext.book!.chapters[action]);
+              if (action.partIndex === undefined) {
+                dispatch(this, WarningEvent("Invalid step action: missing partIndex for text generation"));
+                return;
+              }
+              const part = chapter.parts[action.partIndex];
+              await this.generatePartForChapter(regenerate, chapter, part);
             } else if (type === BookContentType.enum.audio) {
-              await this.generateAudioForChapter(regenerate, this.bookContext.book!.chapters[action]);
+              if (action.partIndex === undefined) {
+                dispatch(this, WarningEvent("Invalid step action: missing partIndex for audio generation"));
+                return;
+              }
+              const part = chapter.parts[action.partIndex];
+              await this.generateAudioForChapterPart(regenerate, chapter, part);
             }
             step.status = StepStatus.enum.done;
             this.loadingOverlay.requestUpdate();
