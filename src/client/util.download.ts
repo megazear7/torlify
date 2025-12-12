@@ -10,7 +10,6 @@ export function downloadBlobFile(blob: Blob, filename: string): void {
   a.download = filename;
   a.click();
   setTimeout(() => {
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }, 100);
 }

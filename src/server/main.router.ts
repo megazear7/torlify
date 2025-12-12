@@ -23,6 +23,7 @@ import { appPingModelController } from "./controller.app-ping-model.js";
 import { bookPingModelController } from "./controller.book-ping-model.js";
 import { registerDownloadChapter } from "./controller.download-chapter.js";
 import { registerDownloadChapterAudio } from "./controller.download-chapter-audio.js";
+import { registerDownloadPartAudio } from "./controller.download-part-audio.js";
 
 const router = express.Router();
 
@@ -49,6 +50,7 @@ registerDownloadBook(router);
 registerDownloadChapter(router);
 registerDownloadBookAudio(router);
 registerDownloadChapterAudio(router);
+registerDownloadPartAudio(router);
 registerGetChapterAudio(router);
 
 export { router };

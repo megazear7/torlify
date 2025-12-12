@@ -22,6 +22,8 @@ import { aiIcon, replaceIcon } from "./icons.js";
 import { generatePartOutlineService } from "../shared/service.generate-part-outline.js";
 import { createOutlineForPart } from "../shared/util.book.js";
 import { downloadTextFile } from "./util.download.js";
+import { handleError } from "./util.error.js";
+import { downloadPartAudioService } from "../shared/service.download-part-audio.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -56,6 +58,9 @@ export class TorlifyPartEditor extends LitElement {
 
   @property({ type: Boolean })
   public regenerateChecked: boolean = false;
+
+  @property({ type: Boolean })
+  private downloadingAudio: boolean = false;
 
   @query("#part-audio")
   partAudioElement!: HTMLAudioElement;
@@ -119,7 +124,14 @@ export class TorlifyPartEditor extends LitElement {
                 <torlify-bar>
                   <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
                   <button class="standard-button" @click="${this.downloadText()}">Text</button>
-                  <button class="standard-button" @click="${this.downloadAudio()}">Audio</button>
+                  <button class="standard-button" @click="${this.downloadAudio()}">
+                    Audio
+                    ${this.downloadingAudio
+                      ? html`
+                          <torlify-spinner></torlify-spinner>
+                        `
+                      : ""}
+                  </button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -332,10 +344,21 @@ export class TorlifyPartEditor extends LitElement {
     };
   }
 
-  downloadAudio() {
-    return (): void => {
-      this.closeModal(Modal.enum.download)();
-      dispatch(this, WarningEvent("This feature is not implemented yet"));
+  downloadAudio(): () => void {
+    return async (): Promise<void> => {
+      try {
+        this.downloadingAudio = true;
+        await downloadPartAudioService.fetch({
+          book: this.bookContext.book!.id,
+          chapter: String(this.chapterContext.chapter!.number),
+          part: String(this.partContext.part!.number),
+        });
+        this.downloadingAudio = false;
+      } catch (error) {
+        handleError(this, error, "Failed to download part audio");
+      } finally {
+        this.closeModal(Modal.enum.download)();
+      }
     };
   }
 
