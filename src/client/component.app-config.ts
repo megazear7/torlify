@@ -108,8 +108,12 @@ export class TorlifyAppConfig extends LitElement {
       const response = await appPingModelService.fetch();
       dispatch(this, SuccessEvent(response));
     } catch (error) {
+      const errorObj = error as Error;
       console.error("Connectivity test failed:", error);
-      dispatch(this, WarningEvent("Model did not respond."));
+      dispatch(
+        this,
+        WarningEvent("Model did not respond.", `Ping to app text model failed with an error: ${errorObj.message}`),
+      );
     } finally {
       this.testConnectivityLoading = false;
     }

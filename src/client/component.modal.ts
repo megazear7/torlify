@@ -134,6 +134,16 @@ export class TorlifyModal extends LitElement {
     `;
   }
 
+  override connectedCallback(): void {
+    super.connectedCallback();
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
   backdropClasses(): ReturnType<typeof classMap> {
     return classMap({
       "modal-backdrop": true,
@@ -142,6 +152,12 @@ export class TorlifyModal extends LitElement {
       visible: this.visible,
     });
   }
+
+  private handleKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  };
 
   async open(): Promise<void> {
     this.opening = true;

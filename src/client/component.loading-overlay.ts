@@ -6,35 +6,14 @@ import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
 import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { consume } from "@lit/context";
+import { overlayStyles } from "./styles.overlay.js";
 
 @customElement("torlify-loading-overlay")
 export class TorlifyLoadingOverlay extends LitElement {
   static override styles = [
     globalStyles,
+    overlayStyles,
     css`
-      .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px);
-        z-index: 10000;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity var(--time-normal) ease-in-out;
-        pointer-events: none;
-      }
-
-      .loading-overlay.visible {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
       .loader-container {
         position: relative;
         display: flex;
@@ -199,7 +178,7 @@ export class TorlifyLoadingOverlay extends LitElement {
   }
 
   loadingOverlayClasses(): ReturnType<typeof classMap> {
-    return classMap({ "loading-overlay": true, visible: this.visible });
+    return classMap({ overlay: true, visible: this.visible });
   }
 
   set visible(value: boolean) {
@@ -217,6 +196,7 @@ export class TorlifyLoadingOverlay extends LitElement {
 
   open(): void {
     this._visible = true;
+    window.document.body.style.overflow = "hidden";
     this.dotInterval = setInterval(() => {
       this.dotCount = (this.dotCount + 1) % 4;
     }, ANIMATION_SPEED_IN_MS);
@@ -266,5 +246,6 @@ export class TorlifyLoadingOverlay extends LitElement {
     this.dotCount = 0;
     clearInterval(this.snippetInterval!);
     this.loadingSnippet = [];
+    window.document.body.style.overflow = "";
   }
 }

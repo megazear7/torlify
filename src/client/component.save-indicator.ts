@@ -7,8 +7,8 @@ export class TorlifySaveIndicator extends LitElement {
   static override styles = css`
     :host {
       position: fixed;
-      top: var(--size-medium);
-      right: var(--size-medium);
+      top: var(--size-large);
+      right: var(--size-large);
       z-index: 10001;
       pointer-events: none;
     }

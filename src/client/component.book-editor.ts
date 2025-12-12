@@ -18,13 +18,14 @@ import { Chapter, ChapterPart } from "../shared/type.book.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { downloadBookAudioService } from "../shared/service.download-book-audio.js";
 import { aiIcon, replaceIcon } from "./icons.js";
+import { cost, countTokens, countWords } from "../shared/util.book.js";
+import { SuccessEvent } from "./event.success.js";
+import { bookPingModelService } from "../shared/service.book-ping-model.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import "./component.book-field.js";
 import "./component.checkbox.js";
-import { cost, countTokens, countWords } from "../shared/util.book.js";
-import { SuccessEvent } from "./event.success.js";
-import { bookPingModelService } from "../shared/service.book-ping-model.js";
+import "./component.loading-overlay.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -428,7 +429,11 @@ export class TorlifyBookEditor extends LitElement {
       dispatch(this, SuccessEvent(response));
     } catch (error) {
       console.error("Connectivity test failed:", error);
-      dispatch(this, WarningEvent("Model did not respond."));
+      const errorObj = error as Error;
+      dispatch(
+        this,
+        WarningEvent("Model did not respond.", `Ping to book text model failed with an error: ${errorObj.message}`),
+      );
     } finally {
       this.testConnectivityLoading = false;
     }

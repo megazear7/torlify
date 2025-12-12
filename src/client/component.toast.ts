@@ -99,6 +99,7 @@ export class TorlifyToast extends LitElement {
   }
 
   private handleClose(): void {
+    this.visible = false;
     this.dispatchEvent(new CustomEvent("close"));
   }
 }

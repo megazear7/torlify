@@ -17,6 +17,7 @@ import "./page.part.js";
 import "./page.not-found.js";
 import "./component.toast.js";
 import "./component.save-indicator.js";
+import "./component.notification-manager.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
@@ -95,6 +96,7 @@ export class TorlifyApp extends LitElement {
         .visible="${this.toastVisible}"
         @close="${this.handleToastClose}"></torlify-toast>
       <torlify-save-indicator></torlify-save-indicator>
+      <torlify-notification-manager></torlify-notification-manager>
     `;
   }
 
