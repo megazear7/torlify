@@ -2,8 +2,17 @@ import { promises as fs } from "fs";
 import AdmZip from "adm-zip";
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, Footer, PageNumber, Bookmark } from "docx";
 import { getBook } from "./util.book.js";
+import { Book, Chapter, ChapterNumber } from "../shared/type.book.js";
 
-export async function createDocxFile(bookId: string): Promise<Buffer> {
+export async function createChapterDocxFile(bookId: string, chapter: ChapterNumber): Promise<Buffer> {
+  const book = await getBook(bookId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sections: any[] = [];
+  sections.push(...createChapterSection(book, book.chapters.find((c) => c.number === chapter)!));
+  return createBuffer(sections, book);
+}
+
+export async function createBookDocxFile(bookId: string): Promise<Buffer> {
   const book = await getBook(bookId);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -293,73 +302,7 @@ export async function createDocxFile(bookId: string): Promise<Buffer> {
 
   // Chapters with mirrored margins
   book.chapters.forEach((chapter) => {
-    sections.push({
-      properties: {
-        page: {
-          size: { width: 8640, height: 12960 },
-          margin: {
-            top: 720,
-            bottom: 720,
-            left: 864, // Outside margin (narrow)
-            right: 1152, // Inside margin (wide, for binding)
-          },
-        },
-      },
-      footers: {
-        default: new Footer({
-          children: [
-            new Paragraph({
-              children: [
-                new TextRun({
-                  children: [PageNumber.CURRENT],
-                }),
-              ],
-              alignment: "center",
-            }),
-          ],
-        }),
-      },
-      children: [
-        new Paragraph({
-          children: [
-            new Bookmark({
-              id: `chapter_${chapter.number}`,
-              children: [
-                new TextRun({
-                  text: book.details?.includeChapterTitles
-                    ? `CHAPTER ${chapter.number}: ${chapter.title}`
-                    : `CHAPTER ${chapter.number}`,
-                  size: 28,
-                  font: "Garamond",
-                }),
-              ],
-            }),
-          ],
-          alignment: "center",
-          spacing: { after: 400, before: 2600 },
-        }),
-        ...chapter.parts.flatMap((part) => {
-          const lines = (part.text || "").split(/\n|\\n/).filter((line: string) => !!line.trim());
-          return lines.map(
-            (line) =>
-              new Paragraph({
-                indent: { firstLine: 200 },
-                children: [
-                  new TextRun({
-                    text: line,
-                    size: 24,
-                    font: "Garamond",
-                  }),
-                ],
-                spacing: {
-                  line: 360,
-                  after: 0,
-                },
-              }),
-          );
-        }),
-      ],
-    });
+    sections.push(...createChapterSection(book, chapter));
   });
 
   // About the Author Page
@@ -398,6 +341,11 @@ export async function createDocxFile(bookId: string): Promise<Buffer> {
     });
   }
 
+  return createBuffer(sections, book);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function createBuffer(sections: any[], book: Book): Promise<Buffer> {
   const doc = new Document({
     sections,
   });
@@ -432,4 +380,78 @@ export async function createDocxFile(bookId: string): Promise<Buffer> {
 
   zip.updateFile("word/document.xml", Buffer.from(modifiedXml, "utf8"));
   return zip.toBuffer();
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createChapterSection(book: Book, chapter: Chapter): any[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sections: any[] = [];
+  sections.push({
+    properties: {
+      page: {
+        size: { width: 8640, height: 12960 },
+        margin: {
+          top: 720,
+          bottom: 720,
+          left: 864, // Outside margin (narrow)
+          right: 1152, // Inside margin (wide, for binding)
+        },
+      },
+    },
+    footers: {
+      default: new Footer({
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun({
+                children: [PageNumber.CURRENT],
+              }),
+            ],
+            alignment: "center",
+          }),
+        ],
+      }),
+    },
+    children: [
+      new Paragraph({
+        children: [
+          new Bookmark({
+            id: `chapter_${chapter.number}`,
+            children: [
+              new TextRun({
+                text: book.details?.includeChapterTitles
+                  ? `CHAPTER ${chapter.number}: ${chapter.title}`
+                  : `CHAPTER ${chapter.number}`,
+                size: 28,
+                font: "Garamond",
+              }),
+            ],
+          }),
+        ],
+        alignment: "center",
+        spacing: { after: 400, before: 2600 },
+      }),
+      ...chapter.parts.flatMap((part) => {
+        const lines = (part.text || "").split(/\n|\\n/).filter((line: string) => !!line.trim());
+        return lines.map(
+          (line) =>
+            new Paragraph({
+              indent: { firstLine: 200 },
+              children: [
+                new TextRun({
+                  text: line,
+                  size: 24,
+                  font: "Garamond",
+                }),
+              ],
+              spacing: {
+                line: 360,
+                after: 0,
+              },
+            }),
+        );
+      }),
+    ],
+  });
+  return sections;
 }

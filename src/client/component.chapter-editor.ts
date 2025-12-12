@@ -21,6 +21,8 @@ import { aiIcon, replaceIcon } from "./icons.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { createOutlineForChapter } from "../shared/util.book.js";
 import { downloadTextFile } from "./util.download.js";
+import { downloadChapterService } from "../shared/service.download-chapter.js";
+import { handleError } from "./util.error.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -320,15 +322,26 @@ export class TorlifyChapterEditor extends LitElement {
   downloadOutline() {
     return (): void => {
       const text = createOutlineForChapter(this.chapterContext.chapter!);
-      downloadTextFile(text, `${this.bookContext.book?.title || "book"} Chapter ${this.chapterContext.chapter?.number || 1} Outline.md`);
+      downloadTextFile(
+        text,
+        `${this.bookContext.book?.title || "book"} Chapter ${this.chapterContext.chapter?.number || 1} Outline.md`,
+      );
       this.closeModal(Modal.enum.download)();
     };
   }
 
   downloadText() {
-    return (): void => {
+    return async (): Promise<void> => {
+      try {
+        await downloadChapterService.fetch({
+          book: this.bookContext.book!.id,
+          chapter: String(this.chapterContext.chapter!.number),
+        });
+      } catch (error) {
+        handleError(this, error, "Failed to download chapter text");
+        return;
+      }
       this.closeModal(Modal.enum.download)();
-      dispatch(this, WarningEvent("This feature is not implemented yet"));
     };
   }
 

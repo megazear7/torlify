@@ -313,28 +313,31 @@ export class TorlifyPartEditor extends LitElement {
       this.loading = false;
     };
   }
-  
-    downloadOutline() {
-      return (): void => {
-        const text = createOutlineForPart(this.chapterContext.chapter!, this.partContext.part!);
-        downloadTextFile(text, `${this.bookContext.book?.title || "book"} Chapter ${this.chapterContext.chapter?.number || 1} Part ${this.partContext.part?.number || 1} Outline.md`);
-        this.closeModal(Modal.enum.download)();
-      };
-    }
-  
-    downloadText() {
-      return (): void => {
-        this.closeModal(Modal.enum.download)();
-        dispatch(this, WarningEvent("This feature is not implemented yet"));
-      };
-    }
-  
-    downloadAudio() {
-      return (): void => {
-        this.closeModal(Modal.enum.download)();
-        dispatch(this, WarningEvent("This feature is not implemented yet"));
-      };
-    }
+
+  downloadOutline() {
+    return (): void => {
+      const text = createOutlineForPart(this.chapterContext.chapter!, this.partContext.part!);
+      downloadTextFile(
+        text,
+        `${this.bookContext.book?.title || "book"} Chapter ${this.chapterContext.chapter?.number || 1} Part ${this.partContext.part?.number || 1} Outline.md`,
+      );
+      this.closeModal(Modal.enum.download)();
+    };
+  }
+
+  downloadText() {
+    return (): void => {
+      this.closeModal(Modal.enum.download)();
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
+    };
+  }
+
+  downloadAudio() {
+    return (): void => {
+      this.closeModal(Modal.enum.download)();
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
+    };
+  }
 
   handleTextChange(): (event: CustomEvent) => void {
     return (event: CustomEvent): void => {

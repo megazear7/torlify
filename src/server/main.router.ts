@@ -21,6 +21,7 @@ import { registerDownloadBookAudio } from "./controller.download-book-audio.js";
 import { generatePartOutlineController } from "./controller.generate-part-outline.js";
 import { appPingModelController } from "./controller.app-ping-model.js";
 import { bookPingModelController } from "./controller.book-ping-model.js";
+import { registerDownloadChapter } from "./controller.download-chapter.js";
 
 const router = express.Router();
 
@@ -44,6 +45,7 @@ appPingModelController.register(router);
 bookPingModelController.register(router);
 registerUploadReference(router);
 registerDownloadBook(router);
+registerDownloadChapter(router);
 registerDownloadBookAudio(router);
 registerGetChapterAudio(router);
 
