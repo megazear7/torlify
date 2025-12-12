@@ -1,6 +1,6 @@
 import { consume } from "@lit/context";
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { BookContext, bookContext, chapterContext, ChapterContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
@@ -24,6 +24,7 @@ import { downloadTextFile } from "./util.download.js";
 import { downloadChapterService } from "../shared/service.download-chapter.js";
 import { handleError } from "./util.error.js";
 import { downloadChapterAudioService } from "../shared/service.download-chapter-audio.js";
+import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -63,6 +64,12 @@ export class TorlifyChapterEditor extends LitElement {
   @property({ type: Boolean })
   private downloadingAudio: boolean = false;
 
+  @property({ type: Array, attribute: false })
+  public steps: Step[] = [];
+
+  @query("torlify-loading-overlay")
+  private loadingOverlay!: TorlifyLoadingOverlay;
+
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
@@ -72,6 +79,7 @@ export class TorlifyChapterEditor extends LitElement {
             <torlify-loading-overlay
               .visible="${this.loading}"
               message="${this.loadingMessage}"
+              .steps="${this.steps}"
             ></torlify-loading-overlay>
             <div class="secondary-surface">
               <h4>Chapter ${this.chapterContext.chapter.number}</h4>
@@ -260,15 +268,25 @@ export class TorlifyChapterEditor extends LitElement {
       this.closeModal(Modal.enum.generate)();
       this.loading = true;
       this.loadingMessage = "Generating chapter outline";
+      this.steps = [
+        {
+          status: StepStatus.enum.progress,
+          message: "Generate outline",
+        },
+      ];
+      this.loadingOverlay.requestUpdate();
       try {
         this.chapterContext.chapter = await generateChapterOutlineService.fetch({
           book,
           chapter: String(chapter.number),
         });
+        this.steps[0].status = StepStatus.enum.done;
+        this.loadingOverlay.requestUpdate();
       } catch {
         dispatch(this, WarningEvent("Failed to generate outline"));
       }
       this.loading = false;
+      this.steps = [];
     };
   }
 
@@ -293,10 +311,25 @@ export class TorlifyChapterEditor extends LitElement {
       this.closeModal(Modal.enum.generate)();
       this.loading = true;
       this.loadingMessage = "Generating chapter parts";
+      const steps: Step[] = [];
       for (const part of chapter.parts || []) {
+        steps.push({
+          status: StepStatus.enum.pending,
+          message: `Generate text for part ${part.number}`,
+        });
+      }
+      this.steps = steps;
+      for (const step of this.steps) {
+        step.status = StepStatus.enum.progress;
+        this.loadingOverlay.requestUpdate();
+        const partIndex = this.steps.indexOf(step);
+        const part = chapter.parts[partIndex];
         await this.generateTextForChapterPart(this.regenerateChecked, book, chapter, part);
+        step.status = StepStatus.enum.done;
+        this.loadingOverlay.requestUpdate();
       }
       this.loading = false;
+      this.steps = [];
     };
   }
 
@@ -325,10 +358,25 @@ export class TorlifyChapterEditor extends LitElement {
       this.closeModal(Modal.enum.generate)();
       this.loading = true;
       this.loadingMessage = `Generating audio for chapter ${chapter.number} with the ${book.model.audio.voice} voice`;
+      const steps: Step[] = [];
       for (const part of chapter.parts) {
+        steps.push({
+          status: StepStatus.enum.pending,
+          message: `Generate audio for part ${part.number}`,
+        });
+      }
+      this.steps = steps;
+      for (const step of this.steps) {
+        step.status = StepStatus.enum.progress;
+        this.loadingOverlay.requestUpdate();
+        const partIndex = this.steps.indexOf(step);
+        const part = chapter.parts[partIndex];
         await this.generateAudioForChapterPart(this.regenerateChecked, book, chapter, part);
+        step.status = StepStatus.enum.done;
+        this.loadingOverlay.requestUpdate();
       }
       this.loading = false;
+      this.steps = [];
     };
   }
 
