@@ -7,6 +7,17 @@ import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { consume } from "@lit/context";
 import { overlayStyles } from "./styles.overlay.js";
+import z from "zod";
+import { checkedCircleIcon, circleIcon } from "./icons.js";
+
+export const StepStatus = z.enum(["done", "progress", "pending"]);
+export type StepStatus = z.infer<typeof StepStatus>;
+
+export const Step = z.object({
+  status: StepStatus,
+  message: z.string(),
+});
+export type Step = z.infer<typeof Step>;
 
 @customElement("torlify-loading-overlay")
 export class TorlifyLoadingOverlay extends LitElement {
@@ -19,6 +30,33 @@ export class TorlifyLoadingOverlay extends LitElement {
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      .steps-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: var(--size-xl);
+      }
+
+      .step-item {
+        display: flex;
+        align-items: center;
+        gap: var(--size-medium);
+        margin-bottom: var(--size-small);
+        height: var(--size-large);
+      }
+
+      .step-icon {
+        height: var(--size-large);
+      }
+
+      .step-icon {
+        height: var(--size-large);
+      }
+
+      .step-item.done .step-icon {
+        color: var(--color-success);
       }
 
       .loader {
@@ -155,6 +193,9 @@ export class TorlifyLoadingOverlay extends LitElement {
   @property({ type: Array, attribute: false })
   private loadingSnippet: string[] = [];
 
+  @property({ type: Array, attribute: false })
+  private steps: Step[] = [];
+
   @query(".loading-snippet")
   private loadingSnippetElement!: HTMLElement;
 
@@ -164,6 +205,20 @@ export class TorlifyLoadingOverlay extends LitElement {
   override render(): TemplateResult {
     return html`
       <div class="${this.loadingOverlayClasses()}">
+        <div class="steps-container">
+          ${this.steps.map(
+            (step, index) => html`
+              <div class="step-item ${step.status === StepStatus.enum.done ? 'done' : ''}">
+                <div class="step-icon">
+                  ${step.status === StepStatus.enum.done ? html`${checkedCircleIcon}` : ''}
+                  ${step.status === StepStatus.enum.progress ? html`<torlify-spinner size="20"></torlify-spinner>` : ''}
+                  ${step.status === StepStatus.enum.pending ? html`${circleIcon}` : ''}
+                </div>
+                <div class="step-text">${index + 1}. ${step.message}</div>
+              </div>
+            `,
+          )}
+        </div>
         <div class="loader-container">
           <div class="loader"></div>
         </div>
