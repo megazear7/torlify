@@ -208,11 +208,23 @@ export class TorlifyLoadingOverlay extends LitElement {
         <div class="steps-container">
           ${this.steps.map(
             (step, index) => html`
-              <div class="step-item ${step.status === StepStatus.enum.done ? 'done' : ''}">
+              <div class="step-item ${step.status === StepStatus.enum.done ? "done" : ""}">
                 <div class="step-icon">
-                  ${step.status === StepStatus.enum.done ? html`${checkedCircleIcon}` : ''}
-                  ${step.status === StepStatus.enum.progress ? html`<torlify-spinner size="20"></torlify-spinner>` : ''}
-                  ${step.status === StepStatus.enum.pending ? html`${circleIcon}` : ''}
+                  ${step.status === StepStatus.enum.done
+                    ? html`
+                        ${checkedCircleIcon}
+                      `
+                    : ""}
+                  ${step.status === StepStatus.enum.progress
+                    ? html`
+                        <torlify-spinner size="20"></torlify-spinner>
+                      `
+                    : ""}
+                  ${step.status === StepStatus.enum.pending
+                    ? html`
+                        ${circleIcon}
+                      `
+                    : ""}
                 </div>
                 <div class="step-text">${index + 1}. ${step.message}</div>
               </div>

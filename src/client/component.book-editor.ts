@@ -18,7 +18,7 @@ import { Chapter, ChapterPart } from "../shared/type.book.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { downloadBookAudioService } from "../shared/service.download-book-audio.js";
 import { aiIcon, replaceIcon } from "./icons.js";
-import { cost, countTokens, countWords } from "../shared/util.book.js";
+import { cost, countTokens, countWords, createOutlineForBook } from "../shared/util.book.js";
 import { SuccessEvent } from "./event.success.js";
 import { bookPingModelService } from "../shared/service.book-ping-model.js";
 import "./component.auto-textarea.js";
@@ -26,6 +26,7 @@ import "./component.bar.js";
 import "./component.book-field.js";
 import "./component.checkbox.js";
 import "./component.loading-overlay.js";
+import { downloadTextFile } from "./util.download.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -240,28 +241,8 @@ export class TorlifyBookEditor extends LitElement {
 
   downloadOutline(): () => void {
     return async (): Promise<void> => {
-      const outlines: string[] = [];
-      for (const chapter of this.bookContext.book?.chapters || []) {
-        outlines.push(`# Chapter ${chapter.number}`);
-        outlines.push("");
-        for (const [index, partDescription] of chapter.outline.entries()) {
-          outlines.push(`## Part ${index + 1}`);
-          outlines.push(partDescription || "(No part description)");
-          outlines.push("");
-        }
-        if (chapter.outline.length === 0) {
-          outlines.push("(No chapter outline available)");
-          outlines.push("");
-        }
-      }
-      const text = outlines.join("\n");
-      const blob = new Blob([text], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${this.bookContext.book?.title || "book"}-outline.md`;
-      a.click();
-      URL.revokeObjectURL(url);
+      const text = createOutlineForBook(this.bookContext.book!);
+      downloadTextFile(text, `${this.bookContext.book?.title || "book"}-outline.md`);
       this.closeModal(Modal.enum.download)();
     };
   }

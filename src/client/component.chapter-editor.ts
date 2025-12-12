@@ -19,6 +19,8 @@ import "./component.bar.js";
 import { TorlifyModal } from "./component.modal.js";
 import { aiIcon, replaceIcon } from "./icons.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
+import { createOutlineForChapter } from "../shared/util.book.js";
+import { downloadTextFile } from "./util.download.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -126,9 +128,9 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Download Chapter</h3>
                 <p>Download the complete chapter outline, text, or audio.</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Outline</button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Text</button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.download)}">Audio</button>
+                  <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
+                  <button class="standard-button" @click="${this.downloadText()}">Text</button>
+                  <button class="standard-button" @click="${this.downloadAudio()}">Audio</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -312,6 +314,28 @@ export class TorlifyChapterEditor extends LitElement {
         await this.generateAudioForChapterPart(this.regenerateChecked, book, chapter, part);
       }
       this.loading = false;
+    };
+  }
+
+  downloadOutline() {
+    return (): void => {
+      const text = createOutlineForChapter(this.chapterContext.chapter!);
+      downloadTextFile(text, `${this.bookContext.book?.title || "book"} Chapter ${this.chapterContext.chapter?.number || 1} Outline.md`);
+      this.closeModal(Modal.enum.download)();
+    };
+  }
+
+  downloadText() {
+    return (): void => {
+      this.closeModal(Modal.enum.download)();
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
+    };
+  }
+
+  downloadAudio() {
+    return (): void => {
+      this.closeModal(Modal.enum.download)();
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
     };
   }
 

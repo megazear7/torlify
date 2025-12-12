@@ -1,4 +1,4 @@
-import { Book, Chapter } from "./type.book.js";
+import { Book, Chapter, ChapterPart } from "./type.book.js";
 
 export function countWords(book: Book): number {
   return book.chapters.reduce((total: number, chapter: Chapter) => {
@@ -31,4 +31,39 @@ export function cost(book: Book): number {
     (book.model.audio.usage.prompt_tokens || 0) * (book.model.audio.cost.inputTokenCost || 0) * oneMillionth;
 
   return textCompletionCost + textPromptCost + audioCompletionCost + audioPromptCost;
+}
+
+export function createOutlineForBook(book: Book): string {
+  const outlines: string[] = [];
+  outlines.push(`# ${book.title}`);
+  outlines.push("");
+  for (const chapter of book.chapters || []) {
+    outlines.push(createOutlineForChapter(chapter));
+    outlines.push("");
+  }
+  return outlines.join("\n");
+}
+
+export function createOutlineForChapter(chapter: Chapter): string {
+  const outlines: string[] = [];
+  outlines.push(`## Chapter ${chapter.number}: ${chapter.title}`);
+  outlines.push("");
+  for (const part of chapter.parts) {
+    outlines.push(createOutlineForPart(chapter, part));
+  }
+  if (chapter.outline.length === 0) {
+    outlines.push("(No chapter outline available)");
+    outlines.push("");
+  }
+  return outlines.join("\n");
+}
+
+export function createOutlineForPart(chapter: Chapter, part: ChapterPart): string {
+  const outlines: string[] = [];
+  const partDescription = chapter.outline[part.number - 1];
+  outlines.push(`### Part ${part.number}`);
+  outlines.push("");
+  outlines.push(partDescription || "(No part description)");
+  outlines.push("");
+  return outlines.join("\n");
 }
