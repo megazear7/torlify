@@ -2,6 +2,9 @@ import z from "zod";
 import { ModelConfigs, ModelTypeConfig } from "./type.model.js";
 import { Cost, Usage } from "./type.prompt.js";
 
+export const BookContentType = z.enum(["outline", "text", "audio"]);
+export type BookContentType = z.infer<typeof BookContentType>;
+
 export const BookId = z
   .string()
   .min(3)

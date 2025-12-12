@@ -1,6 +1,6 @@
 import { consume } from "@lit/context";
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
@@ -14,7 +14,7 @@ import { NavigationEvent } from "./event.navigation.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import z from "zod";
-import { Chapter, ChapterPart } from "../shared/type.book.js";
+import { BookContentType, Chapter, ChapterPart } from "../shared/type.book.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { downloadBookAudioService } from "../shared/service.download-book-audio.js";
 import { aiIcon, replaceIcon } from "./icons.js";
@@ -27,6 +27,8 @@ import "./component.book-field.js";
 import "./component.checkbox.js";
 import "./component.loading-overlay.js";
 import { downloadTextFile } from "./util.download.js";
+import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
+import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -73,6 +75,9 @@ export class TorlifyBookEditor extends LitElement {
   @property({ type: Boolean })
   public downloadingAudio = false;
 
+  @query("torlify-loading-overlay")
+  private loadingOverlay!: TorlifyLoadingOverlay;
+
   override render(): TemplateResult {
     return html`
       ${this.bookContext.book
@@ -114,11 +119,21 @@ export class TorlifyBookEditor extends LitElement {
                       </p>
                     `}
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.generateOutlines(this.regenerateChecked)}">
+                  <button
+                    class="standard-button"
+                    @click=${this.generate(this.regenerateChecked, BookContentType.enum.outline)}>
                     Outline
                   </button>
-                  <button class="standard-button" @click="${this.generateParts(this.regenerateChecked)}">Text</button>
-                  <button class="standard-button" @click="${this.generateAudio(this.regenerateChecked)}">Audio</button>
+                  <button
+                    class="standard-button"
+                    @click=${this.generate(this.regenerateChecked, BookContentType.enum.text)}>
+                    Text
+                  </button>
+                  <button
+                    class="standard-button"
+                    @click=${this.generate(this.regenerateChecked, BookContentType.enum.audio)}>
+                    Audio
+                  </button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -290,41 +305,64 @@ export class TorlifyBookEditor extends LitElement {
     };
   }
 
-  generate = async (callback: (chapter: Chapter) => Promise<void>): Promise<void> => {
-    this.closeModal(Modal.enum.generate)();
-    this.regenerateChecked = false;
-    this.loading = true;
-    this.loadingMessage = "Generating remaining content";
-    try {
-      for (const chapter of this.bookContext.book!.chapters) {
-        await callback(chapter);
+  generate(regenerate: boolean, type: BookContentType): () => Promise<void> {
+    return async (): Promise<void> => {
+      this.closeModal(Modal.enum.generate)();
+      this.regenerateChecked = false;
+      this.loading = true;
+      this.loadingMessage = "Generating remaining content";
+      document.addEventListener("keydown", this.handleKeyDown);
+      try {
+        const steps: Step[] = [];
+        for (const chapter of this.bookContext.book!.chapters) {
+          // TODO: Get the sub steps for each chapter based on the content type
+          steps.push({
+            status: StepStatus.enum.pending,
+            message: `Generate ${type} for chapter ${chapter.number}`,
+            action: chapter.number - 1,
+          });
+        }
+        this.loadingOverlay.steps = steps;
+        for (const step of this.loadingOverlay.steps) {
+          step.status = StepStatus.enum.progress;
+          this.loadingOverlay.requestUpdate();
+          const action = step.action;
+          if (action === undefined) {
+            dispatch(this, WarningEvent("Invalid step action"));
+            return;
+          }
+          if (this.loading) {
+            if (type === BookContentType.enum.outline) {
+              await this.generateOutlineForChapter(regenerate, this.bookContext.book!.chapters[action]);
+            } else if (type === BookContentType.enum.text) {
+              await this.generatePartsForChapter(regenerate, this.bookContext.book!.chapters[action]);
+            } else if (type === BookContentType.enum.audio) {
+              await this.generateAudioForChapter(regenerate, this.bookContext.book!.chapters[action]);
+            }
+            step.status = StepStatus.enum.done;
+            this.loadingOverlay.requestUpdate();
+          }
+        }
+        dispatch(this, NavigationEvent({ path: `/book/${this.bookContext.book!.id}` }));
+      } catch (error) {
+        console.error("Error generating remaining content:", error);
+        dispatch(this, WarningEvent("Failed to generate remaining content"));
+      } finally {
+        document.removeEventListener("keydown", this.handleKeyDown);
+        this.loading = false;
       }
-      dispatch(this, NavigationEvent({ path: `/book/${this.bookContext.book!.id}` }));
-    } catch (error) {
-      console.error("Error generating remaining content:", error);
-      dispatch(this, WarningEvent("Failed to generate remaining content"));
-    } finally {
+    };
+  }
+
+  private handleKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === "Escape") {
       this.loading = false;
+      setTimeout(() => {
+        this.loadingMessage = "Loading";
+        this.loadingOverlay.steps = [];
+      }, ANIMATION_SPEED_IN_MS);
     }
   };
-
-  generateOutlines(regenerate: boolean): () => Promise<void> {
-    return async (): Promise<void> => {
-      this.generate(async (chapter: Chapter) => await this.generateOutlineForChapter(regenerate, chapter));
-    };
-  }
-
-  generateParts(regenerate: boolean): () => Promise<void> {
-    return async (): Promise<void> => {
-      this.generate(async (chapter: Chapter) => await this.generatePartsForChapter(regenerate, chapter));
-    };
-  }
-
-  generateAudio(regenerate: boolean): () => Promise<void> {
-    return async (): Promise<void> => {
-      this.generate(async (chapter: Chapter) => await this.generateAudioForChapter(regenerate, chapter));
-    };
-  }
 
   async generateOutlineForChapter(regenerate: boolean, chapter: Chapter): Promise<void> {
     const hasNoOutline = chapter.outline.filter((item) => !item || !item.trim()).length > 0;

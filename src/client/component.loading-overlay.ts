@@ -16,6 +16,7 @@ export type StepStatus = z.infer<typeof StepStatus>;
 export const Step = z.object({
   status: StepStatus,
   message: z.string(),
+  action: z.number().optional(),
 });
 export type Step = z.infer<typeof Step>;
 
@@ -182,7 +183,10 @@ export class TorlifyLoadingOverlay extends LitElement {
   };
 
   @property({ type: String })
-  message = "Loading";
+  public message = "Loading";
+
+  @property({ type: Array, attribute: false })
+  public steps: Step[] = [];
 
   @property({ type: Boolean, attribute: false })
   private _visible = false;
@@ -192,9 +196,6 @@ export class TorlifyLoadingOverlay extends LitElement {
 
   @property({ type: Array, attribute: false })
   private loadingSnippet: string[] = [];
-
-  @property({ type: Array, attribute: false })
-  private steps: Step[] = [];
 
   @query(".loading-snippet")
   private loadingSnippetElement!: HTMLElement;
