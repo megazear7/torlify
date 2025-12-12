@@ -15,7 +15,7 @@ export async function getBookAudio(book: Book): Promise<Readable> {
   const audioPaths: string[] = [];
   const audioPath = `data/books/${book.id}/audio/combined.mp3`;
 
-  // Chapter intro
+  // Book intro
   audioPaths.push(await generateBookIntro(book));
   const longPausePath = await createSilence(2.0);
   audioPaths.push(longPausePath);
@@ -68,6 +68,68 @@ export async function getBookAudio(book: Book): Promise<Readable> {
       const chapterPausePath = await createSilence(2.5);
       audioPaths.push(chapterPausePath);
     }
+  }
+
+  try {
+    await combineMP3Files(audioPaths, audioPath);
+  } catch (err) {
+    console.error("Failed to combine MP3 files:", err);
+    throw err;
+  }
+
+  return createReadStream(audioPath);
+}
+
+export async function getChapterAudio(book: Book, chapter: Chapter): Promise<Readable> {
+  const audioPaths: string[] = [];
+  const audioPath = `data/books/${book.id}/audio/combined.mp3`;
+
+  // Chapter intro
+  audioPaths.push(await generateChapterIntro(book, chapter));
+  const longPausePath = await createSilence(1.5);
+  audioPaths.push(longPausePath);
+
+  for (let i = 0; i < chapter.parts.length; i++) {
+    const partNumber = i + 1;
+    const part = chapter.parts[i];
+    const audioId = part.audio;
+
+    // Skip parts that don't have audio
+    if (!audioId) {
+      console.warn(`Stopping audio generation at chapter ${chapter.number} part ${partNumber} - no audio available`);
+
+      // Combine whatever audio we have so far and return it
+      if (audioPaths.length > 0) {
+        try {
+          await combineMP3Files(audioPaths, audioPath);
+          console.log(audioPaths);
+          console.log(`Returning partial audio with ${audioPaths.length} segments`);
+          console.log(audioPath);
+          return createReadStream(audioPath);
+        } catch (err) {
+          console.error("Failed to combine partial MP3 files:", err);
+          throw err;
+        }
+      } else {
+        throw new Error(
+          `No audio available for chapter ${chapter.number} part ${partNumber} and no previous audio to return`,
+        );
+      }
+    }
+
+    audioPaths.push(await getPartAudioPath(book.id, chapter.number, partNumber));
+
+    // Add short pause between parts (except after the last part)
+    if (i < chapter.parts.length - 1) {
+      const shortPausePath = await createSilence(0.5);
+      audioPaths.push(shortPausePath);
+    }
+  }
+
+  // Add longer pause between chapters (except after the last chapter)
+  if (chapter !== book.chapters[book.chapters.length - 1]) {
+    const chapterPausePath = await createSilence(2.5);
+    audioPaths.push(chapterPausePath);
   }
 
   try {

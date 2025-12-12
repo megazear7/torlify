@@ -42,7 +42,7 @@ export async function createChapterPartAudio(
       },
       {
         role: "user",
-        content: "Please speak the above text exactly as written",
+        content: "Please speak the above text exactly as written. Do not include any additional commentary whatsoever.",
       },
     ],
   });

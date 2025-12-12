@@ -2,6 +2,7 @@ import z from "zod";
 import { AbstractService, NoBodyParams, ServiceType } from "./main.service.js";
 import { HttpMethod } from "./type.http.js";
 import { BookId } from "./type.book.js";
+import { downloadBlobFile } from "../client/util.download.js";
 
 export const DownloadBookAudioPathParameters = z.object({
   book: BookId,
@@ -28,16 +29,7 @@ export class DownloadBookAudioService extends AbstractService<
       throw new Error("Failed to download MP3");
     }
     const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${params.book}.mp3`;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
+    downloadBlobFile(blob, `${params.book}.mp3`);
     return { success: true };
   }
 }
