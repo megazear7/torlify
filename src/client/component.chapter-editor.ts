@@ -25,6 +25,7 @@ import { downloadChapterService } from "../shared/service.download-chapter.js";
 import { handleError } from "./util.error.js";
 import { downloadChapterAudioService } from "../shared/service.download-chapter-audio.js";
 import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
+import { NavigationEvent } from "./event.navigation.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -36,6 +37,44 @@ export class TorlifyChapterEditor extends LitElement {
     css`
       :host {
         scroll-margin-top: var(--size-xl);
+      }
+
+      .nav-button {
+        position: fixed;
+        bottom: var(--size-large);
+        width: var(--size-xl);
+        height: var(--size-xl);
+        border-radius: 50%;
+        border: none;
+        background-color: var(--color-primary);
+        color: var(--color-primary-text);
+        font-size: var(--font-large);
+        cursor: pointer;
+        box-shadow: var(--shadow-normal);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .nav-button:hover:not(:disabled) {
+        background-color: var(--color-primary-hover);
+        transform: scale(1.1);
+      }
+
+      .nav-button:disabled {
+        background-color: var(--color-secondary);
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      .nav-button.previous {
+        left: var(--size-large);
+      }
+
+      .nav-button.next {
+        right: var(--size-large);
       }
     `,
   ];
@@ -223,6 +262,22 @@ export class TorlifyChapterEditor extends LitElement {
         : html`
             <p>Loading chapter...</p>
           `}
+      <button
+        class="nav-button previous"
+        @click="${this.navigateToPreviousChapter}"
+        ?disabled="${!this.hasPrevious}"
+        title="${this.hasPrevious ? 'Go to previous chapter' : 'No previous chapter'}"
+      >
+        ‹
+      </button>
+      <button
+        class="nav-button next"
+        @click="${this.navigateToNextChapter}"
+        ?disabled="${!this.hasNext}"
+        title="${this.hasNext ? 'Go to next chapter' : 'No next chapter'}"
+      >
+        ›
+      </button>
     `;
   }
 
@@ -509,5 +564,39 @@ export class TorlifyChapterEditor extends LitElement {
     const bookId = this.bookContext.book?.id;
     if (!bookId) throw new Error("Book ID is not available");
     return bookId;
+  }
+
+  get hasPrevious(): boolean {
+    const chapters = this.bookContext.book?.chapters;
+    const currentChapter = this.chapterContext.chapter;
+    if (!chapters || !currentChapter) return false;
+    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    return currentIndex > 0;
+  }
+
+  get hasNext(): boolean {
+    const chapters = this.bookContext.book?.chapters;
+    const currentChapter = this.chapterContext.chapter;
+    if (!chapters || !currentChapter) return false;
+    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    return currentIndex < chapters.length - 1;
+  }
+
+  navigateToPreviousChapter(): void {
+    if (!this.hasPrevious) return;
+    const chapters = this.bookContext.book!.chapters;
+    const currentChapter = this.chapterContext.chapter!;
+    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    const previousChapter = chapters[currentIndex - 1];
+    dispatch(this, NavigationEvent({ path: `/book/${this.bookId}/chapter/${previousChapter.number}` }));
+  }
+
+  navigateToNextChapter(): void {
+    if (!this.hasNext) return;
+    const chapters = this.bookContext.book!.chapters;
+    const currentChapter = this.chapterContext.chapter!;
+    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    const nextChapter = chapters[currentIndex + 1];
+    dispatch(this, NavigationEvent({ path: `/book/${this.bookId}/chapter/${nextChapter.number}` }));
   }
 }
