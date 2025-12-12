@@ -339,8 +339,12 @@ export class TorlifyPartEditor extends LitElement {
 
   downloadText() {
     return (): void => {
+      const text = this.partContext.part!.text;
+      downloadTextFile(
+        text,
+        `${this.bookContext.book?.title || "book"} Chapter ${this.chapterContext.chapter?.number || 1} Part ${this.partContext.part?.number || 1} Text.md`,
+      );
       this.closeModal(Modal.enum.download)();
-      dispatch(this, WarningEvent("This feature is not implemented yet"));
     };
   }
 
