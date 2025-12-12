@@ -47,6 +47,7 @@ export class GenerateBookController extends AbstractController<GenerateBookParam
         },
         audio: {
           ...appConfig.model.audio,
+          voice: appConfig.model.audio.voice,
           usage: {
             completion_tokens: 0,
             prompt_tokens: 0,

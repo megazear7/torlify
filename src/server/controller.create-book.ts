@@ -49,6 +49,7 @@ export class CreateBookController extends AbstractController<CreateBookParameter
           name: "",
           endpoint: "",
           modelName: "",
+          voice: appConfig.model.audio.voice,
           cost: {
             inputTokenCost: 0,
             inputTokenCount: 0,
