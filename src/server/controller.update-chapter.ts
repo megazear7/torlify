@@ -5,6 +5,7 @@ import {
   updateChapterService,
 } from "../shared/service.update-chapter.js";
 import { Chapter, ChapterPartial } from "../shared/type.book.js";
+import { mergeChapterProperties } from "../shared/util.merge-chapter.js";
 import { AbstractController } from "./main.controller.js";
 import { getBook, saveBook } from "./util.book.js";
 
@@ -21,7 +22,7 @@ export class UpdateChapterController extends AbstractController<
     const updatedBook = {
       ...existingBook,
       chapters: existingBook.chapters.map((chapter) =>
-        chapter.number === bodyParams.chapter.number ? { ...chapter, ...bodyParams.chapter } : chapter,
+        chapter.number === bodyParams.chapter.number ? mergeChapterProperties(chapter, bodyParams.chapter) : chapter,
       ),
     };
     await saveBook(updatedBook);

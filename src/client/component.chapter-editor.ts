@@ -14,8 +14,6 @@ import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
 import z from "zod";
-import "./component.auto-textarea.js";
-import "./component.bar.js";
 import { TorlifyModal } from "./component.modal.js";
 import { aiIcon, leftArrowIcon, replaceIcon, rightArrowIcon } from "./icons.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
@@ -26,6 +24,9 @@ import { handleError } from "./util.error.js";
 import { downloadChapterAudioService } from "../shared/service.download-chapter-audio.js";
 import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
 import { NavigationEvent } from "./event.navigation.js";
+import "./component.chapter-title-modal.js";
+import "./component.auto-textarea.js";
+import "./component.bar.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -37,6 +38,15 @@ export class TorlifyChapterEditor extends LitElement {
     css`
       :host {
         scroll-margin-top: var(--size-xl);
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+      }
+
+      torlify-chapter-title-modal {
+        margin-left: auto;
       }
 
       .nav-container {
@@ -172,15 +182,13 @@ export class TorlifyChapterEditor extends LitElement {
             <torlify-loading-overlay
               .visible="${this.loading}"
               message="${this.loadingMessage}"
-              .steps="${this.steps}"
-            ></torlify-loading-overlay>
+              .steps="${this.steps}"></torlify-loading-overlay>
             <div class="secondary-surface">
-              <h4>Chapter ${this.chapterContext.chapter.number}</h4>
-              <torlify-auto-textarea
-                heading="h2"
-                .value="${this.chapterContext.chapter.title}"
-                @input="${this.updateProperty("title")}"
-              ></torlify-auto-textarea>
+              <h4 class="title">
+                Chapter ${this.chapterContext.chapter.number}
+                <torlify-chapter-title-modal></torlify-chapter-title-modal>
+              </h4>
+              <torlify-field property="chapter.title" type="textarea" heading="h2"></torlify-field>
             </div>
             <torlify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
@@ -202,18 +210,16 @@ export class TorlifyChapterEditor extends LitElement {
                   .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
                   @change="${this.handleRegenerateCheckedChange}"></torlify-checkbox>
-                ${
-                  this.regenerateChecked
-                    ? html`
-                        <p>All content for the entire chapter will be generated, replacing any existing content.</p>
-                      `
-                    : html`
-                        <p>
-                          All missing content will be generated for the entire chapter but no existing content will be
-                          replaced.
-                        </p>
-                      `
-                }
+                ${this.regenerateChecked
+                  ? html`
+                      <p>All content for the entire chapter will be generated, replacing any existing content.</p>
+                    `
+                  : html`
+                      <p>
+                        All missing content will be generated for the entire chapter but no existing content will be
+                        replaced.
+                      </p>
+                    `}
                 <torlify-bar>
                   <button class="standard-button" @click="${this.generateOutline()}">Outline</button>
                   <button class="standard-button" @click="${this.generateParts()}">Text</button>
@@ -239,13 +245,11 @@ export class TorlifyChapterEditor extends LitElement {
                   <button class="standard-button" @click="${this.downloadText()}">Text</button>
                   <button class="standard-button" @click="${this.downloadAudio()}">
                     Audio
-                    ${
-                      this.downloadingAudio
-                        ? html`
-                            <torlify-spinner></torlify-spinner>
-                          `
-                        : ""
-                    }
+                    ${this.downloadingAudio
+                      ? html`
+                          <torlify-spinner></torlify-spinner>
+                        `
+                      : ""}
                   </button>
                 </torlify-bar>
               </div>
@@ -255,7 +259,9 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Move Chapter</h3>
                 <p>Move this chapter before the previous chapter or after the next chapter?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">Before previous</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">
+                    Before previous
+                  </button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">After next</button>
                 </torlify-bar>
               </div>
@@ -265,7 +271,9 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Add Chapter</h3>
                 <p>Add a new chapter before the previous chapter or after the next chapter?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">Before previous</button>
+                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">
+                    Before previous
+                  </button>
                   <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">After next</button>
                 </torlify-bar>
               </div>
@@ -281,26 +289,17 @@ export class TorlifyChapterEditor extends LitElement {
               </div>
             </torlify-modal>
             <div class="secondary-surface">
-              <h4>When</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.when}" @input="${this.updateProperty("when")}"></torlify-auto-textarea>
-              <h4>Where</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.where}" @input="${this.updateProperty("where")}"></torlify-auto-textarea>
-              <h4>What</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.what}" @input="${this.updateProperty("what")}"></torlify-auto-textarea>
-              <h4>Why</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.why}" @input="${this.updateProperty("why")}"></torlify-auto-textarea>
-              <h4>How</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.how}" @input="${this.updateProperty("how")}"></torlify-auto-textarea>
-              <h4>Who</h4>
-              <torlify-auto-textarea .value="${this.chapterContext.chapter.who}" @input="${this.updateProperty("who")}"></torlify-auto-textarea>
+              <torlify-field property="chapter.when"></torlify-field>
+              <torlify-field property="chapter.where"></torlify-field>
+              <torlify-field property="chapter.what"></torlify-field>
+              <torlify-field property="chapter.why"></torlify-field>
+              <torlify-field property="chapter.how"></torlify-field>
+              <torlify-field property="chapter.who"></torlify-field>
             </div>
             <div class="secondary-surface">
-              <h4>Minimum Parts</h4>
-              <input type="text" .value="${this.chapterContext.chapter.minParts}" @input="${this.updateProperty("minParts")}"></input>
-              <h4>Maximum Parts</h4>
-              <input type="text" .value="${this.chapterContext.chapter.maxParts}" @input="${this.updateProperty("maxParts")}"></input>
-              <h4>Estimated Part Length in Words</h4>
-              <input type="text" .value="${this.chapterContext.chapter.partLength}" @input="${this.updateProperty("partLength")}"></input>
+              <torlify-field property="chapter.minParts"></torlify-field>
+              <torlify-field property="chapter.maxParts"></torlify-field>
+              <torlify-field property="chapter.partLength"></torlify-field>
             </div>
             <div class="secondary-surface">
               <h4>Outline</h4>

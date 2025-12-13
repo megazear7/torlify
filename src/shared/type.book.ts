@@ -195,9 +195,7 @@ export const Chapter = ChapterStub.extend({
 });
 export type Chapter = z.infer<typeof Chapter>;
 
-export const ChapterPartial = Chapter.partial().extend({
-  number: Chapter.shape.number,
-});
+export const ChapterPartial = Chapter.partial();
 export type ChapterPartial = z.infer<typeof ChapterPartial>;
 
 export const EditInstructions = z

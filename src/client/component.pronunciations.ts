@@ -10,6 +10,8 @@ import { wait } from "../shared/util.wait.js";
 import { updateBookService } from "../shared/service.update-book.js";
 import { SaveEvent } from "./event.save.js";
 import { DebounceHandler } from "./util.debounce.js";
+import "./component.configure-pronunciation.js";
+import { PronunciationUpdatedEventDetail } from "./event.pronunciation-updated.js";
 
 @customElement("torlify-pronunciations")
 export class TorlifyPronunciations extends LitElement {
@@ -83,9 +85,6 @@ export class TorlifyPronunciations extends LitElement {
       .pronunciation-field {
         position: relative;
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: var(--size-medium);
       }
 
       .pronunciation-label {
@@ -100,6 +99,7 @@ export class TorlifyPronunciations extends LitElement {
       .pronunciation-input {
         border: 1px solid var(--color-grey-transparent);
         border-radius: var(--radius-medium);
+        margin: 0 !important;
         background: transparent;
         padding: var(--size-medium) var(--size-large);
         color: var(--color-primary-text);
@@ -208,28 +208,30 @@ export class TorlifyPronunciations extends LitElement {
                 ${pronunciations.map(
                   (pronunciation, index) => html`
                     <div class="pronunciation-item ${this.removingIndices.includes(index) ? "removing" : ""}">
-                      <div class="pronunciation-inputs">
-                        <div class="pronunciation-field">
-                          <label class="pronunciation-label">Match Text</label>
-                          <input
-                            class="pronunciation-input"
-                            type="text"
-                            placeholder="Word or phrase to replace"
-                            .value="${pronunciation.match}"
-                            @input="${(e: Event): void =>
-                              this.updatePronunciation(index, "match", (e.target as HTMLInputElement).value)}" />
-                        </div>
-                        <div class="pronunciation-field">
-                          <label class="pronunciation-label">Replace With</label>
-                          <input
-                            class="pronunciation-input"
-                            type="text"
-                            placeholder="Pronunciation replacement"
-                            .value="${pronunciation.replace}"
-                            @input="${(e: Event): void =>
-                              this.updatePronunciation(index, "replace", (e.target as HTMLInputElement).value)}" />
-                        </div>
+                      <div class="pronunciation-field">
+                        <label class="pronunciation-label">Match Text</label>
+                        <input
+                          class="pronunciation-input"
+                          type="text"
+                          placeholder="Word or phrase to replace"
+                          .value="${pronunciation.match}"
+                          @input="${(e: Event): void =>
+                            this.updatePronunciation(index, "match", (e.target as HTMLInputElement).value)}" />
                       </div>
+                      <div class="pronunciation-field">
+                        <label class="pronunciation-label">Replace With</label>
+                        <input
+                          class="pronunciation-input"
+                          type="text"
+                          placeholder="Pronunciation replacement"
+                          .value="${pronunciation.replace}"
+                          @input="${(e: Event): void =>
+                            this.updatePronunciation(index, "replace", (e.target as HTMLInputElement).value)}" />
+                      </div>
+                      <torlify-configure-pronunciation
+                        .pronunciation="${pronunciation}"
+                        @PronunciationUpdated=${this.handlePronunciationMatch(index)}>
+                      </torlify-configure-pronunciation>
                       <button
                         class="remove-button"
                         @click="${async (): Promise<void> => this.removePronunciation(index)}"
@@ -243,6 +245,14 @@ export class TorlifyPronunciations extends LitElement {
             `}
       </div>
     `;
+  }
+
+  private handlePronunciationMatch(index: number): (e: CustomEvent) => void {
+    return (e: CustomEvent): void => {
+      console.log('B');
+      const detail = PronunciationUpdatedEventDetail.parse(e.detail);
+      this.updatePronunciation(index, detail.field, detail.value);
+    };
   }
 
   private addPronunciation(): void {

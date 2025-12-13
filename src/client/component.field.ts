@@ -2,12 +2,12 @@ import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
-import { AppContext, appContext, BookContext, bookContext } from "./context.js";
+import { AppContext, appContext, BookContext, bookContext, chapterContext, ChapterContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { SaveEvent } from "./event.save.js";
 import { dispatch } from "./util.events.js";
 import { DebounceHandler } from "./util.debounce.js";
-import { Book, BookPartial } from "../shared/type.book.js";
+import { Book, BookPartial, Chapter, ChapterPartial } from "../shared/type.book.js";
 import { AppConfig, AppConfigPartial } from "../shared/type.app.js";
 import { buildNestedObject } from "../shared/util.property.js";
 import { mergeBookProperties } from "../shared/util.merge-book.js";
@@ -15,6 +15,8 @@ import { updateBookService } from "../shared/service.update-book.js";
 import { mergeAppProperties } from "../shared/util.merge-app.js";
 import { updateAppService } from "../shared/service.update-app.js";
 import { infoIcon } from "./icons.js";
+import { WarningEvent } from "./event.warning.js";
+import { updateChapterService } from "../shared/service.update-chapter.js";
 
 @customElement("torlify-field")
 export class TorlifyField extends LitElement {
@@ -25,8 +27,10 @@ export class TorlifyField extends LitElement {
         display: flex;
         align-items: center;
         gap: var(--size-small);
-        color: var(--color-primary-text);
         margin-bottom: var(--size-small);
+        color: var(--color-accent);
+        opacity: 0.8;
+        font-style: italic;
       }
 
       label .field-help {
@@ -45,6 +49,12 @@ export class TorlifyField extends LitElement {
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })
   public bookContext: BookContext = {
+    status: LoadingStatus.enum.idle,
+  };
+
+  @consume({ context: chapterContext, subscribe: true })
+  @property({ attribute: false })
+  public chapterContext: ChapterContext = {
     status: LoadingStatus.enum.idle,
   };
 
@@ -159,19 +169,41 @@ export class TorlifyField extends LitElement {
     return value || "";
   }
 
-  getContext(): AppConfig | Book | undefined {
-    return this.property.startsWith("book.") ? this.bookContext.book : this.appContext.app;
+  getContext(): AppConfig | Book | Chapter | undefined {
+    if (this.property.startsWith("app.")) {
+      return this.appContext.app;
+    } else if (this.property.startsWith("book.")) {
+      return this.bookContext.book;
+    } else if (this.property.startsWith("chapter.")) {
+      return this.chapterContext.chapter;
+    }
+    dispatch(this, WarningEvent(`Unknown property context for ${this.property}`));
+    throw new Error(`Unknown property context for ${this.property}`);
   }
 
   get contextualProperty(): string {
-    return this.property.startsWith("book.") ? this.property.split("book.")[1] : this.property.split("app.")[1];
+    if (this.property.startsWith("app.")) {
+      return this.property.split("app.")[1];
+    } else if (this.property.startsWith("book.")) {
+      return this.property.split("book.")[1];
+    } else if (this.property.startsWith("chapter.")) {
+      return this.property.split("chapter.")[1];
+    }
+    throw new Error(`Unknown property context for ${this.property}`);
   }
 
   save(): (event: CustomEvent | InputEvent) => void {
     return (event: CustomEvent | InputEvent): void => {
       const value = this.getValueFromEvent(event);
       if (value === undefined) return;
-      if (this.property.startsWith("book.")) {
+      if (this.property.startsWith("app.")) {
+        const app = buildNestedObject(AppConfigPartial, this.contextualProperty, value);
+        this.appContext.app = mergeAppProperties(this.appContext.app!, app);
+        this.debounceHandler.debounce(() => {
+          updateAppService.fetch({ app });
+          dispatch(this, SaveEvent());
+        });
+      } else if (this.property.startsWith("book.")) {
         const book = buildNestedObject(BookPartial, this.contextualProperty, value);
         this.bookContext.book = mergeBookProperties(this.bookContext.book!, book);
         this.debounceHandler.debounce(() => {
@@ -181,11 +213,20 @@ export class TorlifyField extends LitElement {
           });
           dispatch(this, SaveEvent());
         });
-      } else {
-        const app = buildNestedObject(AppConfigPartial, this.contextualProperty, value);
-        this.appContext.app = mergeAppProperties(this.appContext.app!, app);
+      } else if (this.property.startsWith("chapter.")) {
+        const chapter = {
+          ...buildNestedObject(ChapterPartial, this.contextualProperty, value),
+          number: this.chapterContext.chapter!.number,
+        };
+        this.chapterContext.chapter = {
+          ...this.chapterContext.chapter!,
+          ...chapter,
+        };
         this.debounceHandler.debounce(() => {
-          updateAppService.fetch({ app });
+          updateChapterService.fetch({
+            book: this.bookContext.book!.id,
+            chapter,
+          });
           dispatch(this, SaveEvent());
         });
       }

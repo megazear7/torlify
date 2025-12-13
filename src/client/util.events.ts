@@ -7,6 +7,7 @@ import { SuccessEventData } from "./event.success.js";
 import { SaveEventData } from "./event.save.js";
 import { ModelClosingEventData } from "./event.modal-closing.js";
 import { ModelOpeningEventData } from "./event.modal-opening.js";
+import { PronunciationUpdatedEventData } from "./event.pronunciation-updated.js";
 
 export const TorlifyEvent = z.union([
   ModelSubmitEventData,
@@ -17,6 +18,7 @@ export const TorlifyEvent = z.union([
   WarningEventData,
   SuccessEventData,
   SaveEventData,
+  PronunciationUpdatedEventData,
 ]);
 export type TorlifyEvent = z.infer<typeof TorlifyEvent>;
 

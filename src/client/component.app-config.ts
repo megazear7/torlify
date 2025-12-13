@@ -67,11 +67,11 @@ export class TorlifyAppConfig extends LitElement {
           <torlify-field property="app.model.text.endpoint"></torlify-field>
           <torlify-field
             property="app.model.text.cost.inputTokenCost"
-            help="per million tokens"
+            help="dollars per million tokens"
             type="number"></torlify-field>
           <torlify-field
             property="app.model.text.cost.outputTokenCost"
-            help="per million tokens"
+            help="dollars per million tokens"
             type="number"></torlify-field>
           <h3>Audio Model Configuration</h3>
           <torlify-field property="app.model.audio.name"></torlify-field>
@@ -85,11 +85,11 @@ export class TorlifyAppConfig extends LitElement {
           <torlify-field property="app.model.audio.endpoint"></torlify-field>
           <torlify-field
             property="app.model.audio.cost.inputTokenCost"
-            help="per million tokens"
+            help="dollars per million tokens"
             type="number"></torlify-field>
           <torlify-field
             property="app.model.audio.cost.outputTokenCost"
-            help="per million tokens"
+            help="dollars per million tokens"
             type="number"></torlify-field>
         </div>
       </torlify-modal>

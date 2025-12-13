@@ -21,14 +21,15 @@ import { aiIcon, replaceIcon } from "./icons.js";
 import { cost, countTokens, countWords, createOutlineForBook } from "../shared/util.book.js";
 import { SuccessEvent } from "./event.success.js";
 import { bookPingModelService } from "../shared/service.book-ping-model.js";
+import { downloadTextFile } from "./util.download.js";
+import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
+import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import "./component.book-field.js";
 import "./component.checkbox.js";
 import "./component.loading-overlay.js";
-import { downloadTextFile } from "./util.download.js";
-import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
-import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
+import "./component.book-title-modal.js";
 
 export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
@@ -46,10 +47,23 @@ export class TorlifyBookEditor extends LitElement {
         color: var(--color-secondary-text);
       }
 
+      .loading-button {
+        margin-bottom: var(--size-large);
+      }
+
       .loading-button.loading:hover {
         background-color: var(--color-secondary-bold);
         box-shadow: var(--shadow-normal);
         transform: none;
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+      }
+
+      .title torlify-book-title-modal {
+        margin-left: auto;
       }
     `,
   ];
@@ -171,12 +185,12 @@ export class TorlifyBookEditor extends LitElement {
             <torlify-modal id="${Modal.enum.details}-modal">
               <div slot="body">
                 <h3>Details</h3>
-                <torlify-book-field property="details.authorName"></torlify-book-field>
-                <torlify-book-field property="details.isbn"></torlify-book-field>
-                <torlify-book-field property="details.dedication"></torlify-book-field>
-                <torlify-book-field property="details.acknowledgements"></torlify-book-field>
-                <torlify-book-field property="details.aboutTheAuthor"></torlify-book-field>
-                <torlify-book-field property="details.includeChapterTitles" type="boolean"></torlify-book-field>
+                <torlify-field property="book.details.authorName"></torlify-field>
+                <torlify-field property="book.details.isbn"></torlify-field>
+                <torlify-field property="book.details.dedication"></torlify-field>
+                <torlify-field property="book.details.acknowledgements"></torlify-field>
+                <torlify-field property="book.details.aboutTheAuthor"></torlify-field>
+                <torlify-field property="book.details.includeChapterTitles" type="boolean"></torlify-field>
               </div>
             </torlify-modal>
             <torlify-modal id="${Modal.enum.configure}-modal">
@@ -194,23 +208,23 @@ export class TorlifyBookEditor extends LitElement {
                       `
                     : ""}
                 </button>
-                <torlify-book-field property="model.text.name"></torlify-book-field>
-                <torlify-book-field property="model.text.modelName"></torlify-book-field>
-                <torlify-book-field property="model.text.endpoint"></torlify-book-field>
-                <torlify-book-field property="model.text.cost.inputTokenCost" type="number"></torlify-book-field>
-                <torlify-book-field property="model.text.cost.outputTokenCost" type="number"></torlify-book-field>
+                <torlify-field property="book.model.text.name"></torlify-field>
+                <torlify-field property="book.model.text.modelName"></torlify-field>
+                <torlify-field property="book.model.text.endpoint"></torlify-field>
+                <torlify-field property="book.model.text.cost.inputTokenCost" type="number"></torlify-field>
+                <torlify-field property="book.model.text.cost.outputTokenCost" type="number"></torlify-field>
                 <h3>Audio Model Configuration</h3>
-                <torlify-book-field property="model.audio.name"></torlify-book-field>
-                <torlify-book-field property="model.audio.modelName"></torlify-book-field>
+                <torlify-field property="book.model.audio.name"></torlify-field>
+                <torlify-field property="book.model.audio.modelName"></torlify-field>
                 <p>
                   <a href="https://platform.openai.com/docs/guides/text-to-speech/voice-options#voice-options">
                     OpenAI Voice options
                   </a>
                 </p>
-                <torlify-book-field property="model.audio.voice"></torlify-book-field>
-                <torlify-book-field property="model.audio.endpoint"></torlify-book-field>
-                <torlify-book-field property="model.audio.cost.inputTokenCost" type="number"></torlify-book-field>
-                <torlify-book-field property="model.audio.cost.outputTokenCost" type="number"></torlify-book-field>
+                <torlify-field property="book.model.audio.voice"></torlify-field>
+                <torlify-field property="book.model.audio.endpoint"></torlify-field>
+                <torlify-field property="book.model.audio.cost.inputTokenCost" type="number"></torlify-field>
+                <torlify-field property="book.model.audio.cost.outputTokenCost" type="number"></torlify-field>
               </div>
             </torlify-modal>
             <torlify-modal id="${Modal.enum.delete}-modal">
@@ -224,7 +238,11 @@ export class TorlifyBookEditor extends LitElement {
               </div>
             </torlify-modal>
             <div class="secondary-surface">
-              <torlify-book-field property="title" type="textarea" heading="h2"></torlify-book-field>
+              <h4 class="title">
+                Title
+                <torlify-book-title-modal></torlify-book-title-modal>
+              </h4>
+              <torlify-field property="book.title" type="textarea" heading="h2"></torlify-field>
               <div class="stats">
                 <span>${checkCompletion(this.bookContext.book)}% complete</span>
                 <span>${formatNumber(this.tokens)} tokens</span>
@@ -236,11 +254,11 @@ export class TorlifyBookEditor extends LitElement {
             </div>
             <div class="secondary-surface">
               <h4>Overview</h4>
-              <torlify-book-field property="overview" type="textarea"></torlify-book-field>
+              <torlify-field property="book.overview" type="textarea"></torlify-field>
               <h4>Edit Instructions</h4>
-              <torlify-book-field property="instructions.edit" type="textarea"></torlify-book-field>
+              <torlify-field property="book.instructions.edit" type="textarea"></torlify-field>
               <h4>Audio Instructions</h4>
-              <torlify-book-field property="instructions.audio" type="textarea"></torlify-book-field>
+              <torlify-field property="book.instructions.audio" type="textarea"></torlify-field>
             </div>
           `
         : html`
