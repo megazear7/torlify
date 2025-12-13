@@ -1,5 +1,5 @@
 import { consume } from "@lit/context";
-import { css, html, LitElement, TemplateResult } from "lit";
+import { html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { bookContext, BookContext, ChapterContext, chapterContext, PartContext, partContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
@@ -30,48 +30,7 @@ export type Modal = z.infer<typeof Modal>;
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
-  static override styles = [
-    globalStyles,
-    css`
-      .part-nav-button {
-        position: fixed;
-        bottom: var(--size-medium);
-        width: var(--size-large);
-        height: var(--size-large);
-        border-radius: 50%;
-        border: none;
-        background-color: var(--color-primary);
-        color: var(--color-primary-text);
-        font-size: var(--font-large);
-        cursor: pointer;
-        box-shadow: var(--shadow-normal);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-      }
-
-      .part-nav-button:hover:not(:disabled) {
-        background-color: var(--color-primary-hover);
-        transform: scale(1.1);
-      }
-
-      .part-nav-button:disabled {
-        background-color: var(--color-secondary);
-        cursor: not-allowed;
-        opacity: 0.5;
-      }
-
-      .part-nav-button.previous {
-        left: var(--size-medium);
-      }
-
-      .part-nav-button.next {
-        right: var(--size-medium);
-      }
-    `,
-  ];
+  static override styles = [globalStyles];
 
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })
@@ -236,22 +195,6 @@ export class TorlifyPartEditor extends LitElement {
         : html`
             <p>Loading part...</p>
           `}
-      <button
-        class="part-nav-button previous"
-        @click="${this.navigateToPreviousPart}"
-        ?disabled="${!this.hasPreviousPart}"
-        title="${this.hasPreviousPart ? 'Go to previous part' : 'No previous part'}"
-      >
-        ‹
-      </button>
-      <button
-        class="part-nav-button next"
-        @click="${this.navigateToNextPart}"
-        ?disabled="${!this.hasNextPart}"
-        title="${this.hasNextPart ? 'Go to next part' : 'No next part'}"
-      >
-        ›
-      </button>
     `;
   }
 
@@ -581,68 +524,5 @@ export class TorlifyPartEditor extends LitElement {
 
   get hasAudio(): boolean {
     return !!this.partContext.part?.audio;
-  }
-
-  get hasPreviousPart(): boolean {
-    const chapter = this.chapterContext.chapter;
-    const part = this.partContext.part;
-    if (!chapter || !part) return false;
-    if (part.number > 1) return true;
-    // Check if there's a previous chapter
-    const chapters = this.bookContext.book?.chapters;
-    if (!chapters) return false;
-    const currentChapterIndex = chapters.findIndex(ch => ch.number === chapter.number);
-    return currentChapterIndex > 0;
-  }
-
-  get hasNextPart(): boolean {
-    const chapter = this.chapterContext.chapter;
-    const part = this.partContext.part;
-    if (!chapter || !part) return false;
-    if (part.number < chapter.parts.length) return true;
-    // Check if there's a next chapter
-    const chapters = this.bookContext.book?.chapters;
-    if (!chapters) return false;
-    const currentChapterIndex = chapters.findIndex(ch => ch.number === chapter.number);
-    return currentChapterIndex < chapters.length - 1;
-  }
-
-  navigateToPreviousPart(): void {
-    if (!this.hasPreviousPart) return;
-    const book = this.bookContext.book!;
-    const chapter = this.chapterContext.chapter!;
-    const part = this.partContext.part!;
-    const chapters = book.chapters;
-    const currentChapterIndex = chapters.findIndex(ch => ch.number === chapter.number);
-
-    if (part.number > 1) {
-      // Previous part in same chapter
-      const prevPartNumber = part.number - 1;
-      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}/part/${prevPartNumber}` }));
-    } else {
-      // Last part of previous chapter
-      const prevChapter = chapters[currentChapterIndex - 1];
-      const lastPartNumber = prevChapter.parts.length;
-      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${prevChapter.number}/part/${lastPartNumber}` }));
-    }
-  }
-
-  navigateToNextPart(): void {
-    if (!this.hasNextPart) return;
-    const book = this.bookContext.book!;
-    const chapter = this.chapterContext.chapter!;
-    const part = this.partContext.part!;
-    const chapters = book.chapters;
-    const currentChapterIndex = chapters.findIndex(ch => ch.number === chapter.number);
-
-    if (part.number < chapter.parts.length) {
-      // Next part in same chapter
-      const nextPartNumber = part.number + 1;
-      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}/part/${nextPartNumber}` }));
-    } else {
-      // First part of next chapter
-      const nextChapter = chapters[currentChapterIndex + 1];
-      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${nextChapter.number}/part/1` }));
-    }
   }
 }

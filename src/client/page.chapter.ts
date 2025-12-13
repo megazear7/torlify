@@ -5,12 +5,13 @@ import { TorlifyChapterProvider } from "./provider.chapter.js";
 import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
-import "./component.chapter-list.js";
+import "./component.book-summary.js";
 import "./component.chapter-editor.js";
 import "./component.part-list.js";
 import "./component.pronunciations.js";
 import "./component.references.js";
 import "./component.characters.js";
+import "./component.chapter-list.js";
 
 @customElement("torlify-chapter-page")
 export class TorlifyChapterPage extends TorlifyChapterProvider {
@@ -23,11 +24,12 @@ export class TorlifyChapterPage extends TorlifyChapterProvider {
       <torlify-bookmark-tabs></torlify-bookmark-tabs>
       <div class="container">
         <torlify-book-list></torlify-book-list>
-        <torlify-chapter-list></torlify-chapter-list>
+        <torlify-book-summary></torlify-book-summary>
         <torlify-book-editor></torlify-book-editor>
         <torlify-pronunciations></torlify-pronunciations>
         <torlify-references></torlify-references>
         <torlify-characters></torlify-characters>
+        <torlify-chapter-list></torlify-chapter-list>
         <torlify-chapter-editor></torlify-chapter-editor>
         <torlify-part-list></torlify-part-list>
       </div>
@@ -36,7 +38,7 @@ export class TorlifyChapterPage extends TorlifyChapterProvider {
 
   override async load(): Promise<void> {
     await super.load();
-    this.chapterEditorElement.scrollIntoView({
+    this.chapterListElement.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });

@@ -5,11 +5,12 @@ import { TorlifyBookProvider } from "./provider.book.js";
 import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
-import "./component.chapter-list.js";
+import "./component.book-summary.js";
 import "./component.bookmark-tabs.js";
 import "./component.pronunciations.js";
 import "./component.references.js";
 import "./component.characters.js";
+import "./component.chapter-list.js";
 
 @customElement("torlify-book-page")
 export class TorlifyBookPage extends TorlifyBookProvider {
@@ -26,11 +27,12 @@ export class TorlifyBookPage extends TorlifyBookProvider {
       <torlify-bookmark-tabs></torlify-bookmark-tabs>
       <div class="container">
         <torlify-book-list></torlify-book-list>
-        <torlify-chapter-list></torlify-chapter-list>
+        <torlify-book-summary></torlify-book-summary>
         <torlify-book-editor></torlify-book-editor>
         <torlify-pronunciations></torlify-pronunciations>
         <torlify-references></torlify-references>
         <torlify-characters></torlify-characters>
+        <torlify-chapter-list></torlify-chapter-list>
       </div>
     `;
   }

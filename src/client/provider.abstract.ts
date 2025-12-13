@@ -4,7 +4,7 @@ import { query } from "lit/decorators.js";
 import { TorlifyBookList } from "./component.book-list.js";
 import { ScrollToEventDetail, ScrollToEventTarget } from "./event.scroll-to.js";
 import { TorlifyPartList } from "./component.part-list.js";
-import { TorlifyChapterEditor } from "./component.chapter-editor.js";
+import { TorlifyChapterList } from "./component.chapter-list.js";
 
 export abstract class TorlifyAbstractProvider extends LitElement {
   abstract load(): Promise<void>;
@@ -12,8 +12,8 @@ export abstract class TorlifyAbstractProvider extends LitElement {
   @query("torlify-book-list")
   bookListElement!: TorlifyBookList;
 
-  @query("torlify-chapter-editor")
-  chapterEditorElement!: TorlifyChapterEditor;
+  @query("torlify-chapter-list")
+  chapterListElement!: TorlifyChapterList;
 
   @query("torlify-part-list")
   partListElement!: TorlifyPartList;
@@ -37,7 +37,7 @@ export abstract class TorlifyAbstractProvider extends LitElement {
         block: "start",
       });
     } else if (target === ScrollToEventTarget.enum.chapter) {
-      this.chapterEditorElement.scrollIntoView({
+      this.chapterListElement.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });

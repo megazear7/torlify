@@ -5,13 +5,14 @@ import { TorlifyPartProvider } from "./provider.part.js";
 import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
-import "./component.chapter-list.js";
+import "./component.book-summary.js";
 import "./component.chapter-editor.js";
 import "./component.part-list.js";
 import "./component.part-editor.js";
 import "./component.pronunciations.js";
 import "./component.references.js";
 import "./component.characters.js";
+import "./component.chapter-list.js";
 
 @customElement("torlify-part-page")
 export class TorlifyPartPage extends TorlifyPartProvider {
@@ -31,11 +32,12 @@ export class TorlifyPartPage extends TorlifyPartProvider {
       <torlify-bookmark-tabs></torlify-bookmark-tabs>
       <div class="container">
         <torlify-book-list></torlify-book-list>
-        <torlify-chapter-list></torlify-chapter-list>
+        <torlify-book-summary></torlify-book-summary>
         <torlify-book-editor></torlify-book-editor>
         <torlify-pronunciations></torlify-pronunciations>
         <torlify-references></torlify-references>
         <torlify-characters></torlify-characters>
+        <torlify-chapter-list></torlify-chapter-list>
         <torlify-chapter-editor></torlify-chapter-editor>
         <torlify-part-list></torlify-part-list>
         <torlify-part-editor></torlify-part-editor>

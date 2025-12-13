@@ -1,7 +1,7 @@
 import { consume } from "@lit/context";
 import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { BookContext, bookContext, chapterContext, ChapterContext } from "./context.js";
+import { BookContext, bookContext, chapterContext, ChapterContext, PartContext, partContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { dispatch } from "./util.events.js";
@@ -17,7 +17,7 @@ import z from "zod";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
 import { TorlifyModal } from "./component.modal.js";
-import { aiIcon, replaceIcon } from "./icons.js";
+import { aiIcon, leftArrowIcon, replaceIcon, rightArrowIcon } from "./icons.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { createOutlineForChapter } from "../shared/util.book.js";
 import { downloadTextFile } from "./util.download.js";
@@ -39,16 +39,30 @@ export class TorlifyChapterEditor extends LitElement {
         scroll-margin-top: var(--size-xl);
       }
 
-      .nav-button {
+      .nav-container {
         position: fixed;
         bottom: var(--size-large);
-        width: calc(var(--size-xl) * 1.5);
-        height: calc(var(--size-xl) * 1.5);
+        display: flex;
+        align-items: center;
+        gap: var(--size-small);
+      }
+
+      .nav-container-previous {
+        left: var(--size-large);
+      }
+
+      .nav-container-next {
+        right: var(--size-large);
+      }
+
+      .nav-button {
+        width: var(--size-xl);
+        height: var(--size-xl);
         border-radius: 50%;
         border: none;
-        background-color: var(--color-primary);
-        color: var(--color-primary-text);
-        font-size: var(--font-xl);
+        background-color: var(--color-secondary-surface);
+        color: var(--color-primary-text-muted);
+        font-size: var(--font-large);
         cursor: pointer;
         box-shadow: var(--shadow-normal);
         z-index: 1000;
@@ -59,12 +73,11 @@ export class TorlifyChapterEditor extends LitElement {
       }
 
       .nav-button:hover:not(:disabled) {
-        background-color: var(--color-primary-hover);
+        background-color: var(--color-2);
         transform: scale(1.1);
       }
 
       .nav-button:disabled {
-        background-color: var(--color-secondary);
         cursor: not-allowed;
         opacity: 0.5;
       }
@@ -75,6 +88,41 @@ export class TorlifyChapterEditor extends LitElement {
 
       .nav-button.next {
         right: var(--size-xl);
+      }
+
+      .part-nav-button {
+        width: var(--size-large);
+        height: var(--size-large);
+        border-radius: 50%;
+        border: none;
+        background-color: var(--color-secondary-surface);
+        color: var(--color-primary-text-muted);
+        font-size: var(--font-large);
+        cursor: pointer;
+        box-shadow: var(--shadow-normal);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .part-nav-button:hover:not(:disabled) {
+        background-color: var(--color-2);
+        transform: scale(1.1);
+      }
+
+      .part-nav-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      .part-nav-button.previous {
+        left: calc(var(--size-xl) + calc(var(--size-xl) * 1.5) + var(--size-medium));
+      }
+
+      .part-nav-button.next {
+        right: calc(var(--size-xl) + var(--size-large) + var(--size-medium));
       }
     `,
   ];
@@ -88,6 +136,12 @@ export class TorlifyChapterEditor extends LitElement {
   @consume({ context: chapterContext, subscribe: true })
   @property({ attribute: false })
   public chapterContext: ChapterContext = {
+    status: LoadingStatus.enum.idle,
+  };
+
+  @consume({ context: partContext, subscribe: true })
+  @property({ attribute: false })
+  public partContext: PartContext = {
     status: LoadingStatus.enum.idle,
   };
 
@@ -262,22 +316,38 @@ export class TorlifyChapterEditor extends LitElement {
         : html`
             <p>Loading chapter...</p>
           `}
-      <button
-        class="nav-button previous"
-        @click="${this.navigateToPreviousChapter}"
-        ?disabled="${!this.hasPrevious}"
-        title="${this.hasPrevious ? 'Go to previous chapter' : 'No previous chapter'}"
-      >
-        ‹
-      </button>
-      <button
-        class="nav-button next"
-        @click="${this.navigateToNextChapter}"
-        ?disabled="${!this.hasNext}"
-        title="${this.hasNext ? 'Go to next chapter' : 'No next chapter'}"
-      >
-        ›
-      </button>
+      <div class="nav-container nav-container-previous">
+        <button
+          class="part-nav-button previous"
+          @click="${this.navigateToPreviousPart}"
+          ?disabled="${!this.hasPreviousPart}"
+          title="${this.hasPreviousPart ? "Go to previous part" : "No previous part"}">
+          ${leftArrowIcon}
+        </button>
+        <button
+          class="nav-button previous"
+          @click="${this.navigateToPreviousChapter}"
+          ?disabled="${!this.hasPrevious}"
+          title="${this.hasPrevious ? "Go to previous chapter" : "No previous chapter"}">
+          ${leftArrowIcon}
+        </button>
+      </div>
+      <div class="nav-container nav-container-next">
+        <button
+          class="nav-button next"
+          @click="${this.navigateToNextChapter}"
+          ?disabled="${!this.hasNext}"
+          title="${this.hasNext ? "Go to next chapter" : "No next chapter"}">
+          ${rightArrowIcon}
+        </button>
+        <button
+          class="part-nav-button next"
+          @click="${this.navigateToNextPart}"
+          ?disabled="${!this.hasNextPart}"
+          title="${this.hasNextPart ? "Go to next part" : "No next part"}">
+          ${rightArrowIcon}
+        </button>
+      </div>
     `;
   }
 
@@ -570,7 +640,7 @@ export class TorlifyChapterEditor extends LitElement {
     const chapters = this.bookContext.book?.chapters;
     const currentChapter = this.chapterContext.chapter;
     if (!chapters || !currentChapter) return false;
-    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    const currentIndex = chapters.findIndex((ch) => ch.number === currentChapter.number);
     return currentIndex > 0;
   }
 
@@ -578,15 +648,39 @@ export class TorlifyChapterEditor extends LitElement {
     const chapters = this.bookContext.book?.chapters;
     const currentChapter = this.chapterContext.chapter;
     if (!chapters || !currentChapter) return false;
-    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    const currentIndex = chapters.findIndex((ch) => ch.number === currentChapter.number);
     return currentIndex < chapters.length - 1;
+  }
+
+  get hasPreviousPart(): boolean {
+    const chapter = this.chapterContext.chapter;
+    const part = this.partContext.part;
+    if (!chapter || !part) return false;
+    if (part.number > 1) return true;
+    // Check if there's a previous chapter
+    const chapters = this.bookContext.book?.chapters;
+    if (!chapters) return false;
+    const currentChapterIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+    return currentChapterIndex > 0;
+  }
+
+  get hasNextPart(): boolean {
+    const chapter = this.chapterContext.chapter;
+    const part = this.partContext.part;
+    if (!chapter || !part) return false;
+    if (part.number < chapter.parts.length) return true;
+    // Check if there's a next chapter
+    const chapters = this.bookContext.book?.chapters;
+    if (!chapters) return false;
+    const currentChapterIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+    return currentChapterIndex < chapters.length - 1;
   }
 
   navigateToPreviousChapter(): void {
     if (!this.hasPrevious) return;
     const chapters = this.bookContext.book!.chapters;
     const currentChapter = this.chapterContext.chapter!;
-    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    const currentIndex = chapters.findIndex((ch) => ch.number === currentChapter.number);
     const previousChapter = chapters[currentIndex - 1];
     dispatch(this, NavigationEvent({ path: `/book/${this.bookId}/chapter/${previousChapter.number}` }));
   }
@@ -595,8 +689,50 @@ export class TorlifyChapterEditor extends LitElement {
     if (!this.hasNext) return;
     const chapters = this.bookContext.book!.chapters;
     const currentChapter = this.chapterContext.chapter!;
-    const currentIndex = chapters.findIndex(ch => ch.number === currentChapter.number);
+    const currentIndex = chapters.findIndex((ch) => ch.number === currentChapter.number);
     const nextChapter = chapters[currentIndex + 1];
     dispatch(this, NavigationEvent({ path: `/book/${this.bookId}/chapter/${nextChapter.number}` }));
+  }
+
+  navigateToPreviousPart(): void {
+    if (!this.hasPreviousPart) return;
+    const book = this.bookContext.book!;
+    const chapter = this.chapterContext.chapter!;
+    const part = this.partContext.part!;
+    const chapters = book.chapters;
+    const currentChapterIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+
+    if (part.number > 1) {
+      // Previous part in same chapter
+      const prevPartNumber = part.number - 1;
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}/part/${prevPartNumber}` }));
+    } else {
+      // Last part of previous chapter
+      const prevChapter = chapters[currentChapterIndex - 1];
+      const lastPartNumber = prevChapter.parts.length;
+      dispatch(
+        this,
+        NavigationEvent({ path: `/book/${book.id}/chapter/${prevChapter.number}/part/${lastPartNumber}` }),
+      );
+    }
+  }
+
+  navigateToNextPart(): void {
+    if (!this.hasNextPart) return;
+    const book = this.bookContext.book!;
+    const chapter = this.chapterContext.chapter!;
+    const part = this.partContext.part!;
+    const chapters = book.chapters;
+    const currentChapterIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+
+    if (part.number < chapter.parts.length) {
+      // Next part in same chapter
+      const nextPartNumber = part.number + 1;
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}/part/${nextPartNumber}` }));
+    } else {
+      // First part of next chapter
+      const nextChapter = chapters[currentChapterIndex + 1];
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${nextChapter.number}/part/1` }));
+    }
   }
 }

@@ -16,13 +16,15 @@ export type StepStatus = z.infer<typeof StepStatus>;
 export const Step = z.object({
   status: StepStatus,
   message: z.string(),
-  action: z.union([
-    z.number(),
-    z.object({
-      chapterIndex: z.number(),
-      partIndex: z.number().optional(),
-    }),
-  ]).optional(),
+  action: z
+    .union([
+      z.number(),
+      z.object({
+        chapterIndex: z.number(),
+        partIndex: z.number().optional(),
+      }),
+    ])
+    .optional(),
 });
 export type Step = z.infer<typeof Step>;
 
