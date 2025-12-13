@@ -5,11 +5,12 @@ import { consume } from "@lit/context";
 import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { TorlifyModal } from "./component.modal.js";
-import { aiIcon, audioIcon, gearIcon, trashIcon } from "./icons.js";
+import { audioIcon, gearIcon } from "./icons.js";
 import { WarningEvent } from "./event.warning.js";
 import { dispatch } from "./util.events.js";
 import { Pronunciation } from "../shared/type.book.js";
 import { PronunciationUpdatedEvent } from "./event.pronunciation-updated.js";
+import { generatePronunciationAudioService } from "../shared/service.generate-pronunciation-audio.js";
 import "./component.field.js";
 import "./component.spinner.js";
 import "./component.field.js";
@@ -46,8 +47,14 @@ export class TorlifyConfigurePronunciation extends LitElement {
   @property({ type: Object })
   public pronunciation!: Pronunciation;
 
+  @property({ type: Boolean })
+  public loading: boolean = false;
+
   @query("torlify-modal")
   public modal!: TorlifyModal;
+
+  @query("audio")
+  public audioElement!: HTMLAudioElement;
 
   override render(): TemplateResult {
     return html`
@@ -76,10 +83,16 @@ export class TorlifyConfigurePronunciation extends LitElement {
             </div>
           </div>
           <torlify-bar>
-            <button class="standard-button" @click=${this.generate()}>${aiIcon} Generate</button>
-            <button class="standard-button" @click=${this.listen()}>${audioIcon} Listen</button>
-            <button class="standard-button" @click=${this.delete()}>${trashIcon} Delete</button>
+            <button class="standard-button" @click=${this.listen()} ?disabled=${this.loading}>
+              ${this.loading
+                ? html`
+                    <torlify-spinner></torlify-spinner>
+                  `
+                : audioIcon}
+              Listen
+            </button>
           </torlify-bar>
+          <audio controls style="display: none;"></audio>
         </div>
       </torlify-modal>
     `;
@@ -112,21 +125,43 @@ export class TorlifyConfigurePronunciation extends LitElement {
     };
   }
 
-  generate(): () => void {
-    return (): void => {
-      dispatch(this, WarningEvent("Generate title functionality not implemented yet."));
-    };
-  }
-
   listen(): () => void {
-    return (): void => {
-      dispatch(this, WarningEvent("Listen title functionality not implemented yet."));
-    };
-  }
+    return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      if (!book) {
+        dispatch(this, WarningEvent("Book not loaded"));
+        return;
+      }
+      if (!this.pronunciation.replace || this.pronunciation.replace.trim() === "") {
+        dispatch(this, WarningEvent("No replacement text to pronounce"));
+        return;
+      }
 
-  delete(): () => void {
-    return (): void => {
-      dispatch(this, WarningEvent("Delete title functionality not implemented yet."));
+      this.loading = true;
+      try {
+        const response = await generatePronunciationAudioService.fetch({
+          book: book.id,
+          text: this.pronunciation.replace,
+        });
+
+        // Convert base64 audio data to a blob URL
+        const audioData = response.audioData;
+        const binaryString = atob(audioData);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: "audio/mpeg" });
+        const audioUrl = URL.createObjectURL(blob);
+
+        this.audioElement.src = audioUrl;
+        this.audioElement.play();
+      } catch (error) {
+        console.error("Error generating pronunciation audio:", error);
+        dispatch(this, WarningEvent("Failed to generate pronunciation audio."));
+      } finally {
+        this.loading = false;
+      }
     };
   }
 
