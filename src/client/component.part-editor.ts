@@ -336,13 +336,6 @@ export class TorlifyPartEditor extends LitElement {
     };
   }
 
-  notImplemented(name: Modal): () => void {
-    return (): void => {
-      this.closeModal(name)();
-      dispatch(this, WarningEvent("This feature is not implemented yet"));
-    };
-  }
-
   generateOutline(): () => void {
     return async (): Promise<void> => {
       const book = this.bookContext.book;
