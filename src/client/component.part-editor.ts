@@ -152,9 +152,7 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Move Part</h3>
                 <p>Move this part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.moveBeforePrevious()}">
-                    Before previous
-                  </button>
+                  <button class="standard-button" @click="${this.moveBeforePrevious()}">Before previous</button>
                   <button class="standard-button" @click="${this.moveAfterNext()}">After next</button>
                 </torlify-bar>
               </div>
@@ -164,9 +162,7 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Add Part</h3>
                 <p>Add a new part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.addPartBeforePrevious()}">
-                    Before previous
-                  </button>
+                  <button class="standard-button" @click="${this.addPartBeforePrevious()}">Before previous</button>
                   <button class="standard-button" @click="${this.addPartAfterNext()}">After next</button>
                 </torlify-bar>
               </div>

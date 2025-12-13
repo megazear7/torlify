@@ -91,13 +91,17 @@ export const globalStyles = css`
     transition: var(--transition-all);
   }
 
-  button.standard-button:hover {
+  button.standard-button:disabled {
+    color: var(--color-secondary-text-muted);
+  }
+
+  button.standard-button:not(:disabled):hover {
     background: var(--color-2);
     box-shadow: var(--shadow-hover);
     transform: var(--transform-hover);
   }
 
-  button.standard-button.delete:hover {
+  button.standard-button.delete:not(:disabled):hover {
     background: var(--color-danger);
   }
 

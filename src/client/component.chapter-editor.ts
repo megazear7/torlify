@@ -268,10 +268,20 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Move Chapter</h3>
                 <p>Move this chapter before the previous chapter or after the next chapter?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.moveBeforePrevious()}">
+                  <button
+                    class="standard-button"
+                    ?disabled="${this.chapterContext.chapter.number === 1}"
+                    title="${this.chapterContext.chapter.number === 1 ? "Cannot move before first chapter" : `Move chapter ${this.chapterContext.chapter.number} before the previous chapter`}"
+                    @click="${this.moveBeforePrevious()}">
                     Before previous
                   </button>
-                  <button class="standard-button" @click="${this.moveAfterNext()}">After next</button>
+                  <button
+                    class="standard-button"
+                    ?disabled="${this.chapterContext.chapter.number === this.bookContext.book?.chapters.length}"
+                    title="${this.chapterContext.chapter.number === this.bookContext.book?.chapters.length ? "Cannot move after last chapter" : `Move chapter ${this.chapterContext.chapter.number} after the next chapter`}"
+                    @click="${this.moveAfterNext()}">
+                    After next
+                  </button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -401,7 +411,33 @@ export class TorlifyChapterEditor extends LitElement {
 
   moveAfterNext(): () => void {
     return (): void => {
-      this.notImplemented(Modal.enum.move)();
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      if (!book || !chapter) {
+        this.closeModal(Modal.enum.move)();
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const chapters = book.chapters;
+      const currentIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+      if (currentIndex === chapters.length - 1) {
+        dispatch(this, WarningEvent("This chapter is already the last chapter"));
+        this.closeModal(Modal.enum.move)();
+        return;
+      }
+      const nextIndex = currentIndex + 1;
+      const nextChapter = chapters[nextIndex];
+      // Swap numbers
+      [chapter.number, nextChapter.number] = [nextChapter.number, chapter.number];
+      // Swap positions in array
+      [chapters[currentIndex], chapters[nextIndex]] = [chapters[nextIndex], chapters[currentIndex]];
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      this.closeModal(Modal.enum.move)();
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}` }));
     };
   }
 
