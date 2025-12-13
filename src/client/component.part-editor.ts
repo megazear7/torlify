@@ -24,6 +24,7 @@ import { createOutlineForPart } from "../shared/util.book.js";
 import { downloadTextFile } from "./util.download.js";
 import { handleError } from "./util.error.js";
 import { downloadPartAudioService } from "../shared/service.download-part-audio.js";
+import "./component.audio.js";
 
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
@@ -189,17 +190,12 @@ export class TorlifyPartEditor extends LitElement {
             <div class="secondary-surface">
               ${this.partContext.part.audio
                 ? html`
-                    <audio
-                      controls
-                      id="part-audio"
+                    <torlify-audio
                       src="${getChapterAudioService.renderPath({
                         book: this.bookContext.book!.id,
                         chapter: String(this.chapterContext.chapter!.number),
                         part: String(this.partContext.part!.number),
-                      })}">
-                      <source src="${this.partContext.part.audio}" type="audio/mpeg" />
-                      Your browser does not support the audio element.
-                    </audio>
+                      })}"></torlify-audio>
                   `
                 : html`
                     <p>No audio available</p>
