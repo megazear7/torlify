@@ -17,6 +17,11 @@ export class GenerateBookController extends AbstractController<GenerateBookParam
     const bookStub: BookStub = await submitPrompt<BookStub>(messages, BookStub);
     const book: Book = {
       ...bookStub,
+      instructions: {
+        writing: bookStub.instructions?.writing || "",
+        edit: bookStub.instructions?.edit || "",
+        audio: bookStub.instructions?.audio || "",
+      },
       updatedAt: Date.now(),
       createdAt: Date.now(),
       chapters: bookStub.chapters.map((chapter) => ({

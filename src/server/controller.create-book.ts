@@ -28,7 +28,7 @@ export class CreateBookController extends AbstractController<CreateBookParameter
       overview: bodyParams.instructions, // Yes this mismatches, but it's intentional
       chapters: [],
       references: [],
-      instructions: { edit: "", audio: "" },
+      instructions: { writing: "", edit: "", audio: "" },
       pronunciation: [],
       characters: [],
       model: {

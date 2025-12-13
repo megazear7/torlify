@@ -22,6 +22,7 @@ import { priorPartsPrompt } from "./prompt.prior-parts.js";
 import { promises as fs } from "fs";
 import { fixPlotPrompt } from "./prompt.fix-plot.js";
 import { fixQualityPrompt } from "./prompt.fix-quality.js";
+import { writingInstructionsPrompt } from "./prompt.writing-instructions.js";
 
 export class GeneratePartController extends AbstractController<NoBodyParams, GeneratePartPathParameters, ChapterPart> {
   async handler({ pathParams }: RequestOptions<NoBodyParams, GeneratePartPathParameters>): Promise<ChapterPart> {
@@ -62,7 +63,7 @@ async function authorPart(
 ): Promise<string> {
   const messages: ChatCompletionMessageParam[] = [
     ...(await referencesPrompt(book, ReferenceUse.enum.writing)),
-    ...(await editInstructionsPrompt(book)),
+    ...(await writingInstructionsPrompt(book)),
     ...(await writtenChaptersPrompt(book, chapter)),
     ...(await priorPartsPrompt(chapter, partNumber)),
     ...(await makeChapterPartPrompt(chapter, partNumber, partDescription)),

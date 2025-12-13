@@ -271,6 +271,8 @@ export class TorlifyBookEditor extends LitElement {
             <div class="secondary-surface">
               <h4>Overview</h4>
               <torlify-field property="book.overview" type="textarea"></torlify-field>
+              <h4>Writing Instructions</h4>
+              <torlify-field property="book.instructions.writing" type="textarea"></torlify-field>
               <h4>Edit Instructions</h4>
               <torlify-field property="book.instructions.edit" type="textarea"></torlify-field>
               <h4>Audio Instructions</h4>

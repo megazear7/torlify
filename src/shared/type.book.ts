@@ -198,10 +198,17 @@ export type Chapter = z.infer<typeof Chapter>;
 export const ChapterPartial = Chapter.partial();
 export type ChapterPartial = z.infer<typeof ChapterPartial>;
 
+export const WritingInstructions = z
+  .string()
+  .describe(
+    "Instructions to follow when writing the book. These instructions should not include changes to the plot, storyline, or the order of events. These instructions should be for things like tone, words to use or not use, and other stylistic choices.",
+  );
+export type WritingInstructions = z.infer<typeof WritingInstructions>;
+
 export const EditInstructions = z
   .string()
   .describe(
-    "Instructions to follow when editing the book. These instructions should not include changes to the plot, storyline, or the order of events. The AI will edit each paragraph individually. These edits should be for things like tone, words to use or not use, and other changes that can be made one paragraph at a time.",
+    "Instructions to follow when editing the book. These instructions should not include changes to the plot, storyline, or the order of events. The AI will edit each paragraph individually. These instructions should be for things like tone, words to use or not use, and other changes that can be made one paragraph at a time.",
   );
 export type EditInstructions = z.infer<typeof EditInstructions>;
 
@@ -213,6 +220,7 @@ export const AudioInstructions = z
 export type AudioInstructions = z.infer<typeof AudioInstructions>;
 
 export const Instructions = z.object({
+  writing: WritingInstructions.optional(),
   edit: EditInstructions.optional(),
   audio: AudioInstructions.optional(),
 });
