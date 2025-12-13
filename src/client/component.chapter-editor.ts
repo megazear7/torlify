@@ -241,7 +241,7 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Edit Chapter</h3>
                 <p>Edit the entire chapter based on your instructions</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.edit)}">Edit</button>
+                  <button class="standard-button" @click="${this.edit()}">Edit</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -315,14 +315,12 @@ export class TorlifyChapterEditor extends LitElement {
                 <p>Are you sure you want to delete this chapter?</p>
                 <div class="delete-options">
                   <torlify-bar>
-                    <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Outline</button>
-                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Text</button>
-                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Audio</button>
+                    <button class="standard-button" @click="${this.deleteOutline()}">Outline</button>
+                    <button class="standard-button" @click=${this.deleteText()}>Text</button>
+                    <button class="standard-button" @click=${this.deleteAudio()}>Audio</button>
                   </torlify-bar>
                   <torlify-bar>
-                    <button class="standard-button delete" @click="${this.deleteChapter()}">
-                      Delete
-                    </button>
+                    <button class="standard-button delete" @click="${this.deleteChapter()}">Delete</button>
                   </torlify-bar>
                 </div>
               </div>
@@ -389,6 +387,60 @@ export class TorlifyChapterEditor extends LitElement {
     `;
   }
 
+  deleteOutline(): () => void {
+    return (): void => {
+      const chapter = this.chapterContext.chapter;
+      if (!chapter) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Chapter not loaded"));
+        return;
+      }
+      // Clear chapter outline
+      for (let i = 0; i < chapter.outline.length; i++) {
+        chapter.outline[i] = "";
+      }
+      // Save changes
+      this.saveNoDebounce();
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
+  deleteText(): () => void {
+    return (): void => {
+      const chapter = this.chapterContext.chapter;
+      if (!chapter) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Chapter not loaded"));
+        return;
+      }
+      // Clear all part text
+      for (const part of chapter.parts) {
+        part.text = "";
+      }
+      // Save changes
+      this.saveNoDebounce();
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
+  deleteAudio(): () => void {
+    return (): void => {
+      const chapter = this.chapterContext.chapter;
+      if (!chapter) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Chapter not loaded"));
+        return;
+      }
+      // Clear all part audio
+      for (const part of chapter.parts) {
+        part.audio = undefined;
+      }
+      // Save changes
+      this.saveNoDebounce();
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
   deleteChapter(): () => void {
     return (): void => {
       const book = this.bookContext.book;
@@ -417,9 +469,14 @@ export class TorlifyChapterEditor extends LitElement {
       if (chapters.length === 0) {
         dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
       } else {
-        dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${currentIndex >= chapters.length ? currentIndex : currentIndex + 1}` }));
+        dispatch(
+          this,
+          NavigationEvent({
+            path: `/book/${book.id}/chapter/${currentIndex >= chapters.length ? currentIndex : currentIndex + 1}`,
+          }),
+        );
       }
-    }
+    };
   }
 
   addBefore(): () => void {
@@ -595,10 +652,10 @@ export class TorlifyChapterEditor extends LitElement {
     };
   }
 
-  notImplemented(name: Modal): () => void {
-    return (): void => {
-      this.closeModal(name)();
+  edit(): () => void {
+    return async (): Promise<void> => {
       dispatch(this, WarningEvent("This feature is not implemented yet"));
+      this.closeModal(Modal.enum.edit)();
     };
   }
 
@@ -843,6 +900,14 @@ export class TorlifyChapterEditor extends LitElement {
       }
       this.save();
     };
+  }
+
+  saveNoDebounce(): void {
+    updateChapterService.fetch({
+      book: this.bookId,
+      chapter: this.chapterContext.chapter,
+    });
+    dispatch(this, SaveEvent());
   }
 
   save(): void {

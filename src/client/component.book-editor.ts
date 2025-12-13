@@ -7,9 +7,12 @@ import { globalStyles } from "./styles.global.js";
 import { checkCompletion, formatDate, formatNumber } from "../shared/util.number.js";
 import { dispatch } from "./util.events.js";
 import { WarningEvent } from "./event.warning.js";
+import { SuccessEvent } from "./event.success.js";
+import { SaveEvent } from "./event.save.js";
 import { downloadBookService } from "../shared/service.download-book.js";
 import { TorlifyModal } from "./component.modal.js";
 import { deleteBookService } from "../shared/service.delete-book.js";
+import { updateBookService } from "../shared/service.update-book.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
 import { generatePartService } from "../shared/service.generate-part.js";
@@ -19,7 +22,6 @@ import { generatePartAudioService } from "../shared/service.generate-part-audio.
 import { downloadBookAudioService } from "../shared/service.download-book-audio.js";
 import { aiIcon, replaceIcon } from "./icons.js";
 import { cost, countTokens, countWords, createOutlineForBook } from "../shared/util.book.js";
-import { SuccessEvent } from "./event.success.js";
 import { bookPingModelService } from "../shared/service.book-ping-model.js";
 import { downloadTextFile } from "./util.download.js";
 import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
@@ -164,7 +166,7 @@ export class TorlifyBookEditor extends LitElement {
                 <h3>Edit</h3>
                 <p>Edit the entire book based on your instructions</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.edit)}">Edit</button>
+                  <button class="standard-button" @click="${this.edit()}">Edit</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -241,12 +243,12 @@ export class TorlifyBookEditor extends LitElement {
                 <p>You can delete the book outline, text, or audio. Alternatively, you can delete the entire book.</p>
                 <div class="delete-options">
                   <torlify-bar>
-                    <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Outline</button>
-                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Text</button>
-                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Audio</button>
+                    <button class="standard-button delete" @click="${this.deleteOutline()}">Outline</button>
+                    <button class="standard-button delete" @click=${this.deleteText()}>Text</button>
+                    <button class="standard-button delete" @click=${this.deleteAudio()}>Audio</button>
                   </torlify-bar>
                   <torlify-bar>
-                    <button class="standard-button delete" @click="${this.confirmDeleteBook}">Delete</button>
+                    <button class="standard-button delete" @click="${this.deleteBook}">Delete</button>
                   </torlify-bar>
                 </div>
               </div>
@@ -330,10 +332,10 @@ export class TorlifyBookEditor extends LitElement {
     };
   }
 
-  notImplemented(name: Modal): () => void {
-    return (): void => {
-      this.closeModal(name)();
+  edit(): () => void {
+    return async (): Promise<void> => {
       dispatch(this, WarningEvent("This feature is not implemented yet"));
+      this.closeModal(Modal.enum.edit)();
     };
   }
 
@@ -492,7 +494,79 @@ export class TorlifyBookEditor extends LitElement {
     await generatePartAudioService.fetch({ book, chapter, part });
   }
 
-  confirmDeleteBook = async (): Promise<void> => {
+  deleteOutline(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      if (!book) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Book not loaded"));
+        return;
+      }
+      // Clear all chapter outlines
+      for (const chapter of book.chapters) {
+        for (let i = 0; i < chapter.outline.length; i++) {
+          chapter.outline[i] = "";
+        }
+      }
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
+  deleteText(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      if (!book) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Book not loaded"));
+        return;
+      }
+      // Clear all part text
+      for (const chapter of book.chapters) {
+        for (const part of chapter.parts) {
+          part.text = "";
+        }
+      }
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
+  deleteAudio(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      if (!book) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Book not loaded"));
+        return;
+      }
+      // Clear all part audio
+      for (const chapter of book.chapters) {
+        for (const part of chapter.parts) {
+          part.audio = undefined;
+        }
+      }
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
+  deleteBook = async (): Promise<void> => {
     const bookId = this.bookContext.book!.id;
     try {
       await deleteBookService.fetch({ bookId });

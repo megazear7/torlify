@@ -125,7 +125,7 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Edit Part</h3>
                 <p>Edit the part based on your instructions</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.edit)}">Edit</button>
+                  <button class="standard-button" @click="${this.edit()}">Edit</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -189,9 +189,9 @@ export class TorlifyPartEditor extends LitElement {
                 <p>Are you sure you want to delete this part?</p>
                 <div class="delete-options">
                   <torlify-bar>
-                    <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Outline</button>
-                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Text</button>
-                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Audio</button>
+                    <button class="standard-button" @click="${this.deleteOutline()}">Outline</button>
+                    <button class="standard-button" @click=${this.deleteText()}>Text</button>
+                    <button class="standard-button" @click=${this.deleteAudio()}>Audio</button>
                   </torlify-bar>
                   <torlify-bar>
                     <button class="standard-button delete" @click="${this.removePart()}">Delete</button>
@@ -445,6 +445,13 @@ export class TorlifyPartEditor extends LitElement {
     };
   }
 
+  edit(): () => void {
+    return async (): Promise<void> => {
+      dispatch(this, WarningEvent("This feature is not implemented yet"));
+      this.closeModal(Modal.enum.edit)();
+    };
+  }
+
   downloadOutline() {
     return (): void => {
       const text = createOutlineForPart(this.chapterContext.chapter!, this.partContext.part!);
@@ -504,6 +511,74 @@ export class TorlifyPartEditor extends LitElement {
         });
         dispatch(this, SaveEvent());
       });
+    };
+  }
+
+  deleteOutline(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+      if (!book || !chapter || !part) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+      // Clear part outline
+      chapter.outline[part.number - 1] = "";
+      // Save changes
+      updateChapterService.fetch({
+        book: book.id,
+        chapter,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
+  deleteText(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+      if (!book || !chapter || !part) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+      // Clear part text
+      part.text = "";
+      // Save changes
+      updatePartService.fetch({
+        book: book.id,
+        chapter: String(chapter.number),
+        part: part,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.delete)();
+    };
+  }
+
+  deleteAudio(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+      if (!book || !chapter || !part) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+      // Clear part audio
+      part.audio = undefined;
+      // Save changes
+      updatePartService.fetch({
+        book: book.id,
+        chapter: String(chapter.number),
+        part: part,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.delete)();
     };
   }
 
