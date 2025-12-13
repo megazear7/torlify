@@ -271,14 +271,18 @@ export class TorlifyChapterEditor extends LitElement {
                   <button
                     class="standard-button"
                     ?disabled="${this.chapterContext.chapter.number === 1}"
-                    title="${this.chapterContext.chapter.number === 1 ? "Cannot move before first chapter" : `Move chapter ${this.chapterContext.chapter.number} before the previous chapter`}"
+                    title="${this.chapterContext.chapter.number === 1
+                      ? "Cannot move before first chapter"
+                      : `Move chapter ${this.chapterContext.chapter.number} before the previous chapter`}"
                     @click="${this.moveBeforePrevious()}">
                     Before previous
                   </button>
                   <button
                     class="standard-button"
                     ?disabled="${this.chapterContext.chapter.number === this.bookContext.book?.chapters.length}"
-                    title="${this.chapterContext.chapter.number === this.bookContext.book?.chapters.length ? "Cannot move after last chapter" : `Move chapter ${this.chapterContext.chapter.number} after the next chapter`}"
+                    title="${this.chapterContext.chapter.number === this.bookContext.book?.chapters.length
+                      ? "Cannot move after last chapter"
+                      : `Move chapter ${this.chapterContext.chapter.number} after the next chapter`}"
                     @click="${this.moveAfterNext()}">
                     After next
                   </button>
@@ -290,10 +294,18 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Add Chapter</h3>
                 <p>Add a new chapter before the previous chapter or after the next chapter?</p>
                 <torlify-bar>
-                  <button class="standard-button" title="Add a new chapter before chapter ${this.chapterContext.chapter.number}" @click="${this.addBefore()}">
-                    Before previous
+                  <button
+                    class="standard-button"
+                    title="Add a new chapter before chapter ${this.chapterContext.chapter.number}"
+                    @click="${this.addBefore()}">
+                    Before
                   </button>
-                  <button class="standard-button" title="Add a new chapter after chapter ${this.chapterContext.chapter.number}" @click="${this.addAfter()}">After next</button>
+                  <button
+                    class="standard-button"
+                    title="Add a new chapter after chapter ${this.chapterContext.chapter.number}"
+                    @click="${this.addAfter()}">
+                    After
+                  </button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -308,7 +320,7 @@ export class TorlifyChapterEditor extends LitElement {
                     <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Audio</button>
                   </torlify-bar>
                   <torlify-bar>
-                    <button class="standard-button delete" @click="${this.notImplemented(Modal.enum.delete)}">
+                    <button class="standard-button delete" @click="${this.deleteChapter()}">
                       Delete
                     </button>
                   </torlify-bar>
@@ -377,15 +389,126 @@ export class TorlifyChapterEditor extends LitElement {
     `;
   }
 
+  deleteChapter(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      if (!book || !chapter) {
+        this.closeModal(Modal.enum.delete)();
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const chapters = book.chapters;
+      const currentIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+      // Remove chapter from book
+      chapters.splice(currentIndex, 1);
+      // Renumber chapters from the deletion point
+      for (let i = currentIndex; i < chapters.length; i++) {
+        chapters[i].number = i + 1;
+      }
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.delete)();
+      // Navigate to the previous chapter
+      if (chapters.length === 0) {
+        dispatch(this, NavigationEvent({ path: `/book/${book.id}` }));
+      } else {
+        dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${currentIndex >= chapters.length ? currentIndex : currentIndex + 1}` }));
+      }
+    }
+  }
+
   addBefore(): () => void {
     return (): void => {
-      // TODO add an empty chapter before this one.
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      if (!book || !chapter) {
+        this.closeModal(Modal.enum.add)();
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const chapters = book.chapters;
+      const currentIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+      // Create new empty chapter
+      const newChapter: Chapter = {
+        number: currentIndex + 1, // Will be renumbered
+        title: "",
+        when: "",
+        where: "",
+        what: "",
+        why: "",
+        how: "",
+        who: "",
+        minParts: 1,
+        maxParts: 2,
+        partLength: 1000,
+        outline: [],
+        parts: [],
+      };
+      // Insert before current chapter
+      chapters.splice(currentIndex, 0, newChapter);
+      // Renumber chapters from the insertion point
+      for (let i = currentIndex; i < chapters.length; i++) {
+        chapters[i].number = i + 1;
+      }
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.add)();
+      // Navigate to the new chapter
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${newChapter.number}` }));
     };
   }
 
   addAfter(): () => void {
     return (): void => {
-      // Add an empty chapter after this one
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      if (!book || !chapter) {
+        this.closeModal(Modal.enum.add)();
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const chapters = book.chapters;
+      const currentIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+      // Create new empty chapter
+      const newChapter: Chapter = {
+        number: currentIndex + 2, // Will be renumbered
+        title: "",
+        when: "",
+        where: "",
+        what: "",
+        why: "",
+        how: "",
+        who: "",
+        minParts: 1,
+        maxParts: 2,
+        partLength: 1000,
+        outline: [],
+        parts: [],
+      };
+      // Insert after current chapter
+      chapters.splice(currentIndex + 1, 0, newChapter);
+      // Renumber chapters from the insertion point
+      for (let i = currentIndex + 1; i < chapters.length; i++) {
+        chapters[i].number = i + 1;
+      }
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      dispatch(this, SaveEvent());
+      this.closeModal(Modal.enum.add)();
+      // Navigate to the new chapter
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${newChapter.number}` }));
     };
   }
 

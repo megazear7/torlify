@@ -155,14 +155,18 @@ export class TorlifyPartEditor extends LitElement {
                   <button
                     class="standard-button"
                     ?disabled="${this.partContext.part.number === 1}"
-                    title="${this.partContext.part.number === 1 ? "Cannot move before first part" : `Move part ${this.partContext.part.number} before the previous part`}"
+                    title="${this.partContext.part.number === 1
+                      ? "Cannot move before first part"
+                      : `Move part ${this.partContext.part.number} before the previous part`}"
                     @click="${this.moveBeforePrevious()}">
                     Before previous
                   </button>
                   <button
                     class="standard-button"
                     ?disabled="${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length}"
-                    title="${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length ? "Cannot move after last part" : `Move part ${this.partContext.part?.number} after the next part`}"
+                    title="${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length
+                      ? "Cannot move after last part"
+                      : `Move part ${this.partContext.part?.number} after the next part`}"
                     @click="${this.moveAfterNext()}">
                     After next
                   </button>
@@ -174,8 +178,8 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Add Part</h3>
                 <p>Add a new part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.addPartBeforePrevious()}">Before previous</button>
-                  <button class="standard-button" @click="${this.addPartAfterNext()}">After next</button>
+                  <button class="standard-button" @click="${this.addBefore()}">Before previous</button>
+                  <button class="standard-button" @click="${this.addAfter()}">After next</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -241,7 +245,10 @@ export class TorlifyPartEditor extends LitElement {
       [parts[currentIndex], parts[prevIndex]] = [parts[prevIndex], parts[currentIndex]];
       // Swap corresponding outline entries
       if (chapter.outline) {
-        [chapter.outline[currentIndex], chapter.outline[prevIndex]] = [chapter.outline[prevIndex], chapter.outline[currentIndex]];
+        [chapter.outline[currentIndex], chapter.outline[prevIndex]] = [
+          chapter.outline[prevIndex],
+          chapter.outline[currentIndex],
+        ];
       }
       // Renumber parts
       parts.forEach((p, index) => {
@@ -285,7 +292,10 @@ export class TorlifyPartEditor extends LitElement {
       [parts[currentIndex], parts[nextIndex]] = [parts[nextIndex], parts[currentIndex]];
       // Swap corresponding outline entries
       if (chapter.outline) {
-        [chapter.outline[currentIndex], chapter.outline[nextIndex]] = [chapter.outline[nextIndex], chapter.outline[currentIndex]];
+        [chapter.outline[currentIndex], chapter.outline[nextIndex]] = [
+          chapter.outline[nextIndex],
+          chapter.outline[currentIndex],
+        ];
       }
       // Renumber parts
       parts.forEach((p, index) => {
@@ -561,14 +571,65 @@ export class TorlifyPartEditor extends LitElement {
     };
   }
 
-  addPartBeforePrevious(): () => void {
+  addBefore(): () => void {
     return async (): Promise<void> => {
       this.closeModal(Modal.enum.add)();
-      dispatch(this, WarningEvent("Add part before previous is not implemented yet"));
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+
+      if (!book || !chapter || !part) {
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+
+      const partIndex = chapter.parts.findIndex((p) => p.number === part.number);
+      if (partIndex === -1) {
+        dispatch(this, WarningEvent("Part not found in chapter"));
+        return;
+      }
+
+      // Create new empty part
+      const newPart = {
+        number: partIndex + 2, // Will be renumbered
+        text: "",
+        audio: undefined,
+      };
+
+      // Insert before current part
+      chapter.parts.splice(partIndex, 0, newPart);
+
+      // Also insert an empty outline entry at the same position
+      if (chapter.outline) {
+        chapter.outline.splice(partIndex, 0, "");
+      }
+
+      // Renumber all parts
+      chapter.parts.forEach((p, index) => {
+        p.number = index + 1;
+      });
+
+      try {
+        await updateChapterService.fetch({
+          book: book.id,
+          chapter: chapter,
+        });
+        dispatch(this, SaveEvent());
+
+        // Navigate to the new part
+        dispatch(
+          this,
+          NavigationEvent({
+            path: `/book/${book.id}/chapter/${chapter.number}/part/${newPart.number}`,
+          }),
+        );
+      } catch {
+        dispatch(this, WarningEvent("Failed to add part"));
+      }
     };
   }
 
-  addPartAfterNext(): () => void {
+  addAfter(): () => void {
     return async (): Promise<void> => {
       this.closeModal(Modal.enum.add)();
       const book = this.bookContext.book;
