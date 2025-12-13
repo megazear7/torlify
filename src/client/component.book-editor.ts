@@ -28,7 +28,7 @@ import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-ove
 import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
-import "./component.book-field.js";
+import "./component.field.js";
 import "./component.checkbox.js";
 import "./component.loading-overlay.js";
 import "./component.book-title-modal.js";

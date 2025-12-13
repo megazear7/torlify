@@ -24,6 +24,9 @@ import { bookPingModelController } from "./controller.book-ping-model.js";
 import { registerDownloadChapter } from "./controller.download-chapter.js";
 import { registerDownloadChapterAudio } from "./controller.download-chapter-audio.js";
 import { registerDownloadPartAudio } from "./controller.download-part-audio.js";
+import { generateBookTitleAudioController } from "./controller.generate-book-title-audio.js";
+import { registerGetBookTitleAudio } from "./controller.get-book-title-audio.js";
+import { deleteBookTitleAudioController } from "./controller.delete-book-title-audio.js";
 
 const router = express.Router();
 
@@ -52,5 +55,8 @@ registerDownloadBookAudio(router);
 registerDownloadChapterAudio(router);
 registerDownloadPartAudio(router);
 registerGetChapterAudio(router);
+generateBookTitleAudioController.register(router);
+registerGetBookTitleAudio(router);
+deleteBookTitleAudioController.register(router);
 
 export { router };

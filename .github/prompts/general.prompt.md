@@ -18,6 +18,13 @@
  - Types must be imported by the client code and used in API calls, components, providers, pages, utils, and all other code.
  - Types must be imported by the server code and used in controllers, services, utils, prompts, and all other code.
 
+### Shared Services
+ - Services must be created at `src/shared/service.<service-name>.ts`
+ - Services define the route, method, request body, path parameters, and response content for API calls.
+ - Services must handle data fetching and communication with server controllers.
+ - Services must use Zod schemas from `shared/type.<type-name>.ts` for input validation and response data validation.
+ - Services must be imported and used in client components and server controllers as needed.
+
 ### Shared Utilities
  - Shared utilities must be created at `shared/util.<util-name>.ts` when they can be used by both client and server code.
  - Shared utilities must be grouped by functionality.

@@ -10,7 +10,6 @@ import { WarningEvent } from "./event.warning.js";
 import { dispatch } from "./util.events.js";
 import "./component.field.js";
 import "./component.spinner.js";
-import "./component.book-field.js";
 
 @customElement("torlify-chapter-title-modal")
 export class TorlifyChapterTitleModal extends LitElement {
