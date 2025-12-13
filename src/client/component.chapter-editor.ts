@@ -9,6 +9,7 @@ import { WarningEvent } from "./event.warning.js";
 import { DebounceHandler } from "./util.debounce.js";
 import { SaveEvent } from "./event.save.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
+import { updateBookService } from "../shared/service.update-book.js";
 import { Book, BookId, Chapter, ChapterPart } from "../shared/type.book.js";
 import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import { generatePartService } from "../shared/service.generate-part.js";
@@ -267,10 +268,10 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Move Chapter</h3>
                 <p>Move this chapter before the previous chapter or after the next chapter?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">
+                  <button class="standard-button" @click="${this.moveBeforePrevious()}">
                     Before previous
                   </button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">After next</button>
+                  <button class="standard-button" @click="${this.moveAfterNext()}">After next</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -364,6 +365,44 @@ export class TorlifyChapterEditor extends LitElement {
         </button>
       </div>
     `;
+  }
+
+  moveBeforePrevious(): () => void {
+    return (): void => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      if (!book || !chapter) {
+        this.closeModal(Modal.enum.move)();
+        dispatch(this, WarningEvent("Book or chapter not loaded"));
+        return;
+      }
+      const chapters = book.chapters;
+      const currentIndex = chapters.findIndex((ch) => ch.number === chapter.number);
+      if (currentIndex === 0) {
+        dispatch(this, WarningEvent("This chapter is already the first chapter"));
+        this.closeModal(Modal.enum.move)();
+        return;
+      }
+      const prevIndex = currentIndex - 1;
+      const prevChapter = chapters[prevIndex];
+      // Swap numbers
+      [chapter.number, prevChapter.number] = [prevChapter.number, chapter.number];
+      // Swap positions in array
+      [chapters[currentIndex], chapters[prevIndex]] = [chapters[prevIndex], chapters[currentIndex]];
+      // Save changes
+      updateBookService.fetch({
+        name: book.id,
+        book: book,
+      });
+      this.closeModal(Modal.enum.move)();
+      dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}` }));
+    };
+  }
+
+  moveAfterNext(): () => void {
+    return (): void => {
+      this.notImplemented(Modal.enum.move)();
+    };
   }
 
   handleRegenerateCheckedChange(e: Event): void {

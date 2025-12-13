@@ -152,10 +152,10 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Move Part</h3>
                 <p>Move this part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">
+                  <button class="standard-button" @click="${this.moveBeforePrevious()}">
                     Before previous
                   </button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.move)}">After next</button>
+                  <button class="standard-button" @click="${this.moveAfterNext()}">After next</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -164,10 +164,10 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Add Part</h3>
                 <p>Add a new part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">
+                  <button class="standard-button" @click="${this.addPartBeforePrevious()}">
                     Before previous
                   </button>
-                  <button class="standard-button" @click="${this.addPart()}">After next</button>
+                  <button class="standard-button" @click="${this.addPartAfterNext()}">After next</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -209,6 +209,20 @@ export class TorlifyPartEditor extends LitElement {
             <p>Loading part...</p>
           `}
     `;
+  }
+
+  moveBeforePrevious(): () => void {
+    return async (): Promise<void> => {
+      this.closeModal(Modal.enum.move)();
+      dispatch(this, WarningEvent("Move part before previous is not implemented yet"));
+    };
+  }
+
+  moveAfterNext(): () => void {
+    return async (): Promise<void> => {
+      this.closeModal(Modal.enum.move)();
+      dispatch(this, WarningEvent("Move part after next is not implemented yet"));
+    };
   }
 
   handleRegenerateCheckedChange(e: Event): void {
@@ -465,7 +479,14 @@ export class TorlifyPartEditor extends LitElement {
     };
   }
 
-  addPart(): () => void {
+  addPartBeforePrevious(): () => void {
+    return async (): Promise<void> => {
+      this.closeModal(Modal.enum.add)();
+      dispatch(this, WarningEvent("Add part before previous is not implemented yet"));
+    };
+  }
+
+  addPartAfterNext(): () => void {
     return async (): Promise<void> => {
       this.closeModal(Modal.enum.add)();
       const book = this.bookContext.book;
