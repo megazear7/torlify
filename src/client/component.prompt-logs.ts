@@ -46,9 +46,9 @@ export class TorlifyPromptLogs extends LitElement {
 
       .prompt-logs-content {
         position: relative;
-        top: 10vh;
-        height: 80vh;
-        width: 80vw;
+        top: 5vh;
+        height: 100vh;
+        width: 100vw;
         max-width: 1200px;
         display: flex;
         flex-direction: column;
@@ -67,20 +67,17 @@ export class TorlifyPromptLogs extends LitElement {
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        gap: var(--size-large);
+        gap: var(--size-xxl);
         width: 100%;
-        height: 100%;
+        height: 100vh;
         overflow-y: auto;
         padding: var(--size-medium);
-        background: var(--color-secondary-surface);
-        border-radius: var(--radius-medium);
       }
 
       .prompt-log-item {
-        background: var(--color-primary-surface);
-        border-radius: var(--radius-small);
+        background: var(--color-secondary-surface);
+        border-radius: var(--radius-medium);
         padding: var(--size-medium);
-        border: 1px solid var(--color-border);
       }
 
       .prompt-log-timestamp {
@@ -96,6 +93,7 @@ export class TorlifyPromptLogs extends LitElement {
 
       .prompt-log-label {
         font-weight: bold;
+        font-size: var(--font-large);
         margin-bottom: var(--size-small);
       }
 
@@ -106,7 +104,6 @@ export class TorlifyPromptLogs extends LitElement {
         font-family: monospace;
         font-size: var(--font-small);
         white-space: pre-wrap;
-        max-height: 200px;
         overflow-y: auto;
       }
 
@@ -142,13 +139,13 @@ export class TorlifyPromptLogs extends LitElement {
                     <div class="prompt-log-item">
                       <div class="prompt-log-timestamp">${new Date(log.timestamp).toLocaleString()}</div>
                       <div class="prompt-log-input">
-                        <div class="prompt-log-label">Input:</div>
+                        <div class="prompt-log-label">Input</div>
                         <div class="prompt-log-json">${JSON.stringify(log.input, null, 2)}</div>
                       </div>
                       ${log.output
                         ? html`
                             <div class="prompt-log-output">
-                              <div class="prompt-log-label">Output:</div>
+                              <div class="prompt-log-label">Output</div>
                               <div class="prompt-log-json">${JSON.stringify(log.output, null, 2)}</div>
                             </div>
                           `
