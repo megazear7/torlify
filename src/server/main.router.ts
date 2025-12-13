@@ -31,6 +31,7 @@ import { generateChapterTitleAudioController } from "./controller.generate-chapt
 import { registerGetChapterTitleAudio } from "./controller.get-chapter-title-audio.js";
 import { deleteChapterTitleAudioController } from "./controller.delete-chapter-title-audio.js";
 import { generatePronunciationAudioController } from "./controller.generate-pronunciation-audio.js";
+import { listPromptLogsController } from "./controller.list-prompt-logs.js";
 
 const router = express.Router();
 
@@ -66,5 +67,6 @@ generateChapterTitleAudioController.register(router);
 registerGetChapterTitleAudio(router);
 deleteChapterTitleAudioController.register(router);
 generatePronunciationAudioController.register(router);
+listPromptLogsController.register(router);
 
 export { router };

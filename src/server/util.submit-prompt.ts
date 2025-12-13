@@ -4,6 +4,7 @@ import { readAppConfig } from "./service.app-config.js";
 import { loadTextClient } from "./util.model.js";
 import { Book } from "../shared/type.book.js";
 import { ModelConfigs } from "../shared/type.model.js";
+import { PromptLog } from "../shared/type.prompt-log.js";
 import { promises as fs } from "fs";
 import { ONE_HOUR_IN_MS } from "../shared/util.time.js";
 
@@ -17,8 +18,9 @@ export async function getCompletion<T>(
   modelConfigs: ModelConfigs,
   zod?: ZodType<T>,
 ): Promise<CompletionWithUsage<T>> {
-  const debugDir = "debug/submit-prompt";
-  const debugFile = `${debugDir}/${Date.now()}-prompt.json`;
+  const debugDir = "data/prompt";
+  const timestamp = Date.now();
+  const debugFile = `${debugDir}/${timestamp}-prompt.json`;
   await fs.mkdir(debugDir, { recursive: true });
   const client = await loadTextClient(modelConfigs);
   const input: ChatCompletionCreateParamsNonStreaming = {
@@ -52,13 +54,13 @@ export async function getCompletion<T>(
     }
   }
 
-  await fs.writeFile(debugFile, JSON.stringify({ input }, null, 2));
+  await fs.writeFile(debugFile, JSON.stringify(PromptLog.parse({ timestamp, input }), null, 2));
   const output = await client.chat.completions.create(input);
   if (!output.choices[0].message.content) {
     throw new Error("No response");
   }
 
-  await fs.writeFile(debugFile, JSON.stringify({ input, output }, null, 2));
+  await fs.writeFile(debugFile, JSON.stringify(PromptLog.parse({ timestamp, input, output }), null, 2));
 
   if (zod) {
     return {

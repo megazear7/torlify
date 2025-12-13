@@ -5,6 +5,7 @@ import { TorlifyBookListProvider } from "./provider.book-list.js";
 import "./component.book-list.js";
 import "./component.app-config.js";
 import "./component.book-table.js";
+import "./component.prompt-logs.js";
 
 @customElement("torlify-home-page")
 export class TorlifyHomePage extends TorlifyBookListProvider {
@@ -25,6 +26,7 @@ export class TorlifyHomePage extends TorlifyBookListProvider {
               <p>Select a book from the list to get started or update your AI model connection below.</p>
             `}
         <torlify-app-config></torlify-app-config>
+        <torlify-prompt-logs></torlify-prompt-logs>
         <torlify-book-table></torlify-book-table>
       </div>
     `;
