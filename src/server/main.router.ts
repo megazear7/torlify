@@ -27,6 +27,9 @@ import { registerDownloadPartAudio } from "./controller.download-part-audio.js";
 import { generateBookTitleAudioController } from "./controller.generate-book-title-audio.js";
 import { registerGetBookTitleAudio } from "./controller.get-book-title-audio.js";
 import { deleteBookTitleAudioController } from "./controller.delete-book-title-audio.js";
+import { generateChapterTitleAudioController } from "./controller.generate-chapter-title-audio.js";
+import { registerGetChapterTitleAudio } from "./controller.get-chapter-title-audio.js";
+import { deleteChapterTitleAudioController } from "./controller.delete-chapter-title-audio.js";
 
 const router = express.Router();
 
@@ -58,5 +61,8 @@ registerGetChapterAudio(router);
 generateBookTitleAudioController.register(router);
 registerGetBookTitleAudio(router);
 deleteBookTitleAudioController.register(router);
+generateChapterTitleAudioController.register(router);
+registerGetChapterTitleAudio(router);
+deleteChapterTitleAudioController.register(router);
 
 export { router };
