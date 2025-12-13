@@ -152,8 +152,20 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Move Part</h3>
                 <p>Move this part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.moveBeforePrevious()}">Before previous</button>
-                  <button class="standard-button" @click="${this.moveAfterNext()}">After next</button>
+                  <button
+                    class="standard-button"
+                    ?disabled="${this.partContext.part.number === 1}"
+                    title="${this.partContext.part.number === 1 ? "Cannot move before first part" : `Move part ${this.partContext.part.number} before the previous part`}"
+                    @click="${this.moveBeforePrevious()}">
+                    Before previous
+                  </button>
+                  <button
+                    class="standard-button"
+                    ?disabled="${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length}"
+                    title="${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length ? "Cannot move after last part" : `Move part ${this.partContext.part?.number} after the next part`}"
+                    @click="${this.moveAfterNext()}">
+                    After next
+                  </button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -209,15 +221,89 @@ export class TorlifyPartEditor extends LitElement {
 
   moveBeforePrevious(): () => void {
     return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+      if (!book || !chapter || !part) {
+        this.closeModal(Modal.enum.move)();
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+      const parts = chapter.parts;
+      const currentIndex = parts.findIndex((p) => p.number === part.number);
+      if (currentIndex === 0) {
+        dispatch(this, WarningEvent("This part is already the first part"));
+        this.closeModal(Modal.enum.move)();
+        return;
+      }
+      const prevIndex = currentIndex - 1;
+      // Swap positions in parts array
+      [parts[currentIndex], parts[prevIndex]] = [parts[prevIndex], parts[currentIndex]];
+      // Swap corresponding outline entries
+      if (chapter.outline) {
+        [chapter.outline[currentIndex], chapter.outline[prevIndex]] = [chapter.outline[prevIndex], chapter.outline[currentIndex]];
+      }
+      // Renumber parts
+      parts.forEach((p, index) => {
+        p.number = index + 1;
+      });
+      // Save changes
+      try {
+        await updateChapterService.fetch({
+          book: book.id,
+          chapter: chapter,
+        });
+        dispatch(this, SaveEvent());
+        // Navigate to the updated part position
+        dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}/part/${part.number}` }));
+      } catch {
+        dispatch(this, WarningEvent("Failed to move part"));
+      }
       this.closeModal(Modal.enum.move)();
-      dispatch(this, WarningEvent("Move part before previous is not implemented yet"));
     };
   }
 
   moveAfterNext(): () => void {
     return async (): Promise<void> => {
+      const book = this.bookContext.book;
+      const chapter = this.chapterContext.chapter;
+      const part = this.partContext.part;
+      if (!book || !chapter || !part) {
+        this.closeModal(Modal.enum.move)();
+        dispatch(this, WarningEvent("Book, chapter, or part not loaded"));
+        return;
+      }
+      const parts = chapter.parts;
+      const currentIndex = parts.findIndex((p) => p.number === part.number);
+      if (currentIndex === parts.length - 1) {
+        dispatch(this, WarningEvent("This part is already the last part"));
+        this.closeModal(Modal.enum.move)();
+        return;
+      }
+      const nextIndex = currentIndex + 1;
+      // Swap positions in parts array
+      [parts[currentIndex], parts[nextIndex]] = [parts[nextIndex], parts[currentIndex]];
+      // Swap corresponding outline entries
+      if (chapter.outline) {
+        [chapter.outline[currentIndex], chapter.outline[nextIndex]] = [chapter.outline[nextIndex], chapter.outline[currentIndex]];
+      }
+      // Renumber parts
+      parts.forEach((p, index) => {
+        p.number = index + 1;
+      });
+      // Save changes
+      try {
+        await updateChapterService.fetch({
+          book: book.id,
+          chapter: chapter,
+        });
+        dispatch(this, SaveEvent());
+        // Navigate to the updated part position
+        dispatch(this, NavigationEvent({ path: `/book/${book.id}/chapter/${chapter.number}/part/${part.number}` }));
+      } catch {
+        dispatch(this, WarningEvent("Failed to move part"));
+      }
       this.closeModal(Modal.enum.move)();
-      dispatch(this, WarningEvent("Move part after next is not implemented yet"));
     };
   }
 

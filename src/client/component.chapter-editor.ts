@@ -290,10 +290,10 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Add Chapter</h3>
                 <p>Add a new chapter before the previous chapter or after the next chapter?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">
+                  <button class="standard-button" title="Add a new chapter before chapter ${this.chapterContext.chapter.number}" @click="${this.addBefore()}">
                     Before previous
                   </button>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.add)}">After next</button>
+                  <button class="standard-button" title="Add a new chapter after chapter ${this.chapterContext.chapter.number}" @click="${this.addAfter()}">After next</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -375,6 +375,18 @@ export class TorlifyChapterEditor extends LitElement {
         </button>
       </div>
     `;
+  }
+
+  addBefore(): () => void {
+    return (): void => {
+      // TODO add an empty chapter before this one.
+    };
+  }
+
+  addAfter(): () => void {
+    return (): void => {
+      // Add an empty chapter after this one
+    };
   }
 
   moveBeforePrevious(): () => void {
