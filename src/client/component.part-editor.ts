@@ -178,8 +178,8 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Add Part</h3>
                 <p>Add a new part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.addBefore()}">Before previous</button>
-                  <button class="standard-button" @click="${this.addAfter()}">After next</button>
+                  <button class="standard-button" @click="${this.addBefore()}">Before</button>
+                  <button class="standard-button" @click="${this.addAfter()}">After</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -553,7 +553,7 @@ export class TorlifyPartEditor extends LitElement {
           dispatch(
             this,
             NavigationEvent({
-              path: `/book/${book.id}/chapter/${chapter.number}/part/${targetPart.number}`,
+              path: `/book/${book.id}/chapter/${chapter.number}/part/${partIndex >= chapter.parts.length ? partIndex : partIndex + 1}`,
             }),
           );
         } else {
