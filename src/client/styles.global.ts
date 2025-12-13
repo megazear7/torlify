@@ -97,6 +97,10 @@ export const globalStyles = css`
     transform: var(--transform-hover);
   }
 
+  button.standard-button.delete:hover {
+    background: var(--color-danger);
+  }
+
   torlify-bar > button.standard-button {
     border-radius: 0;
     padding: var(--size-medium) var(--size-large);

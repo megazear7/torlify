@@ -65,6 +65,14 @@ export class TorlifyBookEditor extends LitElement {
       .title torlify-book-title-modal {
         margin-left: auto;
       }
+
+      .delete-options {
+        display: flex;
+      }
+
+      .delete-options :nth-child(2) {
+        margin-left: auto;
+      }
     `,
   ];
 
@@ -230,11 +238,17 @@ export class TorlifyBookEditor extends LitElement {
             <torlify-modal id="${Modal.enum.delete}-modal">
               <div slot="body">
                 <h3>Delete Book</h3>
-                <p>Are you sure you want to delete this book?</p>
-                <torlify-bar>
-                  <button class="standard-button" @click="${this.confirmDeleteBook}">Delete</button>
-                  <button class="standard-button" @click=${this.closeModal(Modal.enum.delete)}>Cancel</button>
-                </torlify-bar>
+                <p>You can delete the book outline, text, or audio. Alternatively, you can delete the entire book.</p>
+                <div class="delete-options">
+                  <torlify-bar>
+                    <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Outline</button>
+                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Text</button>
+                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Audio</button>
+                  </torlify-bar>
+                  <torlify-bar>
+                    <button class="standard-button delete" @click="${this.confirmDeleteBook}">Delete</button>
+                  </torlify-bar>
+                </div>
               </div>
             </torlify-modal>
             <div class="secondary-surface">

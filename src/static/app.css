@@ -13,6 +13,7 @@ html {
   --color-tertiary-text: #ffffff;
   --color-accent: #ff6f61;
   --color-error: #ff6b6b;
+  --color-danger: #ff4444;
   --color-warning: #ffb347;
   --color-success: rgb(56, 173, 56);
   --color-grey-transparent: rgba(200, 200, 200, 0.3);

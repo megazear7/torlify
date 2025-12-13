@@ -1,5 +1,5 @@
 import { consume } from "@lit/context";
-import { html, LitElement, TemplateResult } from "lit";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { bookContext, BookContext, ChapterContext, chapterContext, PartContext, partContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
@@ -30,7 +30,18 @@ export type Modal = z.infer<typeof Modal>;
 
 @customElement("torlify-part-editor")
 export class TorlifyPartEditor extends LitElement {
-  static override styles = [globalStyles];
+  static override styles = [
+    globalStyles,
+    css`
+      .delete-options {
+        display: flex;
+      }
+
+      .delete-options :nth-child(2) {
+        margin-left: auto;
+      }
+    `,
+  ];
 
   @consume({ context: bookContext, subscribe: true })
   @property({ attribute: false })
@@ -163,10 +174,16 @@ export class TorlifyPartEditor extends LitElement {
               <div slot="body">
                 <h3>Delete Part</h3>
                 <p>Are you sure you want to delete this part?</p>
-                <torlify-bar>
-                  <button class="standard-button" @click="${this.removePart()}">Delete</button>
-                  <button class="standard-button" @click="${this.closeModal(Modal.enum.delete)}">Cancel</button>
-                </torlify-bar>
+                <div class="delete-options">
+                  <torlify-bar>
+                    <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Outline</button>
+                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Text</button>
+                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Audio</button>
+                  </torlify-bar>
+                  <torlify-bar>
+                    <button class="standard-button delete" @click="${this.removePart()}">Delete</button>
+                  </torlify-bar>
+                </div>
               </div>
             </torlify-modal>
             <div class="secondary-surface">

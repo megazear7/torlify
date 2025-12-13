@@ -230,8 +230,7 @@ export class TorlifyPronunciations extends LitElement {
                       </div>
                       <torlify-configure-pronunciation
                         .pronunciation="${pronunciation}"
-                        @PronunciationUpdated=${this.handlePronunciationMatch(index)}>
-                      </torlify-configure-pronunciation>
+                        @PronunciationUpdated=${this.handlePronunciationMatch(index)}></torlify-configure-pronunciation>
                       <button
                         class="remove-button"
                         @click="${async (): Promise<void> => this.removePronunciation(index)}"
@@ -249,7 +248,7 @@ export class TorlifyPronunciations extends LitElement {
 
   private handlePronunciationMatch(index: number): (e: CustomEvent) => void {
     return (e: CustomEvent): void => {
-      console.log('B');
+      console.log("B");
       const detail = PronunciationUpdatedEventDetail.parse(e.detail);
       this.updatePronunciation(index, detail.field, detail.value);
     };

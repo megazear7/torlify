@@ -134,6 +134,14 @@ export class TorlifyChapterEditor extends LitElement {
       .part-nav-button.next {
         right: calc(var(--size-xl) + var(--size-large) + var(--size-medium));
       }
+
+      .delete-options {
+        display: flex;
+      }
+
+      .delete-options :nth-child(2) {
+        margin-left: auto;
+      }
     `,
   ];
 
@@ -282,10 +290,18 @@ export class TorlifyChapterEditor extends LitElement {
               <div slot="body">
                 <h3>Delete Chapter</h3>
                 <p>Are you sure you want to delete this chapter?</p>
-                <torlify-bar>
-                  <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Delete</button>
-                  <button class="standard-button" @click="${this.closeModal(Modal.enum.delete)}">Cancel</button>
-                </torlify-bar>
+                <div class="delete-options">
+                  <torlify-bar>
+                    <button class="standard-button" @click="${this.notImplemented(Modal.enum.delete)}">Outline</button>
+                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Text</button>
+                    <button class="standard-button" @click=${this.notImplemented(Modal.enum.delete)}>Audio</button>
+                  </torlify-bar>
+                  <torlify-bar>
+                    <button class="standard-button delete" @click="${this.notImplemented(Modal.enum.delete)}">
+                      Delete
+                    </button>
+                  </torlify-bar>
+                </div>
               </div>
             </torlify-modal>
             <div class="secondary-surface">

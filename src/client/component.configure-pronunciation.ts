@@ -87,21 +87,27 @@ export class TorlifyConfigurePronunciation extends LitElement {
 
   handleMatchInput(): (e: Event) => void {
     return (e: Event): void => {
-      console.log('A');
-      dispatch(this, PronunciationUpdatedEvent({
-        field: "match",
-        value: (e.target as HTMLInputElement).value,
-      }));
+      console.log("A");
+      dispatch(
+        this,
+        PronunciationUpdatedEvent({
+          field: "match",
+          value: (e.target as HTMLInputElement).value,
+        }),
+      );
       this.pronunciation.match = (e.target as HTMLInputElement).value;
     };
   }
 
   handleReplaceInput(): (e: Event) => void {
     return (e: Event): void => {
-      dispatch(this, PronunciationUpdatedEvent({
-        field: "replace",
-        value: (e.target as HTMLInputElement).value,
-      }));
+      dispatch(
+        this,
+        PronunciationUpdatedEvent({
+          field: "replace",
+          value: (e.target as HTMLInputElement).value,
+        }),
+      );
       this.pronunciation.replace = (e.target as HTMLInputElement).value;
     };
   }
