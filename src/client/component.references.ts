@@ -6,7 +6,7 @@ import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { ReferenceUse } from "../shared/type.book.js";
 import { dispatch } from "./util.events.js";
-import { plusIcon, trashIcon, editIcon } from "./icons.js";
+import { plusIcon, trashIcon, editIcon, upArrowIcon, downArrowIcon } from "./icons.js";
 import { TorlifyModal } from "./component.modal.js";
 import { uploadReferenceService } from "../shared/service.upload-reference.js";
 import { WarningEvent } from "./event.warning.js";
@@ -56,6 +56,7 @@ export class TorlifyReferences extends LitElement {
       }
 
       .reference-item {
+        position: relative;
         background: var(--color-secondary-surface);
         border-radius: var(--radius-medium);
         padding: var(--size-large);
@@ -342,6 +343,20 @@ export class TorlifyReferences extends LitElement {
                           ${trashIcon}
                         </button>
                       </div>
+                      <button
+                        class="move-up"
+                        ?disabled=${index === 0}
+                        @click=${this.moveUp(index)}
+                        title="${index === 0 ? 'This is already the first reference' : 'Move reference up'}">
+                        ${upArrowIcon}
+                      </button>
+                      <button
+                        class="move-down"
+                        ?disabled=${index === references.length - 1}
+                        @click=${this.moveDown(index)}
+                        title="${index === references.length - 1 ? 'This is already the last reference' : 'Move reference down'}">
+                        ${downArrowIcon}
+                      </button>
                     </div>
                   `,
                 )}
@@ -450,6 +465,52 @@ export class TorlifyReferences extends LitElement {
     }
     this.requestUpdate();
     this.modal.open();
+  }
+
+  private moveUp(index: number): () => void {
+    return (): void => {
+      if (index === 0) return;
+      if (!this.bookContext.book) return;
+      const newReferences = [...this.bookContext.book.references];
+      [newReferences[index - 1], newReferences[index]] = [newReferences[index], newReferences[index - 1]];
+      this.bookContext.book = {
+        ...this.bookContext.book,
+        references: newReferences,
+      };
+      this.requestUpdate();
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: {
+            references: newReferences,
+          }
+        });
+        dispatch(this, SaveEvent());
+      });
+    };
+  }
+
+  private moveDown(index: number): () => void {
+    return (): void => {
+      if (!this.bookContext.book) return;
+      const newReferences = [...this.bookContext.book.references];
+      if (index === newReferences.length - 1) return;
+      [newReferences[index + 1], newReferences[index]] = [newReferences[index], newReferences[index + 1]];
+      this.bookContext.book = {
+        ...this.bookContext.book,
+        references: newReferences,
+      };
+      this.requestUpdate();
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: {
+            references: newReferences,
+          }
+        });
+        dispatch(this, SaveEvent());
+      });
+    };
   }
 
   private removeReference(index: number): void {
