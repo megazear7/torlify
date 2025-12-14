@@ -242,14 +242,16 @@ export class TorlifyPronunciations extends LitElement {
                         class="move-up"
                         ?disabled=${index === 0}
                         @click=${this.moveUp(index)}
-                        title="${index === 0 ? 'This is already the first pronunciation' : 'Move pronunciation up'}">
+                        title="${index === 0 ? "This is already the first pronunciation" : "Move pronunciation up"}">
                         ${upArrowIcon}
                       </button>
                       <button
                         class="move-down"
                         ?disabled=${index === pronunciations.length - 1}
                         @click=${this.moveDown(index)}
-                        title="${index === pronunciations.length - 1 ? 'This is already the last pronunciation' : 'Move pronunciation down'}">
+                        title="${index === pronunciations.length - 1
+                          ? "This is already the last pronunciation"
+                          : "Move pronunciation down"}">
                         ${downArrowIcon}
                       </button>
                     </div>
@@ -298,7 +300,7 @@ export class TorlifyPronunciations extends LitElement {
           name: this.bookContext.book!.id,
           book: {
             pronunciation: newPronunciations,
-          }
+          },
         });
         dispatch(this, SaveEvent());
       });
@@ -320,7 +322,7 @@ export class TorlifyPronunciations extends LitElement {
           name: this.bookContext.book!.id,
           book: {
             pronunciation: newPronunciations,
-          }
+          },
         });
         dispatch(this, SaveEvent());
       });

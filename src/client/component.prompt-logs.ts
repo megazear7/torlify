@@ -133,7 +133,9 @@ export class TorlifyPromptLogs extends LitElement {
           </div>
           <div class="prompt-logs-list">
             ${this.logs.length === 0
-              ? html`<div class="no-logs">No prompt logs found</div>`
+              ? html`
+                  <div class="no-logs">No prompt logs found</div>
+                `
               : this.logs.map(
                   (log) => html`
                     <div class="prompt-log-item">

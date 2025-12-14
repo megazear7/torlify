@@ -9,11 +9,15 @@ import "./component.prompt-logs.js";
 
 @customElement("torlify-home-page")
 export class TorlifyHomePage extends TorlifyBookListProvider {
-  static override styles = [globalStyles, css`
-    torlify-app-config, torlify-prompt-logs {
-      display: inline-block;
-    }
-  `];
+  static override styles = [
+    globalStyles,
+    css`
+      torlify-app-config,
+      torlify-prompt-logs {
+        display: inline-block;
+      }
+    `,
+  ];
 
   override render(): TemplateResult {
     return html`

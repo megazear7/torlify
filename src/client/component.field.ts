@@ -90,14 +90,14 @@ export class TorlifyField extends LitElement {
 
   input(): TemplateResult {
     return html`
-      <label for="${this.propertyId}">${this.labelWithFallback()}${this.renderHelp()}</label>
+      <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
       <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
     `;
   }
 
   number(): TemplateResult {
     return html`
-      <label for="${this.propertyId}">${this.labelWithFallback()}${this.renderHelp()}</label>
+      <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
       <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
     `;
   }
@@ -131,11 +131,8 @@ export class TorlifyField extends LitElement {
     return html``;
   }
 
-  labelWithFallback(): TemplateResult {
-    if (this.label)
-      return html`
-        <span>${this.label}</span>
-      `;
+  labelWithFallback(): string {
+    if (this.label) return this.label;
     // Derive label from property
     const parts = this.property.split(".");
     const lastPart = parts[parts.length - 1];
@@ -144,8 +141,12 @@ export class TorlifyField extends LitElement {
       .replace(/([A-Z])/g, " $1")
       .replace(/_/g, " ")
       .replace(/\b\w/g, (char) => char.toUpperCase());
+    return title;
+  }
+
+  labelWithFallbackTemplate(): TemplateResult {
     return html`
-      <span>${title}</span>
+      <span>${this.labelWithFallback()}</span>
     `;
   }
 

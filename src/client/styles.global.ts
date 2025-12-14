@@ -184,7 +184,8 @@ export const globalStyles = css`
     overflow-y: auto;
   }
 
-  .move-up, .move-down {
+  .move-up,
+  .move-down {
     opacity: 0;
     position: absolute;
     right: calc(-1 * var(--size-xxl));

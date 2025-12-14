@@ -292,7 +292,12 @@ export const upArrowIcon = html`
     height="24"
     fill="currentColor"
     aria-hidden="true">
-    <path d="M12 19V5M5 12l7-7l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+      d="M12 19V5M5 12l7-7l7 7"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round" />
   </svg>
 `;
 
@@ -304,6 +309,11 @@ export const downArrowIcon = html`
     height="24"
     fill="currentColor"
     aria-hidden="true">
-    <path d="M12 5v14M5 12l7 7l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+      d="M12 5v14M5 12l7 7l7-7"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round" />
   </svg>
 `;

@@ -347,14 +347,16 @@ export class TorlifyReferences extends LitElement {
                         class="move-up"
                         ?disabled=${index === 0}
                         @click=${this.moveUp(index)}
-                        title="${index === 0 ? 'This is already the first reference' : 'Move reference up'}">
+                        title="${index === 0 ? "This is already the first reference" : "Move reference up"}">
                         ${upArrowIcon}
                       </button>
                       <button
                         class="move-down"
                         ?disabled=${index === references.length - 1}
                         @click=${this.moveDown(index)}
-                        title="${index === references.length - 1 ? 'This is already the last reference' : 'Move reference down'}">
+                        title="${index === references.length - 1
+                          ? "This is already the last reference"
+                          : "Move reference down"}">
                         ${downArrowIcon}
                       </button>
                     </div>
@@ -483,7 +485,7 @@ export class TorlifyReferences extends LitElement {
           name: this.bookContext.book!.id,
           book: {
             references: newReferences,
-          }
+          },
         });
         dispatch(this, SaveEvent());
       });
@@ -506,7 +508,7 @@ export class TorlifyReferences extends LitElement {
           name: this.bookContext.book!.id,
           book: {
             references: newReferences,
-          }
+          },
         });
         dispatch(this, SaveEvent());
       });
