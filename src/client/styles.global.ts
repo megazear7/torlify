@@ -183,4 +183,36 @@ export const globalStyles = css`
     max-height: 50vh;
     overflow-y: auto;
   }
+
+  .move-up, .move-down {
+    opacity: 0;
+    position: absolute;
+    right: calc(-1 * var(--size-xxl));
+    transition: var(--transition-all);
+    padding: var(--size-small);
+    border-radius: 50%;
+    background: var(--color-secondary-surface);
+    color: var(--color-secondary-text-muted);
+    box-shadow: var(--shadow-normal);
+  }
+
+  .move-up {
+    top: var(--size-medium);
+  }
+
+  .move-down {
+    top: var(--size-3x);
+  }
+
+  :hover > .move-up,
+  :hover > .move-down {
+    opacity: 1;
+  }
+
+  .move-up:not(:disabled):hover,
+  .move-down:not(:disabled):hover {
+    color: var(--color-secondary-text);
+    box-shadow: var(--shadow-hover);
+    background: var(--color-2);
+  }
 `;

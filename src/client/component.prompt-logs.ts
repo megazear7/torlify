@@ -123,7 +123,7 @@ export class TorlifyPromptLogs extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <button class="prompt-logs-button" @click=${this.open}>View Prompt Logs (${this.logs.length})</button>
+      <button class="standard-button prompt-logs-button" @click=${this.open}>Prompt Logs (${this.logs.length})</button>
       <div class="overlay ${this.visible ? "visible" : ""}">
         <div class="overlay-close" @click=${this.close}>${xIcon}</div>
         <div class="prompt-logs-content">

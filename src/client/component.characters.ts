@@ -5,7 +5,7 @@ import { consume } from "@lit/context";
 import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { dispatch } from "./util.events.js";
-import { plusIcon, trashIcon } from "./icons.js";
+import { downArrowIcon, plusIcon, trashIcon, upArrowIcon } from "./icons.js";
 import { wait } from "../shared/util.wait.js";
 import { DebounceHandler } from "./util.debounce.js";
 import { updateBookService } from "../shared/service.update-book.js";
@@ -54,6 +54,7 @@ export class TorlifyCharacters extends LitElement {
       }
 
       .character-item {
+        position: relative;
         background: var(--color-secondary-surface);
         border-radius: var(--radius-medium);
         padding: var(--size-medium);
@@ -238,6 +239,20 @@ export class TorlifyCharacters extends LitElement {
                         title="Remove character">
                         ${trashIcon}
                       </button>
+                      <button
+                        class="move-up"
+                        ?disabled=${index === 0}
+                        @click=${this.moveUp(index)}
+                        title="Move character up">
+                        ${upArrowIcon}
+                      </button>
+                      <button
+                        class="move-down"
+                        ?disabled=${index === characters.length - 1}
+                        @click=${this.moveDown(index)}
+                        title="Move character down">
+                        ${downArrowIcon}
+                      </button>
                     </div>
                   `,
                 )}
@@ -262,6 +277,58 @@ export class TorlifyCharacters extends LitElement {
       });
       dispatch(this, SaveEvent());
     });
+  }
+
+  private moveUp(index: number): () => void {
+    return (): void => {
+      if (index === 0) return;
+      const currentCharacters = this.bookContext.book?.characters || [];
+      const newCharacters = [...currentCharacters];
+      [newCharacters[index - 1], newCharacters[index]] = [
+        newCharacters[index],
+        newCharacters[index - 1],
+      ];
+      this.bookContext.book = {
+        ...this.bookContext.book!,
+        characters: newCharacters,
+      };
+      this.requestUpdate();
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: {
+            characters: newCharacters,
+          },
+        });
+        dispatch(this, SaveEvent());
+      });
+    };
+  }
+
+  private moveDown(index: number): () => void {
+    return (): void => {
+      const currentCharacters = this.bookContext.book?.characters || [];
+      if (index === currentCharacters.length - 1) return;
+      const newCharacters = [...currentCharacters];
+      [newCharacters[index + 1], newCharacters[index]] = [
+        newCharacters[index],
+        newCharacters[index + 1],
+      ];
+      this.bookContext.book = {
+        ...this.bookContext.book!,
+        characters: newCharacters,
+      };
+      this.requestUpdate();
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: {
+            characters: newCharacters,
+          }
+        });
+        dispatch(this, SaveEvent());
+      });
+    };
   }
 
   private async removeCharacter(index: number): Promise<void> {

@@ -1,4 +1,4 @@
-import { html, TemplateResult } from "lit";
+import { css, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { TorlifyBookListProvider } from "./provider.book-list.js";
@@ -9,7 +9,11 @@ import "./component.prompt-logs.js";
 
 @customElement("torlify-home-page")
 export class TorlifyHomePage extends TorlifyBookListProvider {
-  static override styles = [globalStyles];
+  static override styles = [globalStyles, css`
+    torlify-app-config, torlify-prompt-logs {
+      display: inline-block;
+    }
+  `];
 
   override render(): TemplateResult {
     return html`
