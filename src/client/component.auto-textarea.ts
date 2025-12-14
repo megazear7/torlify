@@ -25,6 +25,7 @@ export class TorlifyAutoTextarea extends LitElement {
         margin-bottom: var(--size-large);
         resize: none;
         overflow-y: hidden;
+        min-height: 98px; // 1 line + padding
       }
 
       textarea:focus {

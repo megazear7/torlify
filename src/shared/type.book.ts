@@ -75,12 +75,22 @@ export const BookOverview = z
 export type BookOverview = z.infer<typeof BookOverview>;
 
 export const BookDetails = z.object({
-  authorName: z.string().optional(),
-  isbn: z.string().optional(),
-  dedication: z.string().optional(),
-  acknowledgements: z.string().optional(),
-  aboutTheAuthor: z.string().optional(),
-  includeChapterTitles: z.boolean().optional(),
+  authorName: z.string().optional().describe("The name of the author of the book."),
+  isbn: z.string().optional().describe("The ISBN number of the book."),
+  dedication: z.string().optional().describe("The dedication of the book. This should be a short paragraph."),
+  acknowledgements: z
+    .string()
+    .optional()
+    .describe("The acknowledgements of the book. This should be a short paragraph."),
+  aboutTheAuthor: z.string().optional().describe("About the author. This should be about one paragraph long."),
+  includeChapterTitles: z.boolean().optional().describe("Whether to include chapter titles."),
+  backCoverText: z
+    .string()
+    .optional()
+    .describe(
+      "The text for the back cover of the book. This should hook the reader without giving away any spoilers. This should be about two paragraphs long.",
+    ),
+  coverImagePromopt: z.string().optional().describe("The prompt used to generate the cover image for the book."),
 });
 export type BookDetails = z.infer<typeof BookDetails>;
 

@@ -62,9 +62,9 @@ export class TorlifyAppConfig extends LitElement {
               : ""}
           </button>
           <br />
-          <torlify-field property="app.model.text.name"></torlify-field>
-          <torlify-field property="app.model.text.modelName"></torlify-field>
-          <torlify-field property="app.model.text.endpoint"></torlify-field>
+          <torlify-field .generation=${false} property="app.model.text.name"></torlify-field>
+          <torlify-field .generation=${false} property="app.model.text.modelName"></torlify-field>
+          <torlify-field .generation=${false} property="app.model.text.endpoint"></torlify-field>
           <torlify-field
             property="app.model.text.cost.inputTokenCost"
             help="dollars per million tokens"
@@ -74,15 +74,15 @@ export class TorlifyAppConfig extends LitElement {
             help="dollars per million tokens"
             type="number"></torlify-field>
           <h3>Audio Model Configuration</h3>
-          <torlify-field property="app.model.audio.name"></torlify-field>
-          <torlify-field property="app.model.audio.modelName"></torlify-field>
+          <torlify-field .generation=${false} property="app.model.audio.name"></torlify-field>
+          <torlify-field .generation=${false} property="app.model.audio.modelName"></torlify-field>
           <p>
             <a href="https://platform.openai.com/docs/guides/text-to-speech/voice-options#voice-options">
               OpenAI Voice options
             </a>
           </p>
-          <torlify-field property="app.model.audio.voice"></torlify-field>
-          <torlify-field property="app.model.audio.endpoint"></torlify-field>
+          <torlify-field .generation=${false} property="app.model.audio.voice"></torlify-field>
+          <torlify-field .generation=${false} property="app.model.audio.endpoint"></torlify-field>
           <torlify-field
             property="app.model.audio.cost.inputTokenCost"
             help="dollars per million tokens"

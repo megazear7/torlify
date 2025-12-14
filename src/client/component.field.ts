@@ -1,5 +1,5 @@
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
 import { AppContext, appContext, BookContext, bookContext, chapterContext, ChapterContext } from "./context.js";
@@ -14,9 +14,10 @@ import { mergeBookProperties } from "../shared/util.merge-book.js";
 import { updateBookService } from "../shared/service.update-book.js";
 import { mergeAppProperties } from "../shared/util.merge-app.js";
 import { updateAppService } from "../shared/service.update-app.js";
-import { infoIcon } from "./icons.js";
+import { aiIcon, infoIcon } from "./icons.js";
 import { WarningEvent } from "./event.warning.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
+import { TorlifyModal } from "./component.modal.js";
 
 @customElement("torlify-field")
 export class TorlifyField extends LitElement {
@@ -36,6 +37,37 @@ export class TorlifyField extends LitElement {
       label .field-help {
         display: flex;
         align-items: center;
+      }
+
+      .field {
+        position: relative;
+      }
+
+      .generate {
+        position: absolute;
+        top: var(--size-small);
+        right: calc(-1 * var(--size-medium));
+        padding: var(--size-small);
+        background: var(--color-secondary-surface-active);
+        border-radius: 50%;
+        opacity: 0;
+        transition: var(--transition-all);
+        box-shadow: var(--shadow-normal);
+        color: var(--color-secondary-text-muted);
+      }
+
+      .field:hover .generate {
+        opacity: 1;
+      }
+
+      .generate:hover {
+        background: var(--color-2);
+        box-shadow: var(--shadow-hover);
+        color: var(--color-secondary-text);
+      }
+
+      .generate-button {
+        cursor: pointer;
       }
     `,
   ];
@@ -73,6 +105,12 @@ export class TorlifyField extends LitElement {
   @property({ type: String })
   public heading: "h2" | "" = "";
 
+  @property({ type: Boolean })
+  public generation: boolean = true;
+
+  @query("torlify-modal")
+  private modal!: TorlifyModal;
+
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
@@ -90,35 +128,63 @@ export class TorlifyField extends LitElement {
 
   input(): TemplateResult {
     return html`
-      <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
-      <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
+      <div class="field">
+        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+        <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
+        ${this.renderGenerate()}
+      </div>
     `;
   }
 
   number(): TemplateResult {
     return html`
-      <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
-      <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
+      <div class="field">
+        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+        <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
+      </div>
     `;
   }
 
   textarea(): TemplateResult {
     return html`
-      ${this.renderHelp()}
-      <torlify-auto-textarea
-        heading="${this.heading}"
-        .value="${this.value}"
-        @input="${this.save()}"></torlify-auto-textarea>
+      <div class="field">
+        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+        <torlify-auto-textarea
+          heading="${this.heading}"
+          .value="${this.value}"
+          @input="${this.save()}"></torlify-auto-textarea>
+        ${this.renderGenerate()}
+      </div>
     `;
   }
 
   boolean(): TemplateResult {
     return html`
-      ${this.renderHelp()}
-      <torlify-checkbox
-        .checked="${!!this.value}"
-        text=${this.labelWithFallback()}
-        @change=${this.save()}></torlify-checkbox>
+      <div class="field">
+        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+        <torlify-checkbox
+          .checked="${!!this.value}"
+          text=${this.labelWithFallback()}
+          @change=${this.save()}></torlify-checkbox>
+      </div>
+    `;
+  }
+
+  renderGenerate(): TemplateResult {
+    if (!this.generation) return html``;
+    return html`
+      <button class="generate" @click=${this.openGenerationModal()}>${aiIcon}</button>
+      <torlify-modal>
+        <div slot="body">
+          <h3>Generate Field Content</h3>
+          <p>Generate for the ${this.labelWithFallback()} Field</p>
+          <h6>Additional Instructions (optional)</h6>
+          <torlify-auto-textarea id="generation-instructions"></torlify-auto-textarea>
+          <torlify-bar>
+            <button class="standard-button generate-button" @click="${this.generate()}">${this.value ? 'Regenerate' : 'Generate'}</button>
+          </torlify-bar>
+        </div>
+      </torlify-modal>
     `;
   }
 
@@ -148,6 +214,19 @@ export class TorlifyField extends LitElement {
     return html`
       <span>${this.labelWithFallback()}</span>
     `;
+  }
+
+  openGenerationModal(): () => void {
+    return (): void => {
+      this.modal.open();
+    };
+  }
+
+  generate(): () => void {
+    return (): void => {
+      dispatch(this, WarningEvent("Generation not yet implemented"));
+      this.modal.close();
+    };
   }
 
   get propertyId(): string {
