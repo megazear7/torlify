@@ -5,7 +5,7 @@ import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 import { dispatch } from "./util.events.js";
-import { plusIcon, trashIcon } from "./icons.js";
+import { downArrowIcon, plusIcon, trashIcon, upArrowIcon } from "./icons.js";
 import { wait } from "../shared/util.wait.js";
 import { updateBookService } from "../shared/service.update-book.js";
 import { SaveEvent } from "./event.save.js";
@@ -55,6 +55,7 @@ export class TorlifyPronunciations extends LitElement {
       }
 
       .pronunciation-item {
+        position: relative;
         background: var(--color-secondary-surface);
         border-radius: var(--radius-medium);
         padding: var(--size-medium);
@@ -237,6 +238,20 @@ export class TorlifyPronunciations extends LitElement {
                         title="Remove pronunciation">
                         ${trashIcon}
                       </button>
+                      <button
+                        class="move-up"
+                        ?disabled=${index === 0}
+                        @click=${this.moveUp(index)}
+                        title="${index === 0 ? 'This is already the first pronunciation' : 'Move pronunciation up'}">
+                        ${upArrowIcon}
+                      </button>
+                      <button
+                        class="move-down"
+                        ?disabled=${index === pronunciations.length - 1}
+                        @click=${this.moveDown(index)}
+                        title="${index === pronunciations.length - 1 ? 'This is already the last pronunciation' : 'Move pronunciation down'}">
+                        ${downArrowIcon}
+                      </button>
                     </div>
                   `,
                 )}
@@ -266,6 +281,50 @@ export class TorlifyPronunciations extends LitElement {
       });
       dispatch(this, SaveEvent());
     });
+  }
+
+  private moveUp(index: number): () => void {
+    return (): void => {
+      if (index === 0) return;
+      const currentPronunciations = this.bookContext.book?.pronunciation || [];
+      const newPronunciations = [...currentPronunciations];
+      const temp = newPronunciations[index - 1];
+      newPronunciations[index - 1] = newPronunciations[index];
+      newPronunciations[index] = temp;
+      this.bookContext.book!.pronunciation = newPronunciations;
+      this.requestUpdate();
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: {
+            pronunciation: newPronunciations,
+          }
+        });
+        dispatch(this, SaveEvent());
+      });
+    };
+  }
+
+  private moveDown(index: number): () => void {
+    return (): void => {
+      const currentPronunciations = this.bookContext.book?.pronunciation || [];
+      if (index === currentPronunciations.length - 1) return;
+      const newPronunciations = [...currentPronunciations];
+      const temp = newPronunciations[index + 1];
+      newPronunciations[index + 1] = newPronunciations[index];
+      newPronunciations[index] = temp;
+      this.bookContext.book!.pronunciation = newPronunciations;
+      this.requestUpdate();
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: {
+            pronunciation: newPronunciations,
+          }
+        });
+        dispatch(this, SaveEvent());
+      });
+    };
   }
 
   private async removePronunciation(index: number): Promise<void> {
