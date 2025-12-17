@@ -23,6 +23,7 @@ export class TorlifyModal extends LitElement {
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
         z-index: 1000;
         align-items: center;
         justify-content: center;
@@ -48,7 +49,7 @@ export class TorlifyModal extends LitElement {
 
       .modal-backdrop.visible .modal-content {
         opacity: 1;
-        transform: translateY(0);
+        transform: none;
       }
 
       .modal-header {
@@ -147,6 +148,7 @@ export class TorlifyModal extends LitElement {
   backdropClasses(): ReturnType<typeof classMap> {
     return classMap({
       "modal-backdrop": true,
+      overlay: true,
       opening: this.opening,
       closing: this.closing,
       visible: this.visible,

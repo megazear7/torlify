@@ -201,7 +201,7 @@ export class TorlifyBookEditor extends LitElement {
                 <torlify-field property="book.details.acknowledgements"></torlify-field>
                 <torlify-field property="book.details.aboutTheAuthor"></torlify-field>
                 <torlify-field property="book.details.backCoverText"></torlify-field>
-                <torlify-field property="book.details.coverImagePromopt"></torlify-field>
+                <torlify-field property="book.details.coverImagePrompt"></torlify-field>
                 <torlify-field property="book.details.includeChapterTitles" type="boolean"></torlify-field>
               </div>
             </torlify-modal>
@@ -260,7 +260,7 @@ export class TorlifyBookEditor extends LitElement {
                 Title
                 <torlify-book-title-modal></torlify-book-title-modal>
               </h4>
-              <torlify-field property="book.title" type="textarea" heading="h2"></torlify-field>
+              <torlify-field property="book.title" type="textarea" hideLabel></torlify-field>
               <div class="stats">
                 <span>${checkCompletion(this.bookContext.book)}% complete</span>
                 <span>${formatNumber(this.tokens)} tokens</span>
@@ -272,13 +272,13 @@ export class TorlifyBookEditor extends LitElement {
             </div>
             <div class="secondary-surface">
               <h4>Overview</h4>
-              <torlify-field property="book.overview" type="textarea"></torlify-field>
+              <torlify-field property="book.overview" type="textarea" hideLabel></torlify-field>
               <h4>Writing Instructions</h4>
-              <torlify-field property="book.instructions.writing" type="textarea"></torlify-field>
+              <torlify-field property="book.instructions.writing" type="textarea" hideLabel></torlify-field>
               <h4>Edit Instructions</h4>
-              <torlify-field property="book.instructions.edit" type="textarea"></torlify-field>
+              <torlify-field property="book.instructions.edit" type="textarea" hideLabel></torlify-field>
               <h4>Audio Instructions</h4>
-              <torlify-field property="book.instructions.audio" type="textarea"></torlify-field>
+              <torlify-field property="book.instructions.audio" type="textarea" hideLabel></torlify-field>
             </div>
           `
         : html`

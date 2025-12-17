@@ -29,7 +29,7 @@ export class TorlifyField extends LitElement {
         align-items: center;
         gap: var(--size-small);
         margin-bottom: var(--size-small);
-        color: var(--color-accent);
+        color: var(--color-secondary-text-muted);
         opacity: 0.8;
         font-style: italic;
       }
@@ -45,7 +45,7 @@ export class TorlifyField extends LitElement {
 
       .generate {
         position: absolute;
-        top: var(--size-small);
+        top: calc(-1 * var(--size-medium));
         right: calc(-1 * var(--size-medium));
         padding: var(--size-small);
         background: var(--color-secondary-surface-active);
@@ -54,6 +54,7 @@ export class TorlifyField extends LitElement {
         transition: var(--transition-all);
         box-shadow: var(--shadow-normal);
         color: var(--color-secondary-text-muted);
+        cursor: pointer;
       }
 
       .field:hover .generate {
@@ -99,6 +100,9 @@ export class TorlifyField extends LitElement {
   @property({ type: String })
   public label: string = "";
 
+  @property({ type: Boolean })
+  public hideLabel: boolean = false;
+
   @property({ type: String })
   public help: string = "";
 
@@ -128,8 +132,10 @@ export class TorlifyField extends LitElement {
 
   input(): TemplateResult {
     return html`
-      <div class="field">
+      ${ this.hideLabel ? html`` : html`
         <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+      `}
+      <div class="field">
         <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
         ${this.renderGenerate()}
       </div>
@@ -138,8 +144,10 @@ export class TorlifyField extends LitElement {
 
   number(): TemplateResult {
     return html`
-      <div class="field">
+      ${ this.hideLabel ? html`` : html`
         <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+      `}
+      <div class="field">
         <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
       </div>
     `;
@@ -147,8 +155,10 @@ export class TorlifyField extends LitElement {
 
   textarea(): TemplateResult {
     return html`
-      <div class="field">
+      ${ this.hideLabel ? html`` : html`
         <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+      `}
+      <div class="field">
         <torlify-auto-textarea
           heading="${this.heading}"
           .value="${this.value}"
@@ -160,8 +170,10 @@ export class TorlifyField extends LitElement {
 
   boolean(): TemplateResult {
     return html`
-      <div class="field">
+      ${ this.hideLabel ? html`` : html`
         <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+      `}
+      <div class="field">
         <torlify-checkbox
           .checked="${!!this.value}"
           text=${this.labelWithFallback()}

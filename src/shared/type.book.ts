@@ -90,7 +90,7 @@ export const BookDetails = z.object({
     .describe(
       "The text for the back cover of the book. This should hook the reader without giving away any spoilers. This should be about two paragraphs long.",
     ),
-  coverImagePromopt: z.string().optional().describe("The prompt used to generate the cover image for the book."),
+  coverImagePrompt: z.string().optional().describe("The prompt used to generate the cover image for the book."),
 });
 export type BookDetails = z.infer<typeof BookDetails>;
 

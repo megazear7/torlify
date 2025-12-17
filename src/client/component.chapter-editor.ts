@@ -197,7 +197,7 @@ export class TorlifyChapterEditor extends LitElement {
                 Chapter ${this.chapterContext.chapter.number}
                 <torlify-chapter-title-modal></torlify-chapter-title-modal>
               </h4>
-              <torlify-field property="chapter.title" type="textarea" heading="h2"></torlify-field>
+              <torlify-field property="chapter.title" type="textarea" heading="h2" hideLabel></torlify-field>
             </div>
             <torlify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
@@ -334,9 +334,9 @@ export class TorlifyChapterEditor extends LitElement {
               <torlify-field property="chapter.who"></torlify-field>
             </div>
             <div class="secondary-surface">
-              <torlify-field property="chapter.minParts"></torlify-field>
-              <torlify-field property="chapter.maxParts"></torlify-field>
-              <torlify-field property="chapter.partLength"></torlify-field>
+              <torlify-field property="chapter.minParts" .generation=${false}></torlify-field>
+              <torlify-field property="chapter.maxParts" .generation=${false}></torlify-field>
+              <torlify-field property="chapter.partLength" .generation=${false}></torlify-field>
             </div>
             <div class="secondary-surface">
               <h4>Outline</h4>
