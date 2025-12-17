@@ -1,5 +1,5 @@
 import { css, html, LitElement, TemplateResult } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
 import { AppContext, appContext, BookContext, bookContext, chapterContext, ChapterContext } from "./context.js";
@@ -18,6 +18,11 @@ import { aiIcon, infoIcon } from "./icons.js";
 import { WarningEvent } from "./event.warning.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
 import { TorlifyModal } from "./component.modal.js";
+import { generateBookFieldService } from "../shared/service.generate-book-field.js";
+import z from "zod";
+
+export const FieldType = z.enum(["input", "textarea", "number", "boolean"]);
+export type FieldType = z.infer<typeof FieldType>;
 
 @customElement("torlify-field")
 export class TorlifyField extends LitElement {
@@ -70,6 +75,12 @@ export class TorlifyField extends LitElement {
       .generate-button {
         cursor: pointer;
       }
+
+      .generate-button.loading {
+        background: var(--color-secondary-surface-active) !important;
+        box-shadow: var(--shadow-normal) !important;
+        transform: none !important;
+      }
     `,
   ];
 
@@ -92,7 +103,7 @@ export class TorlifyField extends LitElement {
   };
 
   @property({ type: String })
-  public type: "input" | "textarea" | "number" | "boolean" = "input";
+  public type: FieldType = FieldType.enum.input;
 
   @property({ type: String })
   public property: string = "";
@@ -112,29 +123,39 @@ export class TorlifyField extends LitElement {
   @property({ type: Boolean })
   public generation: boolean = true;
 
+  @state()
+  public generationLoading: boolean = false;
+
   @query("torlify-modal")
   private modal!: TorlifyModal;
+
+  @query("#generation-instructions")
+  private generationInstructions!: HTMLTextAreaElement;
 
   private debounceHandler = new DebounceHandler();
 
   override render(): TemplateResult {
     switch (this.type) {
-      case "input":
+      case FieldType.enum.input:
         return this.input();
-      case "number":
+      case FieldType.enum.number:
         return this.number();
-      case "textarea":
+      case FieldType.enum.textarea:
         return this.textarea();
-      case "boolean":
+      case FieldType.enum.boolean:
         return this.boolean();
+      default:
+        throw new Error(`Unknown field type: ${this.type}`);
     }
   }
 
   input(): TemplateResult {
     return html`
-      ${ this.hideLabel ? html`` : html`
-        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
-      `}
+      ${this.hideLabel
+        ? html``
+        : html`
+            <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+          `}
       <div class="field">
         <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
         ${this.renderGenerate()}
@@ -144,9 +165,11 @@ export class TorlifyField extends LitElement {
 
   number(): TemplateResult {
     return html`
-      ${ this.hideLabel ? html`` : html`
-        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
-      `}
+      ${this.hideLabel
+        ? html``
+        : html`
+            <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+          `}
       <div class="field">
         <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
       </div>
@@ -155,9 +178,11 @@ export class TorlifyField extends LitElement {
 
   textarea(): TemplateResult {
     return html`
-      ${ this.hideLabel ? html`` : html`
-        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
-      `}
+      ${this.hideLabel
+        ? html``
+        : html`
+            <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+          `}
       <div class="field">
         <torlify-auto-textarea
           heading="${this.heading}"
@@ -170,9 +195,11 @@ export class TorlifyField extends LitElement {
 
   boolean(): TemplateResult {
     return html`
-      ${ this.hideLabel ? html`` : html`
-        <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
-      `}
+      ${this.hideLabel
+        ? html``
+        : html`
+            <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
+          `}
       <div class="field">
         <torlify-checkbox
           .checked="${!!this.value}"
@@ -193,7 +220,16 @@ export class TorlifyField extends LitElement {
           <h6>Additional Instructions (optional)</h6>
           <torlify-auto-textarea id="generation-instructions"></torlify-auto-textarea>
           <torlify-bar>
-            <button class="standard-button generate-button" @click="${this.generate()}">${this.value ? 'Regenerate' : 'Generate'}</button>
+            <button
+              class="standard-button generate-button ${this.generationLoading ? "loading" : ""}"
+              @click="${this.generate()}">
+              ${this.generationLoading
+                ? html`
+                    <torlify-spinner></torlify-spinner>
+                  `
+                : ""}
+              ${this.value ? "Regenerate" : "Generate"}
+            </button>
           </torlify-bar>
         </div>
       </torlify-modal>
@@ -235,10 +271,30 @@ export class TorlifyField extends LitElement {
   }
 
   generate(): () => void {
-    return (): void => {
+    return async (): Promise<void> => {
       dispatch(this, WarningEvent("Generation not yet implemented"));
+      const property = this.property;
+      const instructions = this.generationInstructions.value;
+      const book = this.bookContext.book?.id;
+
+      if (!book) {
+        dispatch(this, WarningEvent("No book context available for generation"));
+        return;
+      }
+
+      this.generationLoading = true;
+      await generateBookFieldService.fetch({ property, instructions, book });
+      this.generationLoading = false;
       this.modal.close();
     };
+  }
+
+  get generationAvailable(): boolean {
+    return (
+      this.property.startsWith("book.") &&
+      this.generation &&
+      (this.type === FieldType.enum.input || this.type === FieldType.enum.textarea)
+    );
   }
 
   get propertyId(): string {
@@ -255,7 +311,7 @@ export class TorlifyField extends LitElement {
     for (const prop of properties) {
       value = value ? value[prop] : undefined;
     }
-    if (this.type === "number") {
+    if (this.type === FieldType.enum.number) {
       return value || 0;
     }
     return value || "";
@@ -328,14 +384,16 @@ export class TorlifyField extends LitElement {
   getValueFromEvent(event: CustomEvent | InputEvent): string | number | boolean | undefined {
     const target = event.target as HTMLInputElement | HTMLTextAreaElement;
     switch (this.type) {
-      case "input":
+      case FieldType.enum.input:
         return (event.target as HTMLInputElement).value;
-      case "number":
+      case FieldType.enum.number:
         return Number((event.target as HTMLInputElement).value);
-      case "textarea":
+      case FieldType.enum.textarea:
         return (event as CustomEvent).detail.value;
-      case "boolean":
+      case FieldType.enum.boolean:
         return (target as HTMLInputElement).checked;
+      default:
+        throw new Error(`Unknown field type: ${this.type}`);
     }
   }
 }

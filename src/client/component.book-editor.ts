@@ -223,8 +223,14 @@ export class TorlifyBookEditor extends LitElement {
                 <torlify-field .generation=${false} property="book.model.text.name"></torlify-field>
                 <torlify-field .generation=${false} property="book.model.text.modelName"></torlify-field>
                 <torlify-field .generation=${false} property="book.model.text.endpoint"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.text.cost.inputTokenCost" type="number"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.text.cost.outputTokenCost" type="number"></torlify-field>
+                <torlify-field
+                  .generation=${false}
+                  property="book.model.text.cost.inputTokenCost"
+                  type="number"></torlify-field>
+                <torlify-field
+                  .generation=${false}
+                  property="book.model.text.cost.outputTokenCost"
+                  type="number"></torlify-field>
                 <h3>Audio Model Configuration</h3>
                 <torlify-field .generation=${false} property="book.model.audio.name"></torlify-field>
                 <torlify-field .generation=${false} property="book.model.audio.modelName"></torlify-field>
@@ -235,8 +241,14 @@ export class TorlifyBookEditor extends LitElement {
                 </p>
                 <torlify-field .generation=${false} property="book.model.audio.voice"></torlify-field>
                 <torlify-field .generation=${false} property="book.model.audio.endpoint"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.audio.cost.inputTokenCost" type="number"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.audio.cost.outputTokenCost" type="number"></torlify-field>
+                <torlify-field
+                  .generation=${false}
+                  property="book.model.audio.cost.inputTokenCost"
+                  type="number"></torlify-field>
+                <torlify-field
+                  .generation=${false}
+                  property="book.model.audio.cost.outputTokenCost"
+                  type="number"></torlify-field>
               </div>
             </torlify-modal>
             <torlify-modal id="${Modal.enum.delete}-modal">
