@@ -195,13 +195,13 @@ export class TorlifyBookEditor extends LitElement {
             <torlify-modal id="${Modal.enum.details}-modal">
               <div slot="body">
                 <h3>Details</h3>
-                <torlify-field property="book.details.authorName"></torlify-field>
-                <torlify-field property="book.details.isbn"></torlify-field>
-                <torlify-field property="book.details.dedication"></torlify-field>
-                <torlify-field property="book.details.acknowledgements"></torlify-field>
-                <torlify-field property="book.details.aboutTheAuthor"></torlify-field>
-                <torlify-field property="book.details.backCoverText"></torlify-field>
-                <torlify-field property="book.details.coverImagePrompt"></torlify-field>
+                <torlify-field property="book.details.authorName" .generation=${false}></torlify-field>
+                <torlify-field property="book.details.isbn" .generation=${false}></torlify-field>
+                <torlify-field property="book.details.dedication" type="textarea"></torlify-field>
+                <torlify-field property="book.details.acknowledgements" type="textarea"></torlify-field>
+                <torlify-field property="book.details.aboutTheAuthor" type="textarea"></torlify-field>
+                <torlify-field property="book.details.backCoverText" type="textarea"></torlify-field>
+                <torlify-field property="book.details.coverImagePrompt" type="textarea"></torlify-field>
                 <torlify-field property="book.details.includeChapterTitles" type="boolean"></torlify-field>
               </div>
             </torlify-modal>
@@ -235,9 +235,7 @@ export class TorlifyBookEditor extends LitElement {
                 <torlify-field .generation=${false} property="book.model.audio.name"></torlify-field>
                 <torlify-field .generation=${false} property="book.model.audio.modelName"></torlify-field>
                 <p>
-                  <a href="https://platform.openai.com/docs/guides/text-to-speech/voice-options#voice-options">
-                    OpenAI Voice options
-                  </a>
+                  <a href="https://www.openai.fm/">OpenAI Voice options</a>
                 </p>
                 <torlify-field .generation=${false} property="book.model.audio.voice"></torlify-field>
                 <torlify-field .generation=${false} property="book.model.audio.endpoint"></torlify-field>

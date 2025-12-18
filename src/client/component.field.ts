@@ -20,6 +20,7 @@ import { updateChapterService } from "../shared/service.update-chapter.js";
 import { TorlifyModal } from "./component.modal.js";
 import { generateBookFieldService } from "../shared/service.generate-book-field.js";
 import z from "zod";
+import { TorlifyAutoTextarea } from "./component.auto-textarea.js";
 
 export const FieldType = z.enum(["input", "textarea", "number", "boolean"]);
 export type FieldType = z.infer<typeof FieldType>;
@@ -272,8 +273,7 @@ export class TorlifyField extends LitElement {
 
   generate(): () => void {
     return async (): Promise<void> => {
-      dispatch(this, WarningEvent("Generation not yet implemented"));
-      const property = this.property;
+      const property = this.contextualProperty;
       const instructions = this.generationInstructions.value;
       const book = this.bookContext.book?.id;
 
@@ -394,6 +394,15 @@ export class TorlifyField extends LitElement {
         return (target as HTMLInputElement).checked;
       default:
         throw new Error(`Unknown field type: ${this.type}`);
+    }
+  }
+
+  resize(): void {
+    const shadow = this.shadowRoot;
+    if (!shadow) return;
+    const textarea = shadow.querySelector<TorlifyAutoTextarea>(".field torlify-auto-textarea");
+    if (textarea) {
+      textarea.adjustHeight();
     }
   }
 }

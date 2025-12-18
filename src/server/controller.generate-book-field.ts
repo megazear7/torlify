@@ -5,8 +5,9 @@ import {
   GenerateBookFieldResponse,
   generateBookFieldService,
 } from "../shared/service.generate-book-field.js";
-import { wait } from "../shared/util.wait.js";
 import { AbstractController } from "./main.controller.js";
+import { getBook } from "./util.book.js";
+import { generateBookField } from "./util.generate-book-field.js";
 
 export class GenerateBookFieldController extends AbstractController<
   GenerateBookFieldBodyParameters,
@@ -20,11 +21,11 @@ export class GenerateBookFieldController extends AbstractController<
     GenerateBookFieldBodyParameters,
     GenerateBookFieldPathParameters
   >): Promise<GenerateBookFieldResponse> {
-    // TODO Implement actual generation logic
-    await wait(3000);
+    const book = await getBook(pathParams.book);
+    const field = await generateBookField(book, pathParams.property, bodyParams.instructions);
     return {
-      message: `(TODO NOT IMPLEMENTED) Generated field ${pathParams.property} successfully for book ${pathParams.book} with instructions: ${bodyParams.instructions}`,
-      value: "Generated value",
+      message: `Generated field ${pathParams.property} successfully for book ${pathParams.book} with instructions: ${bodyParams.instructions}`,
+      value: field,
     };
   }
 }

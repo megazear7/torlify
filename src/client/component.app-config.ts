@@ -77,9 +77,7 @@ export class TorlifyAppConfig extends LitElement {
           <torlify-field .generation=${false} property="app.model.audio.name"></torlify-field>
           <torlify-field .generation=${false} property="app.model.audio.modelName"></torlify-field>
           <p>
-            <a href="https://platform.openai.com/docs/guides/text-to-speech/voice-options#voice-options">
-              OpenAI Voice options
-            </a>
+            <a href="https://www.openai.fm/">OpenAI Voice options</a>
           </p>
           <torlify-field .generation=${false} property="app.model.audio.voice"></torlify-field>
           <torlify-field .generation=${false} property="app.model.audio.endpoint"></torlify-field>
