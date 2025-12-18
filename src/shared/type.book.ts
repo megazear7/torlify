@@ -94,6 +94,27 @@ export const BookDetails = z.object({
 });
 export type BookDetails = z.infer<typeof BookDetails>;
 
+export const BookRequestType = z.enum(["generate", "create"]).describe("The type of book request.");
+export type BookRequestType = z.infer<typeof BookRequestType>;
+
+export const MINIMUM_PART_LENGTH = 100;
+export const MAXIMUM_PART_LENGTH = 2000;
+
+export const MINIMUM_NUMBER_OF_CHAPTERS = 1;
+export const MAXIMUM_NUMBER_OF_CHAPTERS = 50;
+
+export const BookRequestStub = z.object({
+  instructions: z.string(),
+  numberOfChapters: z.number().min(MINIMUM_NUMBER_OF_CHAPTERS).max(MAXIMUM_NUMBER_OF_CHAPTERS),
+  partLength: z.number().min(MINIMUM_PART_LENGTH).max(MAXIMUM_PART_LENGTH),
+});
+export type BookRequestStub = z.infer<typeof BookRequestStub>;
+
+export const BookRequest = BookRequestStub.extend({
+  type: BookRequestType,
+});
+export type BookRequest = z.infer<typeof BookRequest>;
+
 export const BookChapterPartText = z
   .string()
   .describe(
@@ -297,6 +318,7 @@ export const Book = BookStub.extend({
   loadingMessages: LoadingMessages,
   model: ModelConfigs,
   details: BookDetails.optional(),
+  request: BookRequest.optional(),
   references: BookReference.array().describe("A list of reference files to use when writing the book."),
 });
 export type Book = z.infer<typeof Book>;

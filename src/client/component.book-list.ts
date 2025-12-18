@@ -10,13 +10,7 @@ import "./component.modal.js";
 import "./component.loading-overlay.js";
 import "./component.number-slider.js";
 import { dispatch } from "./util.events.js";
-import {
-  generateBookService,
-  MAXIMUM_NUMBER_OF_CHAPTERS,
-  MAXIMUM_PART_LENGTH,
-  MINIMUM_NUMBER_OF_CHAPTERS,
-  MINIMUM_PART_LENGTH,
-} from "../shared/service.generate-book.js";
+import { generateBookService } from "../shared/service.generate-book.js";
 import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { WarningEvent } from "./event.warning.js";
@@ -24,6 +18,12 @@ import { TorlifyAutoTextarea } from "./component.auto-textarea.js";
 import { wait } from "../shared/util.wait.js";
 import { TorlifyModal } from "./component.modal.js";
 import { createBookService } from "../shared/service.create-book.js";
+import {
+  MAXIMUM_NUMBER_OF_CHAPTERS,
+  MAXIMUM_PART_LENGTH,
+  MINIMUM_NUMBER_OF_CHAPTERS,
+  MINIMUM_PART_LENGTH,
+} from "../shared/type.book.js";
 
 @customElement("torlify-book-list")
 export class TorlifyBookList extends LitElement {
@@ -171,6 +171,7 @@ export class TorlifyBookList extends LitElement {
               <torlify-number-slider
                 min="${MINIMUM_PART_LENGTH}"
                 max="${MAXIMUM_PART_LENGTH}"
+                step="10"
                 label="Part Length"
                 .value=${this.generateBookPartLength}
                 @input="${this.handleGenerateBookPartLength}"></torlify-number-slider>

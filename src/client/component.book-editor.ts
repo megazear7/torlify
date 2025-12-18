@@ -33,7 +33,7 @@ import "./component.checkbox.js";
 import "./component.loading-overlay.js";
 import "./component.book-title-modal.js";
 
-export const Modal = z.enum(["delete", "generate", "configure", "edit", "download", "details"]);
+export const Modal = z.enum(["delete", "generate", "info", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
 
 @customElement("torlify-book-editor")
@@ -70,6 +70,13 @@ export class TorlifyBookEditor extends LitElement {
 
       .delete-options :nth-child(2) {
         margin-left: auto;
+      }
+
+      .original-instructions {
+        font-style: italic;
+        padding-left: var(--size-medium);
+        color: var(--color-secondary-text-muted);
+        border-left: 4px solid var(--color-secondary-text-muted);
       }
     `,
   ];
@@ -111,6 +118,7 @@ export class TorlifyBookEditor extends LitElement {
               <button class="standard-button" @click=${this.openModal(Modal.enum.download)}>Download</button>
             </torlify-bar>
             <torlify-bar>
+              <button class="standard-button" @click=${this.openModal(Modal.enum.info)}>Info</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.details)}>Details</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.configure)}>Configure</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.delete)}>Delete</button>
@@ -186,6 +194,27 @@ export class TorlifyBookEditor extends LitElement {
                       : ""}
                   </button>
                 </torlify-bar>
+              </div>
+            </torlify-modal>
+            <torlify-modal id="${Modal.enum.info}-modal">
+              <div slot="body">
+                <h3>Info</h3>
+                ${this.bookContext.book.request
+                  ? html`
+                      <p>
+                        This book was created using the ${this.bookContext.book.request?.type} feature with
+                        ${this.bookContext.book.request?.numberOfChapters} chapters and a part length of
+                        ${this.bookContext.book.request?.partLength}. The instructions that were provided are shown
+                        below.
+                      </p>
+                      <p class="original-instructions">${this.bookContext.book.request?.instructions}</p>
+                    `
+                  : html`
+                      <p>
+                        No request information available. You likely created or generated this book before this feature
+                        was implemented.
+                      </p>
+                    `}
               </div>
             </torlify-modal>
             <torlify-modal id="${Modal.enum.details}-modal">

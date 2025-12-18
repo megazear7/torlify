@@ -1,6 +1,6 @@
 import { NoPathParams, RequestOptions } from "../shared/main.service.js";
 import { CreateBookParameters, createBookService } from "../shared/service.create-book.js";
-import { Book } from "../shared/type.book.js";
+import { Book, BookRequestType } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { readAppConfig } from "./service.app-config.js";
 import { saveBook } from "./util.book.js";
@@ -31,6 +31,10 @@ export class CreateBookController extends AbstractController<CreateBookParameter
       instructions: { writing: "", edit: "", audio: "" },
       pronunciation: [],
       characters: [],
+      request: {
+        type: BookRequestType.enum.create,
+        ...bodyParams,
+      },
       model: {
         text: {
           usage: { prompt_tokens: 0, completion_tokens: 0 },

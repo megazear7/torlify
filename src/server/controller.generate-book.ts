@@ -1,7 +1,7 @@
 import { ChatCompletionMessageParam } from "openai/resources.js";
 import { NoPathParams, RequestOptions } from "../shared/main.service.js";
 import { GenerateBookParameters, generateBookService } from "../shared/service.generate-book.js";
-import { Book, BookStub } from "../shared/type.book.js";
+import { Book, BookRequestType, BookStub } from "../shared/type.book.js";
 import { AbstractController } from "./main.controller.js";
 import { readAppConfig } from "./service.app-config.js";
 import { generateBookPrompt } from "./prompt.generate-book.js";
@@ -42,6 +42,10 @@ export class GenerateBookController extends AbstractController<GenerateBookParam
         aboutTheAuthor: "",
       },
       references: [],
+      request: {
+        type: BookRequestType.enum.generate,
+        ...bodyParams,
+      },
       model: {
         text: {
           ...appConfig.model.text,
