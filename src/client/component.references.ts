@@ -304,7 +304,7 @@ export class TorlifyReferences extends LitElement {
       <div class="references-container">
         <div class="references-header">
           <h4>References</h4>
-          <button class="add-button" @click="${this.addReference}">${plusIcon} Add Reference</button>
+          <button class="add-button" @click=${this.addReference}>${plusIcon} Add Reference</button>
         </div>
 
         ${references.length === 0
@@ -336,10 +336,10 @@ export class TorlifyReferences extends LitElement {
                         </div>
                       </div>
                       <div class="reference-actions">
-                        <button class="action-button edit-button" @click="${(): void => this.editReference(index)}">
+                        <button class="action-button edit-button" @click=${(): void => this.editReference(index)}>
                           ${editIcon}
                         </button>
-                        <button class="action-button remove-button" @click="${(): void => this.removeReference(index)}">
+                        <button class="action-button remove-button" @click=${(): void => this.removeReference(index)}>
                           ${trashIcon}
                         </button>
                       </div>
@@ -382,7 +382,7 @@ export class TorlifyReferences extends LitElement {
               id="file-input"
               class="file-input"
               type="file"
-              @change="${(e: Event): void => this.handleFileSelect(e.target as HTMLInputElement)}"
+              @change=${(e: Event): void => this.handleFileSelect(e.target as HTMLInputElement)}
               accept=".txt,.md,.pdf,.doc,.docx" />
             <label for="file-input">
               <div class="file-upload-content">
@@ -409,7 +409,7 @@ export class TorlifyReferences extends LitElement {
           <textarea
             class="form-textarea"
             .value="${this.instructions}"
-            @input="${this.handleInstructionsInput}"
+            @input=${this.handleInstructionsInput}
             placeholder="Instructions for using this reference"
             rows="3"></textarea>
         </div>
@@ -427,7 +427,7 @@ export class TorlifyReferences extends LitElement {
             )}
           </div>
         </div>
-        <button class="standard-button" @click="${this.handleModalSubmit}">
+        <button class="standard-button" @click=${this.handleModalSubmit}>
           ${this.editingIndex !== null ? "Update Reference" : "Add Reference"}
         </button>
       </div>

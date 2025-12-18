@@ -10,7 +10,15 @@ import { DebounceHandler } from "./util.debounce.js";
 import { SaveEvent } from "./event.save.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
 import { updateBookService } from "../shared/service.update-book.js";
-import { Book, BookId, Chapter, ChapterPart } from "../shared/type.book.js";
+import {
+  Book,
+  BookId,
+  Chapter,
+  ChapterPart,
+  MAXIMUM_PART_LENGTH,
+  MINIMUM_PART_LENGTH,
+  PART_LENGTH_STEP,
+} from "../shared/type.book.js";
 import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
@@ -218,7 +226,7 @@ export class TorlifyChapterEditor extends LitElement {
                   .offIcon="${aiIcon}"
                   .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
-                  @change="${this.handleRegenerateCheckedChange}"></torlify-checkbox>
+                  @change=${this.handleRegenerateCheckedChange}></torlify-checkbox>
                 ${this.regenerateChecked
                   ? html`
                       <p>All content for the entire chapter will be generated, replacing any existing content.</p>
@@ -230,9 +238,9 @@ export class TorlifyChapterEditor extends LitElement {
                       </p>
                     `}
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.generateOutline()}">Outline</button>
-                  <button class="standard-button" @click="${this.generateParts()}">Text</button>
-                  <button class="standard-button" @click="${this.generateAudio()}">Audio</button>
+                  <button class="standard-button" @click=${this.generateOutline()}>Outline</button>
+                  <button class="standard-button" @click=${this.generateParts()}>Text</button>
+                  <button class="standard-button" @click=${this.generateAudio()}>Audio</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -241,7 +249,7 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Edit Chapter</h3>
                 <p>Edit the entire chapter based on your instructions</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.edit()}">Edit</button>
+                  <button class="standard-button" @click=${this.edit()}>Edit</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -250,9 +258,9 @@ export class TorlifyChapterEditor extends LitElement {
                 <h3>Download Chapter</h3>
                 <p>Download the complete chapter outline, text, or audio.</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
-                  <button class="standard-button" @click="${this.downloadText()}">Text</button>
-                  <button class="standard-button" @click="${this.downloadAudio()}">
+                  <button class="standard-button" @click=${this.downloadOutline()}>Outline</button>
+                  <button class="standard-button" @click=${this.downloadText()}>Text</button>
+                  <button class="standard-button" @click=${this.downloadAudio()}>
                     Audio
                     ${this.downloadingAudio
                       ? html`
@@ -274,7 +282,7 @@ export class TorlifyChapterEditor extends LitElement {
                     title="${this.chapterContext.chapter.number === 1
                       ? "Cannot move before first chapter"
                       : `Move chapter ${this.chapterContext.chapter.number} before the previous chapter`}"
-                    @click="${this.moveBeforePrevious()}">
+                    @click=${this.moveBeforePrevious()}>
                     Before previous
                   </button>
                   <button
@@ -283,7 +291,7 @@ export class TorlifyChapterEditor extends LitElement {
                     title="${this.chapterContext.chapter.number === this.bookContext.book?.chapters.length
                       ? "Cannot move after last chapter"
                       : `Move chapter ${this.chapterContext.chapter.number} after the next chapter`}"
-                    @click="${this.moveAfterNext()}">
+                    @click=${this.moveAfterNext()}>
                     After next
                   </button>
                 </torlify-bar>
@@ -297,13 +305,13 @@ export class TorlifyChapterEditor extends LitElement {
                   <button
                     class="standard-button"
                     title="Add a new chapter before chapter ${this.chapterContext.chapter.number}"
-                    @click="${this.addBefore()}">
+                    @click=${this.addBefore()}>
                     Before
                   </button>
                   <button
                     class="standard-button"
                     title="Add a new chapter after chapter ${this.chapterContext.chapter.number}"
-                    @click="${this.addAfter()}">
+                    @click=${this.addAfter()}>
                     After
                   </button>
                 </torlify-bar>
@@ -315,12 +323,12 @@ export class TorlifyChapterEditor extends LitElement {
                 <p>Are you sure you want to delete this chapter?</p>
                 <div class="delete-options">
                   <torlify-bar>
-                    <button class="standard-button" @click="${this.deleteOutline()}">Outline</button>
+                    <button class="standard-button" @click=${this.deleteOutline()}>Outline</button>
                     <button class="standard-button" @click=${this.deleteText()}>Text</button>
                     <button class="standard-button" @click=${this.deleteAudio()}>Audio</button>
                   </torlify-bar>
                   <torlify-bar>
-                    <button class="standard-button delete" @click="${this.deleteChapter()}">Delete</button>
+                    <button class="standard-button delete" @click=${this.deleteChapter()}>Delete</button>
                   </torlify-bar>
                 </div>
               </div>
@@ -334,9 +342,16 @@ export class TorlifyChapterEditor extends LitElement {
               <torlify-field property="chapter.who"></torlify-field>
             </div>
             <div class="secondary-surface">
-              <torlify-field property="chapter.minParts" .generation=${false}></torlify-field>
-              <torlify-field property="chapter.maxParts" .generation=${false}></torlify-field>
-              <torlify-field property="chapter.partLength" .generation=${false}></torlify-field>
+              <torlify-field property="chapter.minParts" .generation=${false} type="number" min="1"></torlify-field>
+              <torlify-field property="chapter.maxParts" .generation=${false} type="number" min="1"></torlify-field>
+              <torlify-field
+                property="chapter.partLength"
+                help="Suggested length for each part in number of words. The minimum is ${MINIMUM_PART_LENGTH}, the maximum is ${MAXIMUM_PART_LENGTH}."
+                .generation=${false}
+                type="number"
+                min=${MINIMUM_PART_LENGTH}
+                max=${MAXIMUM_PART_LENGTH}
+                step=${PART_LENGTH_STEP}></torlify-field>
             </div>
             <div class="secondary-surface">
               <h4>Outline</h4>
@@ -344,7 +359,7 @@ export class TorlifyChapterEditor extends LitElement {
                 (item, index) => html`
                   <torlify-auto-textarea
                     .value="${item}"
-                    @input="${this.updateProperty("outline", index)}"></torlify-auto-textarea>
+                    @input=${this.updateProperty("outline", index)}></torlify-auto-textarea>
                 `,
               )}
             </div>
@@ -355,32 +370,32 @@ export class TorlifyChapterEditor extends LitElement {
       <div class="nav-container nav-container-previous">
         <button
           class="part-nav-button previous"
-          @click="${this.navigateToPreviousPart}"
-          ?disabled="${!this.hasPreviousPart}"
-          title="${this.hasPreviousPart ? "Go to previous part" : "No previous part"}">
+          @click=${this.navigateToPreviousPart}
+          ?disabled=${!this.hasPreviousPart}
+          title=${this.hasPreviousPart ? "Go to previous part" : "No previous part"}>
           ${leftArrowIcon}
         </button>
         <button
           class="nav-button previous"
-          @click="${this.navigateToPreviousChapter}"
-          ?disabled="${!this.hasPrevious}"
-          title="${this.hasPrevious ? "Go to previous chapter" : "No previous chapter"}">
+          @click=${this.navigateToPreviousChapter}
+          ?disabled=${!this.hasPrevious}
+          title=${this.hasPrevious ? "Go to previous chapter" : "No previous chapter"}>
           ${leftArrowIcon}
         </button>
       </div>
       <div class="nav-container nav-container-next">
         <button
           class="nav-button next"
-          @click="${this.navigateToNextChapter}"
-          ?disabled="${!this.hasNext}"
-          title="${this.hasNext ? "Go to next chapter" : "No next chapter"}">
+          @click=${this.navigateToNextChapter}
+          ?disabled=${!this.hasNext}
+          title=${this.hasNext ? "Go to next chapter" : "No next chapter"}>
           ${rightArrowIcon}
         </button>
         <button
           class="part-nav-button next"
-          @click="${this.navigateToNextPart}"
-          ?disabled="${!this.hasNextPart}"
-          title="${this.hasNextPart ? "Go to next part" : "No next part"}">
+          @click=${this.navigateToNextPart}
+          ?disabled=${!this.hasNextPart}
+          title=${this.hasNextPart ? "Go to next part" : "No next part"}>
           ${rightArrowIcon}
         </button>
       </div>

@@ -65,7 +65,7 @@ export class TorlifyCheckbox extends LitElement {
     return html`
       <div class="checkbox-group">
         <label class="checkbox-label ${this.checked ? "checked" : ""}" for="checkbox">
-          <input type="checkbox" id="checkbox" .checked="${this.checked}" @change="${this.handleChange}" />
+          <input type="checkbox" id="checkbox" .checked="${this.checked}" @change=${this.handleChange} />
           ${this.checked ? this.onIcon : this.offIcon}
           <span class="checkbox-text">${this.checked ? this.on || this.text : this.off || this.text}</span>
         </label>

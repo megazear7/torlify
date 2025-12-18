@@ -138,14 +138,16 @@ export class TorlifyBookTable extends LitElement {
   @property()
   sortDirection: "asc" | "desc" = "desc";
 
-  private handleSort(column: string): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = "asc";
-    }
-    this.requestUpdate();
+  private handleSort(column: string): () => void {
+    return () => {
+      if (this.sortColumn === column) {
+        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      } else {
+        this.sortColumn = column;
+        this.sortDirection = "asc";
+      }
+      this.requestUpdate();
+    };
   }
 
   private getSortIndicator(column: string): string {
@@ -180,19 +182,19 @@ export class TorlifyBookTable extends LitElement {
       <table>
         <thead>
           <tr>
-            <th @click=${() => this.handleSort("title")}>Title${this.getSortIndicator("title")}</th>
-            <th @click=${() => this.handleSort("chapterCount")}>Chapters${this.getSortIndicator("chapterCount")}</th>
-            <th @click=${() => this.handleSort("wordCount")}>Words${this.getSortIndicator("wordCount")}</th>
-            <th @click=${() => this.handleSort("tokenCount")}>Tokens${this.getSortIndicator("tokenCount")}</th>
-            <th @click=${() => this.handleSort("efficiency")}>
+            <th @click=${this.handleSort("title")}>Title${this.getSortIndicator("title")}</th>
+            <th @click=${this.handleSort("chapterCount")}>Chapters${this.getSortIndicator("chapterCount")}</th>
+            <th @click=${this.handleSort("wordCount")}>Words${this.getSortIndicator("wordCount")}</th>
+            <th @click=${this.handleSort("tokenCount")}>Tokens${this.getSortIndicator("tokenCount")}</th>
+            <th @click=${this.handleSort("efficiency")}>
               <div style="display: flex; align-items: center;">
                 <span>Efficiency${this.getSortIndicator("efficiency")}</span>
-                <torlify-tooltip content="Cost per 10,000 Words">
+                <torlify-tooltip content="Cost per 10,000 Words" offsetY="50">
                   <span class="info-icon">${infoIcon}</span>
                 </torlify-tooltip>
               </div>
             </th>
-            <th @click=${() => this.handleSort("cost")}>Cost ${this.getSortIndicator("cost")}</th>
+            <th @click=${this.handleSort("cost")}>Cost ${this.getSortIndicator("cost")}</th>
           </tr>
         </thead>
         <tbody>

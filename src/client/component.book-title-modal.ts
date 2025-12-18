@@ -62,13 +62,13 @@ export class TorlifyTitleModal extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <button class="open" @click="${this.open()}">${gearIcon}</button>
+      <button class="open" @click=${this.open()}>${gearIcon}</button>
       <torlify-modal id="config">
         <div slot="body">
           <h2>Title</h2>
           <torlify-field property="book.title" type="textarea" heading="h2"></torlify-field>
           <torlify-bar label="Audio Actions">
-            <button class="standard-button" @click=${this.generate()} ?disabled="${this.loading}">
+            <button class="standard-button" @click=${this.generate()} ?disabled=${this.loading}>
               ${aiIcon} Generate
               ${this.loading
                 ? html`

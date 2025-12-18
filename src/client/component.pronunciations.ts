@@ -197,7 +197,7 @@ export class TorlifyPronunciations extends LitElement {
       <div class="pronunciations-container">
         <div class="pronunciations-header">
           <h4>Pronunciations</h4>
-          <button class="add-button" @click="${this.addPronunciation}">${plusIcon} Add Pronunciation</button>
+          <button class="add-button" @click=${this.addPronunciation}>${plusIcon} Add Pronunciation</button>
         </div>
 
         ${pronunciations.length === 0
@@ -216,8 +216,8 @@ export class TorlifyPronunciations extends LitElement {
                           type="text"
                           placeholder="Word or phrase to replace"
                           .value="${pronunciation.match}"
-                          @input="${(e: Event): void =>
-                            this.updatePronunciation(index, "match", (e.target as HTMLInputElement).value)}" />
+                          @input=${(e: Event): void =>
+                            this.updatePronunciation(index, "match", (e.target as HTMLInputElement).value)} />
                       </div>
                       <div class="pronunciation-field">
                         <label class="pronunciation-label">Replace With</label>
@@ -234,7 +234,7 @@ export class TorlifyPronunciations extends LitElement {
                         @PronunciationUpdated=${this.handlePronunciationMatch(index)}></torlify-configure-pronunciation>
                       <button
                         class="remove-button"
-                        @click="${async (): Promise<void> => this.removePronunciation(index)}"
+                        @click=${async (): Promise<void> => this.removePronunciation(index)}
                         title="Remove pronunciation">
                         ${trashIcon}
                       </button>

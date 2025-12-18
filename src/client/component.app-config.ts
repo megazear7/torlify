@@ -45,14 +45,14 @@ export class TorlifyAppConfig extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <button class="standard-button" @click="${this.openConfig()}">Configure</button>
+      <button class="standard-button" @click=${this.openConfig()}>Configure</button>
       <torlify-modal id="config">
         <div slot="body">
           <h2>App Configuration</h2>
           <h3>Text Model Configuration</h3>
           <button
             class="standard-button small loading-button ${this.testConnectivityLoading ? "loading" : ""}"
-            @click="${this.testConnectivity}"
+            @click=${this.testConnectivity}
             ?disabled="${this.testConnectivityLoading}">
             <span>Test Connectivity</span>
             ${this.testConnectivityLoading

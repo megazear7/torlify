@@ -58,7 +58,7 @@ export class TorlifyConfigurePronunciation extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <button class="open" @click="${this.open()}">${gearIcon}</button>
+      <button class="open" @click=${this.open()}>${gearIcon}</button>
       <torlify-modal id="config">
         <div slot="body">
           <h2>Configure pronunciation</h2>

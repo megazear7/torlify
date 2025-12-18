@@ -94,7 +94,7 @@ export class TorlifyApp extends LitElement {
         .message="${this.toastMessage}"
         .type="${this.toastType}"
         .visible="${this.toastVisible}"
-        @close="${this.handleToastClose}"></torlify-toast>
+        @close=${this.handleToastClose}></torlify-toast>
       <torlify-save-indicator></torlify-save-indicator>
       <torlify-notification-manager></torlify-notification-manager>
     `;

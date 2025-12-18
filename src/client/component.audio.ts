@@ -88,11 +88,17 @@ export class TorlifyAudio extends LitElement {
         @timeupdate=${this.updateTime}
         @loadedmetadata=${this.updateDuration}
         @ended=${this.onEnded}
-        @play=${() => (this.isPlaying = true)}
-        @pause=${() => (this.isPlaying = false)}>
+        @play=${this.setIsPlaying(true)}
+        @pause=${this.setIsPlaying(false)}>
         Your browser does not support the audio element.
       </audio>
     `;
+  }
+
+  setIsPlaying(val: boolean): () => void {
+    return () => {
+      this.isPlaying = val;
+    };
   }
 
   private async togglePlay(): Promise<void> {

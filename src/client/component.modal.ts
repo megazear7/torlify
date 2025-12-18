@@ -122,11 +122,11 @@ export class TorlifyModal extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <slot name="open-button" @click="${(): Promise<void> => this.open()}"></slot>
-      <div class="${this.backdropClasses()}" @click="${(): Promise<void> => this.close()}">
-        <div class="modal-content" @click="${stopProp}">
+      <slot name="open-button" @click=${(): Promise<void> => this.open()}></slot>
+      <div class="${this.backdropClasses()}" @click=${(): Promise<void> => this.close()}>
+        <div class="modal-content" @click=${stopProp}>
           <div class="modal-header">
-            <button class="close-button" @click="${(): Promise<void> => this.close()}">${xIcon}</button>
+            <button class="close-button" @click=${(): Promise<void> => this.close()}>${xIcon}</button>
           </div>
           <div class="modal-body">
             <slot name="body"></slot>

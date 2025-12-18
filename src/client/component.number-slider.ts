@@ -104,11 +104,11 @@ export class TorlifyNumberSlider extends LitElement {
           <input
             id="slider"
             type="range"
-            min="${this.min}"
-            max="${this.max}"
-            step="${this.step}"
-            .value="${this.value.toString()}"
-            @input="${this.handleInput}" />
+            min=${this.min}
+            max=${this.max}
+            step=${this.step}
+            .value=${this.value.toString()}
+            @input=${this.handleInput} />
           <span class="value-display">${this.value}</span>
         </div>
       </div>

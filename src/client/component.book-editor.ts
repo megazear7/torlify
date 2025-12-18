@@ -132,7 +132,7 @@ export class TorlifyBookEditor extends LitElement {
                   .offIcon="${aiIcon}"
                   .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
-                  @change="${this.handleRegenerateCheckedChange}"></torlify-checkbox>
+                  @change=${this.handleRegenerateCheckedChange}></torlify-checkbox>
                 ${this.regenerateChecked
                   ? html`
                       <p>
@@ -170,7 +170,7 @@ export class TorlifyBookEditor extends LitElement {
                 <h3>Edit</h3>
                 <p>Edit the entire book based on your instructions</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.edit()}">Edit</button>
+                  <button class="standard-button" @click=${this.edit()}>Edit</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -179,11 +179,11 @@ export class TorlifyBookEditor extends LitElement {
                 <h3>Download</h3>
                 <p>Download the complete book outline, text, or audio.</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
-                  <button class="standard-button" @click="${this.downloadBook()}">Text</button>
+                  <button class="standard-button" @click=${this.downloadOutline()}>Outline</button>
+                  <button class="standard-button" @click=${this.downloadBook()}>Text</button>
                   <button
                     class="standard-button"
-                    @click="${this.downloadAudio()}"
+                    @click=${this.downloadAudio()}
                     class="standard-button loading-button ${this.downloadingAudio ? "loading" : ""}"
                     ?disabled="${this.downloadingAudio}">
                     Audio
@@ -236,7 +236,7 @@ export class TorlifyBookEditor extends LitElement {
                 <h3>Text Model Configuration</h3>
                 <button
                   class="standard-button small loading-button ${this.testConnectivityLoading ? "loading" : ""}"
-                  @click="${this.testConnectivity}"
+                  @click=${this.testConnectivity}
                   ?disabled="${this.testConnectivityLoading}">
                   <span>Test Connectivity</span>
                   ${this.testConnectivityLoading
@@ -280,12 +280,12 @@ export class TorlifyBookEditor extends LitElement {
                 <p>You can delete the book outline, text, or audio. Alternatively, you can delete the entire book.</p>
                 <div class="delete-options">
                   <torlify-bar>
-                    <button class="standard-button delete" @click="${this.deleteOutline()}">Outline</button>
+                    <button class="standard-button delete" @click=${this.deleteOutline()}>Outline</button>
                     <button class="standard-button delete" @click=${this.deleteText()}>Text</button>
                     <button class="standard-button delete" @click=${this.deleteAudio()}>Audio</button>
                   </torlify-bar>
                   <torlify-bar>
-                    <button class="standard-button delete" @click="${this.deleteBook}">Delete</button>
+                    <button class="standard-button delete" @click=${this.deleteBook}>Delete</button>
                   </torlify-bar>
                 </div>
               </div>

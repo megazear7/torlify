@@ -63,6 +63,9 @@ export class TorlifyTooltip extends LitElement {
   @property({ type: Boolean })
   visible: boolean = false;
 
+  @property({ type: Number })
+  offsetY: number = 0;
+
   @query(".trigger")
   private triggerElement!: HTMLElement;
 
@@ -103,7 +106,7 @@ export class TorlifyTooltip extends LitElement {
     const rect = this.triggerElement.getBoundingClientRect();
 
     // Position above the trigger, centered horizontally
-    const top = rect.top - 40 - 8; // Estimate tooltip height + gap
+    const top = rect.top - this.offsetY; // Estimate tooltip height + gap
     const left = rect.left + rect.width / 2 - 75; // Half of 150px width
 
     this.tooltipElement.style.top = `${Math.max(10, top)}px`; // Keep it on screen

@@ -82,6 +82,12 @@ export class TorlifyField extends LitElement {
         box-shadow: var(--shadow-normal) !important;
         transform: none !important;
       }
+
+      .invalid input,
+      .invalid torlify-auto-textarea {
+        border: none !important;
+        box-shadow: 0 0 0 1px var(--color-danger) !important;
+      }
     `,
   ];
 
@@ -124,8 +130,20 @@ export class TorlifyField extends LitElement {
   @property({ type: Boolean })
   public generation: boolean = true;
 
+  @property({ type: Number })
+  public min?: number;
+
+  @property({ type: Number })
+  public max?: number;
+
+  @property({ type: Number })
+  public step?: number;
+
   @state()
   public generationLoading: boolean = false;
+
+  @state()
+  public invalid: boolean = false;
 
   @query("torlify-modal")
   private modal!: TorlifyModal;
@@ -157,7 +175,7 @@ export class TorlifyField extends LitElement {
         : html`
             <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
           `}
-      <div class="field">
+      <div class="field ${this.invalid ? "invalid" : ""}">
         <input type="text" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
         ${this.renderGenerate()}
       </div>
@@ -171,8 +189,15 @@ export class TorlifyField extends LitElement {
         : html`
             <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
           `}
-      <div class="field">
-        <input type="number" id="${this.propertyId}" .value="${this.value}" @input=${this.save()} />
+      <div class="field ${this.invalid ? "invalid" : ""}">
+        <input
+          type="number"
+          id="${this.propertyId}"
+          .value="${this.value}"
+          @input=${this.save()}
+          min=${this.min !== undefined ? this.min : 0}
+          max=${this.max !== undefined ? this.max : ""}
+          step=${this.step !== undefined ? this.step : 1} />
       </div>
     `;
   }
@@ -184,11 +209,11 @@ export class TorlifyField extends LitElement {
         : html`
             <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
           `}
-      <div class="field">
+      <div class="field ${this.invalid ? "invalid" : ""}">
         <torlify-auto-textarea
-          heading="${this.heading}"
-          .value="${this.value}"
-          @input="${this.save()}"></torlify-auto-textarea>
+          heading=${this.heading}
+          .value=${this.value}
+          @input=${this.save()}></torlify-auto-textarea>
         ${this.renderGenerate()}
       </div>
     `;
@@ -201,7 +226,7 @@ export class TorlifyField extends LitElement {
         : html`
             <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
           `}
-      <div class="field">
+      <div class="field ${this.invalid ? "invalid" : ""}">
         <torlify-checkbox
           .checked="${!!this.value}"
           text=${this.labelWithFallback()}
@@ -223,7 +248,7 @@ export class TorlifyField extends LitElement {
           <torlify-bar>
             <button
               class="standard-button generate-button ${this.generationLoading ? "loading" : ""}"
-              @click="${this.generate()}">
+              @click=${this.generate()}>
               ${this.generationLoading
                 ? html`
                     <torlify-spinner></torlify-spinner>
@@ -240,7 +265,7 @@ export class TorlifyField extends LitElement {
   renderHelp(): TemplateResult {
     if (this.help) {
       return html`
-        <span class="field-help" title=${this.help}>${infoIcon}</span>
+        <torlify-tooltip content=${this.help} offsetY="90">${infoIcon}</torlify-tooltip>
       `;
     }
     return html``;
@@ -343,6 +368,19 @@ export class TorlifyField extends LitElement {
   save(): (event: CustomEvent | InputEvent) => void {
     return (event: CustomEvent | InputEvent): void => {
       const value = this.getValueFromEvent(event);
+
+      if (this.min !== undefined && typeof value === "number" && value < this.min) {
+        this.invalid = true;
+        return;
+      }
+
+      if (this.max !== undefined && typeof value === "number" && value > this.max) {
+        this.invalid = true;
+        return;
+      }
+
+      this.invalid = false;
+
       if (value === undefined) return;
       if (this.property.startsWith("app.")) {
         const app = buildNestedObject(AppConfigPartial, this.contextualProperty, value);

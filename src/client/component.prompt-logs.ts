@@ -129,7 +129,6 @@ export class TorlifyPromptLogs extends LitElement {
         <div class="prompt-logs-content">
           <div class="prompt-logs-header">
             <h2>Prompt Logs</h2>
-            <button class="standard-button" @click=${this.refresh}>Refresh</button>
           </div>
           <div class="prompt-logs-list">
             ${this.logs.length === 0
@@ -184,10 +183,6 @@ export class TorlifyPromptLogs extends LitElement {
       console.error("Error fetching prompt logs:", error);
     }
   }
-
-  private refresh = (): void => {
-    this.fetchLogs();
-  };
 
   private open = (): void => {
     this.visible = true;

@@ -97,6 +97,7 @@ export type BookDetails = z.infer<typeof BookDetails>;
 export const BookRequestType = z.enum(["generate", "create"]).describe("The type of book request.");
 export type BookRequestType = z.infer<typeof BookRequestType>;
 
+export const PART_LENGTH_STEP = 10;
 export const MINIMUM_PART_LENGTH = 100;
 export const MAXIMUM_PART_LENGTH = 2000;
 

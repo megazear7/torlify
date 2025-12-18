@@ -153,31 +153,31 @@ export class TorlifyBookList extends LitElement {
         <li>
           <torlify-modal
             id="create-book-modal"
-            @ModelSubmit="${this.handleGenerateBook}"
+            @ModelSubmit=${this.handleGenerateBook}
             @ModelOpening=${this.handleOpenModal}>
             <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
               <h2>Create Book</h2>
               <torlify-auto-textarea
                 .value="${this.generateBookInstructions}"
-                @input="${this.handleGenerateBookInstructions}"
+                @input=${this.handleGenerateBookInstructions}
                 placeholder="${this.sampleDescription}"></torlify-auto-textarea>
               <torlify-number-slider
                 min="${MINIMUM_NUMBER_OF_CHAPTERS}"
                 max="${MAXIMUM_NUMBER_OF_CHAPTERS}"
                 label="Number of Chapters"
                 .value=${this.generateBookNumberOfChapters}
-                @input="${this.handleGenerateBookNumberOfChapters}"></torlify-number-slider>
+                @input=${this.handleGenerateBookNumberOfChapters}></torlify-number-slider>
               <torlify-number-slider
                 min="${MINIMUM_PART_LENGTH}"
                 max="${MAXIMUM_PART_LENGTH}"
                 step="10"
                 label="Part Length"
                 .value=${this.generateBookPartLength}
-                @input="${this.handleGenerateBookPartLength}"></torlify-number-slider>
+                @input=${this.handleGenerateBookPartLength}></torlify-number-slider>
               <torlify-bar>
-                <button class="standard-button" @click="${this.handleGenerateBook}">${aiIcon} Generate</button>
-                <button class="standard-button" @click="${this.handleCreateBook}">Create Empty</button>
+                <button class="standard-button" @click=${this.handleGenerateBook}>${aiIcon} Generate</button>
+                <button class="standard-button" @click=${this.handleCreateBook}>Create Empty</button>
               </torlify-bar>
             </div>
           </torlify-modal>

@@ -105,7 +105,7 @@ export class TorlifyPartEditor extends LitElement {
                   .offIcon="${aiIcon}"
                   .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
-                  @change="${this.handleRegenerateCheckedChange}"></torlify-checkbox>
+                  @change=${this.handleRegenerateCheckedChange}></torlify-checkbox>
                 ${this.regenerateChecked
                   ? html`
                       <p>The part will be regenerated, replacing any existing content.</p>
@@ -114,9 +114,9 @@ export class TorlifyPartEditor extends LitElement {
                       <p>The part will be generated only if content is missing.</p>
                     `}
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.generateOutline()}">Outline</button>
-                  <button class="standard-button" @click="${this.generateText()}">Text</button>
-                  <button class="standard-button" @click="${this.generateAudio()}">Audio</button>
+                  <button class="standard-button" @click=${this.generateOutline()}>Outline</button>
+                  <button class="standard-button" @click=${this.generateText()}>Text</button>
+                  <button class="standard-button" @click=${this.generateAudio()}>Audio</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -125,7 +125,7 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Edit Part</h3>
                 <p>Edit the part based on your instructions</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.edit()}">Edit</button>
+                  <button class="standard-button" @click=${this.edit()}>Edit</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -134,9 +134,9 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Download Part</h3>
                 <p>Download the part text or audio.</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.downloadOutline()}">Outline</button>
-                  <button class="standard-button" @click="${this.downloadText()}">Text</button>
-                  <button class="standard-button" @click="${this.downloadAudio()}">
+                  <button class="standard-button" @click=${this.downloadOutline()}>Outline</button>
+                  <button class="standard-button" @click=${this.downloadText()}>Text</button>
+                  <button class="standard-button" @click=${this.downloadAudio()}>
                     Audio
                     ${this.downloadingAudio
                       ? html`
@@ -154,20 +154,20 @@ export class TorlifyPartEditor extends LitElement {
                 <torlify-bar>
                   <button
                     class="standard-button"
-                    ?disabled="${this.partContext.part.number === 1}"
-                    title="${this.partContext.part.number === 1
+                    ?disabled=${this.partContext.part.number === 1}
+                    title=${this.partContext.part.number === 1
                       ? "Cannot move before first part"
-                      : `Move part ${this.partContext.part.number} before the previous part`}"
-                    @click="${this.moveBeforePrevious()}">
+                      : `Move part ${this.partContext.part.number} before the previous part`}
+                    @click=${this.moveBeforePrevious()}>
                     Before previous
                   </button>
                   <button
                     class="standard-button"
-                    ?disabled="${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length}"
-                    title="${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length
+                    ?disabled=${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length}
+                    title=${this.partContext.part?.number === this.chapterContext.chapter?.parts?.length
                       ? "Cannot move after last part"
-                      : `Move part ${this.partContext.part?.number} after the next part`}"
-                    @click="${this.moveAfterNext()}">
+                      : `Move part ${this.partContext.part?.number} after the next part`}
+                    @click=${this.moveAfterNext()}>
                     After next
                   </button>
                 </torlify-bar>
@@ -178,8 +178,8 @@ export class TorlifyPartEditor extends LitElement {
                 <h3>Add Part</h3>
                 <p>Add a new part before the previous part or after the next part?</p>
                 <torlify-bar>
-                  <button class="standard-button" @click="${this.addBefore()}">Before</button>
-                  <button class="standard-button" @click="${this.addAfter()}">After</button>
+                  <button class="standard-button" @click=${this.addBefore()}>Before</button>
+                  <button class="standard-button" @click=${this.addAfter()}>After</button>
                 </torlify-bar>
               </div>
             </torlify-modal>
@@ -189,12 +189,12 @@ export class TorlifyPartEditor extends LitElement {
                 <p>Are you sure you want to delete this part?</p>
                 <div class="delete-options">
                   <torlify-bar>
-                    <button class="standard-button" @click="${this.deleteOutline()}">Outline</button>
+                    <button class="standard-button" @click=${this.deleteOutline()}>Outline</button>
                     <button class="standard-button" @click=${this.deleteText()}>Text</button>
                     <button class="standard-button" @click=${this.deleteAudio()}>Audio</button>
                   </torlify-bar>
                   <torlify-bar>
-                    <button class="standard-button delete" @click="${this.removePart()}">Delete</button>
+                    <button class="standard-button delete" @click=${this.removePart()}>Delete</button>
                   </torlify-bar>
                 </div>
               </div>

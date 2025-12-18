@@ -198,7 +198,7 @@ export class TorlifyCharacters extends LitElement {
       <div class="characters-container">
         <div class="characters-header">
           <h4>Characters</h4>
-          <button class="add-button" @click="${this.addCharacter}">${plusIcon} Add Character</button>
+          <button class="add-button" @click=${this.addCharacter}>${plusIcon} Add Character</button>
         </div>
 
         ${characters.length === 0
@@ -235,7 +235,7 @@ export class TorlifyCharacters extends LitElement {
                       </div>
                       <button
                         class="remove-button"
-                        @click="${async (): Promise<void> => this.removeCharacter(index)}"
+                        @click=${async (): Promise<void> => this.removeCharacter(index)}
                         title="Remove character">
                         ${trashIcon}
                       </button>
@@ -243,16 +243,16 @@ export class TorlifyCharacters extends LitElement {
                         class="move-up"
                         ?disabled=${index === 0}
                         @click=${this.moveUp(index)}
-                        title="${index === 0 ? "This is already the first character" : "Move character up"}">
+                        title=${index === 0 ? "This is already the first character" : "Move character up"}>
                         ${upArrowIcon}
                       </button>
                       <button
                         class="move-down"
                         ?disabled=${index === characters.length - 1}
                         @click=${this.moveDown(index)}
-                        title="${index === characters.length - 1
+                        title=${index === characters.length - 1
                           ? "This is already the last character"
-                          : "Move character down"}">
+                          : "Move character down"}>
                         ${downArrowIcon}
                       </button>
                     </div>

@@ -73,8 +73,8 @@ export class TorlifyAutoTextarea extends LitElement {
         class="${this.heading}"
         placeholder="${this.placeholder}"
         .value="${this.value}"
-        @input="${this.handleInput}"
-        @change="${this.handleChange}"></textarea>
+        @input=${this.handleInput}
+        @change=${this.handleChange}></textarea>
     `;
   }
 
