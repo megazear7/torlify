@@ -49,10 +49,6 @@ export class TorlifyBookEditor extends LitElement {
         color: var(--color-secondary-text);
       }
 
-      .loading-button {
-        margin-bottom: var(--size-large);
-      }
-
       .loading-button.loading:hover {
         background-color: var(--color-secondary-bold);
         box-shadow: var(--shadow-normal);

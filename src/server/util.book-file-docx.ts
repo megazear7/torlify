@@ -82,7 +82,7 @@ export async function createBookDocxFile(bookId: string): Promise<Buffer> {
             }),
           ],
           alignment: "center",
-          spacing: { before: 4000, after: 200 },
+          spacing: { before: 10000, after: 200 },
         }),
         new Paragraph({
           children: [
@@ -111,6 +111,17 @@ export async function createBookDocxFile(bookId: string): Promise<Buffer> {
 
   // Dedication Page
   if (book.details?.dedication) {
+    // Blank Page
+    sections.push({
+      properties: {
+        page: {
+          size: { width: 8640, height: 12960 },
+          margin: { top: 720, bottom: 720, left: 720, right: 720 },
+        },
+      },
+      children: [new Paragraph({ text: "" })],
+    });
+
     sections.push({
       properties: {
         page: {
@@ -139,7 +150,7 @@ export async function createBookDocxFile(bookId: string): Promise<Buffer> {
             }),
           ],
           alignment: "center",
-          spacing: { after: 2000 },
+          spacing: { after: 2000, line: 360 },
         }),
       ],
     });
@@ -283,7 +294,7 @@ export async function createBookDocxFile(bookId: string): Promise<Buffer> {
             }),
           ],
           alignment: "center",
-          spacing: { after: 2000 },
+          spacing: { after: 2000, line: 360 },
         }),
       ],
     });
@@ -335,7 +346,7 @@ export async function createBookDocxFile(bookId: string): Promise<Buffer> {
             }),
           ],
           alignment: "center",
-          spacing: { after: 2000 },
+          spacing: { after: 2000, line: 360 },
         }),
       ],
     });
@@ -391,9 +402,9 @@ function createChapterSection(book: Book, chapter: Chapter): any[] {
       page: {
         size: { width: 8640, height: 12960 },
         margin: {
-          top: 720,
-          bottom: 720,
-          left: 864, // Outside margin (narrow)
+          top: 1152,
+          bottom: 1152,
+          left: 1152, // Outside margin (narrow)
           right: 1152, // Inside margin (wide, for binding)
         },
       },
@@ -413,24 +424,50 @@ function createChapterSection(book: Book, chapter: Chapter): any[] {
       }),
     },
     children: [
-      new Paragraph({
-        children: [
-          new Bookmark({
-            id: `chapter_${chapter.number}`,
-            children: [
-              new TextRun({
-                text: book.details?.includeChapterTitles
-                  ? `CHAPTER ${chapter.number}: ${chapter.title}`
-                  : `CHAPTER ${chapter.number}`,
-                size: 28,
-                font: "Garamond",
-              }),
-            ],
-          }),
-        ],
-        alignment: "center",
-        spacing: { after: 400, before: 2600 },
-      }),
+      ...(book.details?.includeChapterTitles
+        ? [
+            new Paragraph({
+              children: [
+                new Bookmark({
+                  id: `chapter_${chapter.number}`,
+                  children: [
+                    new TextRun({
+                      text: `CHAPTER ${chapter.number}`,
+                      size: 22,
+                      font: "Garamond",
+                    }),
+                  ],
+                }),
+              ],
+              alignment: "center",
+              spacing: { before: 2000, after: 400 },
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: chapter.title,
+                  size: 40,
+                  font: "Garamond",
+                  italics: true,
+                }),
+              ],
+              alignment: "center",
+              spacing: { after: 800 },
+            }),
+          ]
+        : [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `CHAPTER ${chapter.number}`,
+                  size: 32,
+                  font: "Garamond",
+                }),
+              ],
+              alignment: "center",
+              spacing: { after: 800, before: 2200 },
+            }),
+          ]),
       ...chapter.parts.flatMap((part) => {
         const lines = (part.text || "").split(/\n|\\n/).filter((line: string) => !!line.trim());
         return lines.map(
