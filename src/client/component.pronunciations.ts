@@ -216,8 +216,7 @@ export class TorlifyPronunciations extends LitElement {
                           type="text"
                           placeholder="Word or phrase to replace"
                           .value="${pronunciation.match}"
-                          @input=${(e: Event): void =>
-                            this.updatePronunciation(index, "match", (e.target as HTMLInputElement).value)} />
+                          @input=${this.updatePronunciationHandler(index, "match")} />
                       </div>
                       <div class="pronunciation-field">
                         <label class="pronunciation-label">Replace With</label>
@@ -226,8 +225,7 @@ export class TorlifyPronunciations extends LitElement {
                           type="text"
                           placeholder="Pronunciation replacement"
                           .value="${pronunciation.replace}"
-                          @input="${(e: Event): void =>
-                            this.updatePronunciation(index, "replace", (e.target as HTMLInputElement).value)}" />
+                          @input="${this.updatePronunciationHandler(index, "replace")}" />
                       </div>
                       <torlify-configure-pronunciation
                         .pronunciation="${pronunciation}"
@@ -347,6 +345,13 @@ export class TorlifyPronunciations extends LitElement {
       });
       dispatch(this, SaveEvent());
     });
+  }
+
+  private updatePronunciationHandler(index: number, field: "match" | "replace"): (e: Event) => void {
+    return (e: Event): void => {
+      const value = (e.target as HTMLInputElement).value;
+      this.updatePronunciation(index, field, value);
+    };
   }
 
   private updatePronunciation(index: number, field: "match" | "replace", value: string): void {

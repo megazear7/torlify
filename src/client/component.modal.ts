@@ -122,11 +122,11 @@ export class TorlifyModal extends LitElement {
 
   override render(): TemplateResult {
     return html`
-      <slot name="open-button" @click=${(): Promise<void> => this.open()}></slot>
-      <div class="${this.backdropClasses()}" @click=${(): Promise<void> => this.close()}>
+      <slot name="open-button" @click=${this.openHandler()}></slot>
+      <div class="${this.backdropClasses()}" @click=${this.closeHandler()}>
         <div class="modal-content" @click=${stopProp}>
           <div class="modal-header">
-            <button class="close-button" @click=${(): Promise<void> => this.close()}>${xIcon}</button>
+            <button class="close-button" @click=${this.closeHandler()}>${xIcon}</button>
           </div>
           <div class="modal-body">
             <slot name="body"></slot>
@@ -162,6 +162,12 @@ export class TorlifyModal extends LitElement {
     }
   };
 
+  private openHandler(): () => void {
+    return () => {
+      this.open();
+    };
+  }
+
   async open(): Promise<void> {
     this.opening = true;
     dispatch(this, ModelOpeningEvent());
@@ -172,6 +178,12 @@ export class TorlifyModal extends LitElement {
       field.resize();
     }
     window.document.body.style.overflow = "hidden";
+  }
+
+  private closeHandler(): () => void {
+    return (): void => {
+      this.close();
+    };
   }
 
   async close(): Promise<void> {

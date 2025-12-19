@@ -52,6 +52,8 @@ html {
   --content-width: 1280px;
   --transform-hover: translateY(-2px);
 
+  --color-2-light: color-mix(in oklab, var(--color-2) 70%, white 20%);
+
   margin: 0;
   padding: 0;
 }

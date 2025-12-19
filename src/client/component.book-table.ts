@@ -64,7 +64,6 @@ export class TorlifyBookTable extends LitElement {
 
       tbody tr:hover {
         background-color: var(--color-secondary-surface-active);
-        transform: var(--transform-hover);
         box-shadow: var(--shadow-hover);
       }
 
@@ -86,7 +85,7 @@ export class TorlifyBookTable extends LitElement {
       }
 
       a:hover {
-        color: var(--color-1);
+        color: var(--color-2-light);
       }
 
       .totals-row {

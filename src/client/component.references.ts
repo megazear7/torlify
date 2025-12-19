@@ -336,10 +336,10 @@ export class TorlifyReferences extends LitElement {
                         </div>
                       </div>
                       <div class="reference-actions">
-                        <button class="action-button edit-button" @click=${(): void => this.editReference(index)}>
+                        <button class="action-button edit-button" @click=${this.editReference(index)}>
                           ${editIcon}
                         </button>
-                        <button class="action-button remove-button" @click=${(): void => this.removeReference(index)}>
+                        <button class="action-button remove-button" @click=${this.removeReference(index)}>
                           ${trashIcon}
                         </button>
                       </div>
@@ -382,7 +382,7 @@ export class TorlifyReferences extends LitElement {
               id="file-input"
               class="file-input"
               type="file"
-              @change=${(e: Event): void => this.handleFileSelect(e.target as HTMLInputElement)}
+              @change=${this.handleFileSelect()}
               accept=".txt,.md,.pdf,.doc,.docx" />
             <label for="file-input">
               <div class="file-upload-content">
@@ -422,7 +422,7 @@ export class TorlifyReferences extends LitElement {
                 <torlify-checkbox
                   text=${option}
                   .checked="${this.whenToUse.includes(option)}"
-                  @change=${(): void => this.toggleWhenToUse(option)}></torlify-checkbox>
+                  @change=${this.toggleWhenToUse(option)}></torlify-checkbox>
               `,
             )}
           </div>
@@ -434,12 +434,14 @@ export class TorlifyReferences extends LitElement {
     `;
   }
 
-  toggleWhenToUse(option: ReferenceUse): void {
-    if (this.whenToUse.includes(option)) {
-      this.whenToUse = this.whenToUse.filter((use) => use !== option);
-    } else {
-      this.whenToUse = [...this.whenToUse, option];
-    }
+  toggleWhenToUse(option: ReferenceUse): () => void {
+    return (): void => {
+      if (this.whenToUse.includes(option)) {
+        this.whenToUse = this.whenToUse.filter((use) => use !== option);
+      } else {
+        this.whenToUse = [...this.whenToUse, option];
+      }
+    };
   }
 
   private handleInstructionsInput(e: Event): void {
@@ -457,16 +459,18 @@ export class TorlifyReferences extends LitElement {
     this.modal.open();
   }
 
-  private editReference(index: number): void {
-    this.instructions = this.bookContext.book?.references[index]?.instructions || "";
-    this.whenToUse = this.bookContext.book?.references[index]?.whenToUse || [];
-    this.editingIndex = index;
-    this.selectedFile = null;
-    if (this.fileInput) {
-      this.fileInput.value = "";
-    }
-    this.requestUpdate();
-    this.modal.open();
+  private editReference(index: number): () => void {
+    return (): void => {
+      this.instructions = this.bookContext.book?.references[index]?.instructions || "";
+      this.whenToUse = this.bookContext.book?.references[index]?.whenToUse || [];
+      this.editingIndex = index;
+      this.selectedFile = null;
+      if (this.fileInput) {
+        this.fileInput.value = "";
+      }
+      this.requestUpdate();
+      this.modal.open();
+    };
   }
 
   private moveUp(index: number): () => void {
@@ -515,19 +519,21 @@ export class TorlifyReferences extends LitElement {
     };
   }
 
-  private removeReference(index: number): void {
-    const currentReferences = this.bookContext.book?.references || [];
-    const newReferences = currentReferences.filter((_, i) => i !== index);
-    this.bookContext.book!.references = newReferences;
-    this.requestUpdate();
+  private removeReference(index: number): () => void {
+    return (): void => {
+      const currentReferences = this.bookContext.book?.references || [];
+      const newReferences = currentReferences.filter((_, i) => i !== index);
+      this.bookContext.book!.references = newReferences;
+      this.requestUpdate();
 
-    this.debounceHandler.debounce(() => {
-      updateBookService.fetch({
-        name: this.bookContext.book!.id,
-        book: this.bookContext.book!,
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: this.bookContext.book!,
+        });
+        dispatch(this, SaveEvent());
       });
-      dispatch(this, SaveEvent());
-    });
+    };
   }
 
   private updateReference(): void {
@@ -606,9 +612,12 @@ export class TorlifyReferences extends LitElement {
     this.whenToUse = [];
   }
 
-  private handleFileSelect(input: HTMLInputElement): void {
-    const file = input.files?.[0] || null;
-    this.setSelectedFile(file);
+  private handleFileSelect(): (e: Event) => void {
+    return (e: Event): void => {
+      const input = e.target as HTMLInputElement;
+      const file = input.files?.[0] || null;
+      this.setSelectedFile(file);
+    };
   }
 
   private setSelectedFile(file: File | null): void {

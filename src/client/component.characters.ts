@@ -218,19 +218,13 @@ export class TorlifyCharacters extends LitElement {
                             type="text"
                             placeholder="Enter character name"
                             .value="${character.name}"
-                            @input="${(e: Event): void =>
-                              this.updateCharacter(index, "name", (e.target as HTMLInputElement).value)}" />
+                            @input="${this.updateCharacter(index, "name")}" />
                         </div>
                         <div class="character-field">
                           <label class="character-label">Instructions</label>
                           <torlify-auto-textarea
                             .value="${character.instructions}"
-                            @input="${(e: Event): void =>
-                              this.updateCharacter(
-                                index,
-                                "instructions",
-                                (e.target as HTMLTextAreaElement).value,
-                              )}"></torlify-auto-textarea>
+                            @input="${this.updateCharacter(index, "instructions")}"></torlify-auto-textarea>
                         </div>
                       </div>
                       <button
@@ -347,21 +341,24 @@ export class TorlifyCharacters extends LitElement {
     });
   }
 
-  private updateCharacter(index: number, field: "name" | "instructions", value: string): void {
-    const currentCharacters = this.bookContext.book?.characters || [];
-    const newCharacters = currentCharacters.map((character, i) =>
-      i === index ? { ...character, [field]: value } : character,
-    );
-    this.bookContext.book = {
-      ...this.bookContext.book!,
-      characters: newCharacters,
-    };
-    this.debounceHandler.debounce(() => {
-      updateBookService.fetch({
-        name: this.bookContext.book!.id,
-        book: this.bookContext.book!,
+  private updateCharacter(index: number, field: "name" | "instructions"): (e: Event) => void {
+    return (e: Event): void => {
+      const value = (e.target as HTMLInputElement).value;
+      const currentCharacters = this.bookContext.book?.characters || [];
+      const newCharacters = currentCharacters.map((character, i) =>
+        i === index ? { ...character, [field]: value } : character,
+      );
+      this.bookContext.book = {
+        ...this.bookContext.book!,
+        characters: newCharacters,
+      };
+      this.debounceHandler.debounce(() => {
+        updateBookService.fetch({
+          name: this.bookContext.book!.id,
+          book: this.bookContext.book!,
+        });
+        dispatch(this, SaveEvent());
       });
-      dispatch(this, SaveEvent());
-    });
+    };
   }
 }
