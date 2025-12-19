@@ -16,6 +16,18 @@ export class TorlifyHomePage extends TorlifyBookListProvider {
       torlify-prompt-logs {
         display: inline-block;
       }
+
+      .title-container {
+        display: flex;
+        align-items: center;
+        gap: var(--size-medium);
+        margin-top: var(--size-medium);
+      }
+
+      .title-container h1 {
+        margin: 0;
+        font-size: calc(var(--font-large) * 1.5);
+      }
     `,
   ];
 
@@ -23,11 +35,14 @@ export class TorlifyHomePage extends TorlifyBookListProvider {
     return html`
       <div class="container">
         <torlify-book-list></torlify-book-list>
-        <h1>Home</h1>
+        <div class="title-container">
+          <h1>Inklify</h1>
+          <img src="/logo/logo-64x64.png" alt="Inklify Logo" />
+        </div>
         ${this.booksContext.books?.length === 0
           ? html`
               <p>
-                Welcome to Torlify! Configure your AI connection below and then use the create button to get started.
+                Welcome to Inklify! Configure your AI connection below and then use the create button to get started.
               </p>
             `
           : html`
