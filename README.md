@@ -15,14 +15,14 @@ Inklify is a comprehensive book creation application that uses models to streaml
 You can simply run the below command to get started or follow the (slightly) longer steps below.
 
 ```sh
-curl -s https://raw.githubusercontent.com/megazear7/Inklify/refs/heads/main/init.sh -o init.sh && chmod 744 init.sh && ./init.sh
+curl -s https://raw.githubusercontent.com/megazear7/inklify/refs/heads/main/init.sh -o init.sh && chmod 744 init.sh && ./init.sh
 ```
 
 Or the slightly longer version:
 
 ```sh
-git clone https://github.com/megazear7/Inklify.git
-cd Inklify
+git clone https://github.com/megazear7/inklify.git
+cd inklify
 nvm use 22
 npm run init
 npm start
