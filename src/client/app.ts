@@ -1,4 +1,4 @@
-import { html, LitElement, PropertyValues, TemplateResult } from "lit";
+import { css, html, LitElement, PropertyValues, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { RouteConfig, RouteName } from "../shared/type.routes.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
@@ -21,6 +21,17 @@ import "./component.notification-manager.js";
 
 @customElement("torlify-app")
 export class TorlifyApp extends LitElement {
+  static override styles = [css`
+    .app-bar {
+      border-top: 3px solid transparent;
+      border-image: linear-gradient(to right, var(--color-1) 10%, var(--color-2) 90%) 2;
+      position: fixed;
+      width: 100vw;
+      top: 0;
+      left: 0;
+      z-index: 999;
+    }
+  `];
   routes: RouteConfig[] = routes;
 
   @property({ type: String })
@@ -64,22 +75,27 @@ export class TorlifyApp extends LitElement {
           switch (this.currentRoute!.name) {
             case RouteName.enum.home:
               return html`
+                <div class="app-bar"></div>
                 <torlify-home-page></torlify-home-page>
               `;
             case RouteName.enum.book:
               return html`
+                <div class="app-bar"></div>
                 <torlify-book-page></torlify-book-page>
               `;
             case RouteName.enum.chapter:
               return html`
+                <div class="app-bar"></div>
                 <torlify-chapter-page></torlify-chapter-page>
               `;
             case RouteName.enum.part:
               return html`
+                <div class="app-bar"></div>
                 <torlify-part-page></torlify-part-page>
               `;
             default:
               return html`
+                <div class="app-bar"></div>
                 <torlify-not-found-page></torlify-not-found-page>
               `;
           }

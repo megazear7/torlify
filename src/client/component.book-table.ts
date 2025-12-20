@@ -21,7 +21,7 @@ export class TorlifyBookTable extends LitElement {
         background-color: var(--color-secondary-surface);
         border-radius: var(--radius-medium);
         box-shadow: var(--shadow-normal);
-        margin: var(--size-medium) 0;
+        margin: var(--size-xl) 0;
         border-radius: var(--radius-medium);
       }
 
@@ -217,7 +217,7 @@ export class TorlifyBookTable extends LitElement {
                 `,
               )
             : html`
-                <p>Error loading books.</p>
+                <p>Get started by creating your first book!</p>
               `}
           ${sortedBooks.length > 0
             ? html`
