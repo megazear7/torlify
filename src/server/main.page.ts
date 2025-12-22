@@ -41,7 +41,7 @@ export const page = (): string => `
         <meta property="og:image" content="/logo/logo-512x512.png" />
     </head>
     <body>
-        <torlify-app></torlify-app>
+        <inklify-app></inklify-app>
     </body>
     </html>
 `;

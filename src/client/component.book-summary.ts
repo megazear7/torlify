@@ -5,8 +5,8 @@ import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { globalStyles } from "./styles.global.js";
 
-@customElement("torlify-book-summary")
-export class TorlifyBookSummary extends LitElement {
+@customElement("inklify-book-summary")
+export class InklifyBookSummary extends LitElement {
   static override styles = [
     globalStyles,
     css`

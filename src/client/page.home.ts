@@ -1,19 +1,19 @@
 import { css, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
-import { TorlifyBookListProvider } from "./provider.book-list.js";
+import { InklifyBookListProvider } from "./provider.book-list.js";
 import "./component.book-list.js";
 import "./component.app-config.js";
 import "./component.book-table.js";
 import "./component.prompt-logs.js";
 
-@customElement("torlify-home-page")
-export class TorlifyHomePage extends TorlifyBookListProvider {
+@customElement("inklify-home-page")
+export class InklifyHomePage extends InklifyBookListProvider {
   static override styles = [
     globalStyles,
     css`
-      torlify-app-config,
-      torlify-prompt-logs {
+      inklify-app-config,
+      inklify-prompt-logs {
         display: inline-block;
       }
 
@@ -34,7 +34,7 @@ export class TorlifyHomePage extends TorlifyBookListProvider {
   override render(): TemplateResult {
     return html`
       <div class="container">
-        <torlify-book-list></torlify-book-list>
+        <inklify-book-list></inklify-book-list>
         <div class="title-container">
           <h1>Inklify</h1>
           <img src="/logo/logo-64x64.png" alt="Inklify Logo" />
@@ -48,9 +48,9 @@ export class TorlifyHomePage extends TorlifyBookListProvider {
           : html`
               <p>Select a book from the list to get started or update your AI model connection below.</p>
             `}
-        <torlify-app-config></torlify-app-config>
-        <torlify-prompt-logs></torlify-prompt-logs>
-        <torlify-book-table></torlify-book-table>
+        <inklify-app-config></inklify-app-config>
+        <inklify-prompt-logs></inklify-prompt-logs>
+        <inklify-book-table></inklify-book-table>
       </div>
     `;
   }

@@ -16,8 +16,8 @@ import { LoadingStatus } from "../shared/type.loading.js";
 import { ScrollToEvent } from "./event.scroll-to.js";
 import { dispatch } from "./util.events.js";
 
-@customElement("torlify-bookmark-tabs")
-export class TorlifyBookmarkTabs extends LitElement {
+@customElement("inklify-bookmark-tabs")
+export class InklifyBookmarkTabs extends LitElement {
   static override styles = [
     globalStyles,
     css`

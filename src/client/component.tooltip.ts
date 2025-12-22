@@ -2,8 +2,8 @@ import { css, html, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 
-@customElement("torlify-tooltip")
-export class TorlifyTooltip extends LitElement {
+@customElement("inklify-tooltip")
+export class InklifyTooltip extends LitElement {
   static override styles = [
     globalStyles,
     css`

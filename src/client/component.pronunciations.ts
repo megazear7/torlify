@@ -13,8 +13,8 @@ import { DebounceHandler } from "./util.debounce.js";
 import "./component.configure-pronunciation.js";
 import { PronunciationUpdatedEventDetail } from "./event.pronunciation-updated.js";
 
-@customElement("torlify-pronunciations")
-export class TorlifyPronunciations extends LitElement {
+@customElement("inklify-pronunciations")
+export class InklifyPronunciations extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -227,9 +227,9 @@ export class TorlifyPronunciations extends LitElement {
                           .value="${pronunciation.replace}"
                           @input="${this.updatePronunciationHandler(index, "replace")}" />
                       </div>
-                      <torlify-configure-pronunciation
+                      <inklify-configure-pronunciation
                         .pronunciation="${pronunciation}"
-                        @PronunciationUpdated=${this.handlePronunciationMatch(index)}></torlify-configure-pronunciation>
+                        @PronunciationUpdated=${this.handlePronunciationMatch(index)}></inklify-configure-pronunciation>
                       <button
                         class="remove-button"
                         @click=${async (): Promise<void> => this.removePronunciation(index)}

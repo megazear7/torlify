@@ -73,7 +73,7 @@ export const pillStyles = css`
     transition: var(--transition-all);
   }
 
-  ul.pill > li > torlify-modal {
+  ul.pill > li > inklify-modal {
     z-index: 1000;
   }
 

@@ -17,7 +17,7 @@ import { getChapterAudioService } from "../shared/service.get-part-audio.js";
 import z from "zod";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { aiIcon, replaceIcon } from "./icons.js";
 import { generatePartOutlineService } from "../shared/service.generate-part-outline.js";
 import { createOutlineForPart } from "../shared/util.book.js";
@@ -29,8 +29,8 @@ import "./component.audio.js";
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
 
-@customElement("torlify-part-editor")
-export class TorlifyPartEditor extends LitElement {
+@customElement("inklify-part-editor")
+export class InklifyPartEditor extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -83,29 +83,29 @@ export class TorlifyPartEditor extends LitElement {
     return html`
       ${this.partContext.part
         ? html`
-            <torlify-loading-overlay
+            <inklify-loading-overlay
               .visible="${this.loading}"
-              message="${this.loadingMessage}"></torlify-loading-overlay>
-            <torlify-bar>
+              message="${this.loadingMessage}"></inklify-loading-overlay>
+            <inklify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.download)}>Download</button>
-            </torlify-bar>
-            <torlify-bar>
+            </inklify-bar>
+            <inklify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.move)}>Move</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.add)}>Add</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.delete)}>Delete</button>
-            </torlify-bar>
-            <torlify-modal id="${Modal.enum.generate}-modal">
+            </inklify-bar>
+            <inklify-modal id="${Modal.enum.generate}-modal">
               <div slot="body">
                 <h3>Generate Part</h3>
-                <torlify-checkbox
+                <inklify-checkbox
                   off="Generate Missing Content"
                   on="Regenerate All Content"
                   .offIcon="${aiIcon}"
                   .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
-                  @change=${this.handleRegenerateCheckedChange}></torlify-checkbox>
+                  @change=${this.handleRegenerateCheckedChange}></inklify-checkbox>
                 ${this.regenerateChecked
                   ? html`
                       <p>The part will be regenerated, replacing any existing content.</p>
@@ -113,45 +113,45 @@ export class TorlifyPartEditor extends LitElement {
                   : html`
                       <p>The part will be generated only if content is missing.</p>
                     `}
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.generateOutline()}>Outline</button>
                   <button class="standard-button" @click=${this.generateText()}>Text</button>
                   <button class="standard-button" @click=${this.generateAudio()}>Audio</button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.edit}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.edit}-modal">
               <div slot="body">
                 <h3>Edit Part</h3>
                 <p>Edit the part based on your instructions</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.edit()}>Edit</button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.download}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.download}-modal">
               <div slot="body">
                 <h3>Download Part</h3>
                 <p>Download the part text or audio.</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.downloadOutline()}>Outline</button>
                   <button class="standard-button" @click=${this.downloadText()}>Text</button>
                   <button class="standard-button" @click=${this.downloadAudio()}>
                     Audio
                     ${this.downloadingAudio
                       ? html`
-                          <torlify-spinner></torlify-spinner>
+                          <inklify-spinner></inklify-spinner>
                         `
                       : ""}
                   </button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.move}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.move}-modal">
               <div slot="body">
                 <h3>Move Part</h3>
                 <p>Move this part before the previous part or after the next part?</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button
                     class="standard-button"
                     ?disabled=${this.partContext.part.number === 1}
@@ -170,51 +170,51 @@ export class TorlifyPartEditor extends LitElement {
                     @click=${this.moveAfterNext()}>
                     After next
                   </button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.add}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.add}-modal">
               <div slot="body">
                 <h3>Add Part</h3>
                 <p>Add a new part before the previous part or after the next part?</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.addBefore()}>Before</button>
                   <button class="standard-button" @click=${this.addAfter()}>After</button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.delete}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.delete}-modal">
               <div slot="body">
                 <h3>Delete Part</h3>
                 <p>Are you sure you want to delete this part?</p>
                 <div class="delete-options">
-                  <torlify-bar>
+                  <inklify-bar>
                     <button class="standard-button" @click=${this.deleteOutline()}>Outline</button>
                     <button class="standard-button" @click=${this.deleteText()}>Text</button>
                     <button class="standard-button" @click=${this.deleteAudio()}>Audio</button>
-                  </torlify-bar>
-                  <torlify-bar>
+                  </inklify-bar>
+                  <inklify-bar>
                     <button class="standard-button delete" @click=${this.removePart()}>Delete</button>
-                  </torlify-bar>
+                  </inklify-bar>
                 </div>
               </div>
-            </torlify-modal>
+            </inklify-modal>
             <div class="secondary-surface">
               ${this.partContext.part.audio
                 ? html`
-                    <torlify-audio
+                    <inklify-audio
                       src="${getChapterAudioService.renderPath({
                         book: this.bookContext.book!.id,
                         chapter: String(this.chapterContext.chapter!.number),
                         part: String(this.partContext.part!.number),
-                      })}"></torlify-audio>
+                      })}"></inklify-audio>
                   `
                 : html`
                     <p>No audio available</p>
                   `}
-              <torlify-auto-textarea
+              <inklify-auto-textarea
                 .value="${this.partContext.part.text}"
-                @input=${this.handleTextChange()}></torlify-auto-textarea>
+                @input=${this.handleTextChange()}></inklify-auto-textarea>
             </div>
           `
         : html`
@@ -324,14 +324,14 @@ export class TorlifyPartEditor extends LitElement {
 
   openModal(name: Modal): () => void {
     return (): void => {
-      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as InklifyModal;
       modal.open();
     };
   }
 
   closeModal(name: Modal): () => void {
     return (): void => {
-      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as InklifyModal;
       modal.close();
     };
   }

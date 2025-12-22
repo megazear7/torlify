@@ -2,8 +2,8 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { checkIcon } from "./icons.js";
 
-@customElement("torlify-save-indicator")
-export class TorlifySaveIndicator extends LitElement {
+@customElement("inklify-save-indicator")
+export class InklifySaveIndicator extends LitElement {
   static override styles = css`
     :host {
       position: fixed;

@@ -4,7 +4,7 @@ import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
 import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { audioIcon, gearIcon } from "./icons.js";
 import { WarningEvent } from "./event.warning.js";
 import { dispatch } from "./util.events.js";
@@ -16,8 +16,8 @@ import "./component.spinner.js";
 import "./component.field.js";
 import "./component.bar.js";
 
-@customElement("torlify-configure-pronunciation")
-export class TorlifyConfigurePronunciation extends LitElement {
+@customElement("inklify-configure-pronunciation")
+export class InklifyConfigurePronunciation extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -50,8 +50,8 @@ export class TorlifyConfigurePronunciation extends LitElement {
   @property({ type: Boolean })
   public loading: boolean = false;
 
-  @query("torlify-modal")
-  public modal!: TorlifyModal;
+  @query("inklify-modal")
+  public modal!: InklifyModal;
 
   @query("audio")
   public audioElement!: HTMLAudioElement;
@@ -59,7 +59,7 @@ export class TorlifyConfigurePronunciation extends LitElement {
   override render(): TemplateResult {
     return html`
       <button class="open" @click=${this.open()}>${gearIcon}</button>
-      <torlify-modal id="config">
+      <inklify-modal id="config">
         <div slot="body">
           <h2>Configure pronunciation</h2>
           <div class="pronunciation-item">
@@ -82,19 +82,19 @@ export class TorlifyConfigurePronunciation extends LitElement {
                 @input=${this.handleReplaceInput()} />
             </div>
           </div>
-          <torlify-bar>
+          <inklify-bar>
             <button class="standard-button" @click=${this.listen()} ?disabled=${this.loading}>
               ${this.loading
                 ? html`
-                    <torlify-spinner></torlify-spinner>
+                    <inklify-spinner></inklify-spinner>
                   `
                 : audioIcon}
               Listen
             </button>
-          </torlify-bar>
+          </inklify-bar>
           <audio controls style="display: none;"></audio>
         </div>
-      </torlify-modal>
+      </inklify-modal>
     `;
   }
 

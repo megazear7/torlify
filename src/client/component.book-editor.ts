@@ -10,7 +10,7 @@ import { WarningEvent } from "./event.warning.js";
 import { SuccessEvent } from "./event.success.js";
 import { SaveEvent } from "./event.save.js";
 import { downloadBookService } from "../shared/service.download-book.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { deleteBookService } from "../shared/service.delete-book.js";
 import { updateBookService } from "../shared/service.update-book.js";
 import { NavigationEvent } from "./event.navigation.js";
@@ -24,7 +24,7 @@ import { aiIcon, replaceIcon } from "./icons.js";
 import { cost, countTokens, countWords, createOutlineForBook } from "../shared/util.book.js";
 import { bookPingModelService } from "../shared/service.book-ping-model.js";
 import { downloadTextFile } from "./util.download.js";
-import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
+import { Step, StepStatus, InklifyLoadingOverlay } from "./component.loading-overlay.js";
 import { ANIMATION_SPEED_IN_MS } from "../shared/util.time.js";
 import "./component.auto-textarea.js";
 import "./component.bar.js";
@@ -36,8 +36,8 @@ import "./component.book-title-modal.js";
 export const Modal = z.enum(["delete", "generate", "info", "configure", "edit", "download", "details"]);
 export type Modal = z.infer<typeof Modal>;
 
-@customElement("torlify-book-editor")
-export class TorlifyBookEditor extends LitElement {
+@customElement("inklify-book-editor")
+export class InklifyBookEditor extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -60,7 +60,7 @@ export class TorlifyBookEditor extends LitElement {
         align-items: center;
       }
 
-      .title torlify-book-title-modal {
+      .title inklify-book-title-modal {
         margin-left: auto;
       }
 
@@ -102,37 +102,37 @@ export class TorlifyBookEditor extends LitElement {
   @property({ type: Boolean })
   public downloadingAudio = false;
 
-  @query("torlify-loading-overlay")
-  private loadingOverlay!: TorlifyLoadingOverlay;
+  @query("inklify-loading-overlay")
+  private loadingOverlay!: InklifyLoadingOverlay;
 
   override render(): TemplateResult {
     return html`
       ${this.bookContext.book
         ? html`
-            <torlify-loading-overlay
+            <inklify-loading-overlay
               .visible=${this.loading}
-              message="${this.loadingMessage}"></torlify-loading-overlay>
-            <torlify-bar>
+              message="${this.loadingMessage}"></inklify-loading-overlay>
+            <inklify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.download)}>Download</button>
-            </torlify-bar>
-            <torlify-bar>
+            </inklify-bar>
+            <inklify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.info)}>Info</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.details)}>Details</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.configure)}>Configure</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.delete)}>Delete</button>
-            </torlify-bar>
-            <torlify-modal id="${Modal.enum.generate}-modal">
+            </inklify-bar>
+            <inklify-modal id="${Modal.enum.generate}-modal">
               <div slot="body">
                 <h3>Generate Book</h3>
-                <torlify-checkbox
+                <inklify-checkbox
                   off="Generate Missing Content"
                   on="Regenerate All Content"
                   .offIcon="${aiIcon}"
                   .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
-                  @change=${this.handleRegenerateCheckedChange}></torlify-checkbox>
+                  @change=${this.handleRegenerateCheckedChange}></inklify-checkbox>
                 ${this.regenerateChecked
                   ? html`
                       <p>
@@ -146,7 +146,7 @@ export class TorlifyBookEditor extends LitElement {
                         replaced. This may take a long time.
                       </p>
                     `}
-                <torlify-bar>
+                <inklify-bar>
                   <button
                     class="standard-button"
                     @click=${this.generate(this.regenerateChecked, BookContentType.enum.outline)}>
@@ -162,23 +162,23 @@ export class TorlifyBookEditor extends LitElement {
                     @click=${this.generate(this.regenerateChecked, BookContentType.enum.audio)}>
                     Audio
                   </button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.edit}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.edit}-modal">
               <div slot="body">
                 <h3>Edit</h3>
                 <p>Edit the entire book based on your instructions</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.edit()}>Edit</button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.download}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.download}-modal">
               <div slot="body">
                 <h3>Download</h3>
                 <p>Download the complete book outline, text, or audio.</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.downloadOutline()}>Outline</button>
                   <button class="standard-button" @click=${this.downloadBook()}>Text</button>
                   <button
@@ -189,14 +189,14 @@ export class TorlifyBookEditor extends LitElement {
                     Audio
                     ${this.downloadingAudio
                       ? html`
-                          <torlify-spinner size="18"></torlify-spinner>
+                          <inklify-spinner size="18"></inklify-spinner>
                         `
                       : ""}
                   </button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.info}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.info}-modal">
               <div slot="body">
                 <h3>Info</h3>
                 ${this.bookContext.book.request
@@ -216,21 +216,21 @@ export class TorlifyBookEditor extends LitElement {
                       </p>
                     `}
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.details}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.details}-modal">
               <div slot="body">
                 <h3>Details</h3>
-                <torlify-field property="book.details.authorName" .generation=${false}></torlify-field>
-                <torlify-field property="book.details.isbn" .generation=${false}></torlify-field>
-                <torlify-field property="book.details.dedication" type="textarea"></torlify-field>
-                <torlify-field property="book.details.acknowledgements" type="textarea"></torlify-field>
-                <torlify-field property="book.details.aboutTheAuthor" type="textarea"></torlify-field>
-                <torlify-field property="book.details.backCoverText" type="textarea"></torlify-field>
-                <torlify-field property="book.details.coverImagePrompt" type="textarea"></torlify-field>
-                <torlify-field property="book.details.includeChapterTitles" type="boolean"></torlify-field>
+                <inklify-field property="book.details.authorName" .generation=${false}></inklify-field>
+                <inklify-field property="book.details.isbn" .generation=${false}></inklify-field>
+                <inklify-field property="book.details.dedication" type="textarea"></inklify-field>
+                <inklify-field property="book.details.acknowledgements" type="textarea"></inklify-field>
+                <inklify-field property="book.details.aboutTheAuthor" type="textarea"></inklify-field>
+                <inklify-field property="book.details.backCoverText" type="textarea"></inklify-field>
+                <inklify-field property="book.details.coverImagePrompt" type="textarea"></inklify-field>
+                <inklify-field property="book.details.includeChapterTitles" type="boolean"></inklify-field>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.configure}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.configure}-modal">
               <div slot="body">
                 <h2>Configure</h2>
                 <h3>Text Model Configuration</h3>
@@ -241,61 +241,61 @@ export class TorlifyBookEditor extends LitElement {
                   <span>Test Connectivity</span>
                   ${this.testConnectivityLoading
                     ? html`
-                        <torlify-spinner size="18"></torlify-spinner>
+                        <inklify-spinner size="18"></inklify-spinner>
                       `
                     : ""}
                 </button>
-                <torlify-field .generation=${false} property="book.model.text.name"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.text.modelName"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.text.endpoint"></torlify-field>
-                <torlify-field
+                <inklify-field .generation=${false} property="book.model.text.name"></inklify-field>
+                <inklify-field .generation=${false} property="book.model.text.modelName"></inklify-field>
+                <inklify-field .generation=${false} property="book.model.text.endpoint"></inklify-field>
+                <inklify-field
                   .generation=${false}
                   property="book.model.text.cost.inputTokenCost"
-                  type="number"></torlify-field>
-                <torlify-field
+                  type="number"></inklify-field>
+                <inklify-field
                   .generation=${false}
                   property="book.model.text.cost.outputTokenCost"
-                  type="number"></torlify-field>
+                  type="number"></inklify-field>
                 <h3>Audio Model Configuration</h3>
-                <torlify-field .generation=${false} property="book.model.audio.name"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.audio.modelName"></torlify-field>
+                <inklify-field .generation=${false} property="book.model.audio.name"></inklify-field>
+                <inklify-field .generation=${false} property="book.model.audio.modelName"></inklify-field>
                 <p>
                   <a href="https://www.openai.fm/">OpenAI Voice options</a>
                 </p>
-                <torlify-field .generation=${false} property="book.model.audio.voice"></torlify-field>
-                <torlify-field .generation=${false} property="book.model.audio.endpoint"></torlify-field>
-                <torlify-field
+                <inklify-field .generation=${false} property="book.model.audio.voice"></inklify-field>
+                <inklify-field .generation=${false} property="book.model.audio.endpoint"></inklify-field>
+                <inklify-field
                   .generation=${false}
                   property="book.model.audio.cost.inputTokenCost"
-                  type="number"></torlify-field>
-                <torlify-field
+                  type="number"></inklify-field>
+                <inklify-field
                   .generation=${false}
                   property="book.model.audio.cost.outputTokenCost"
-                  type="number"></torlify-field>
+                  type="number"></inklify-field>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.delete}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.delete}-modal">
               <div slot="body">
                 <h3>Delete Book</h3>
                 <p>You can delete the book outline, text, or audio. Alternatively, you can delete the entire book.</p>
                 <div class="delete-options">
-                  <torlify-bar>
+                  <inklify-bar>
                     <button class="standard-button delete" @click=${this.deleteOutline()}>Outline</button>
                     <button class="standard-button delete" @click=${this.deleteText()}>Text</button>
                     <button class="standard-button delete" @click=${this.deleteAudio()}>Audio</button>
-                  </torlify-bar>
-                  <torlify-bar>
+                  </inklify-bar>
+                  <inklify-bar>
                     <button class="standard-button delete" @click=${this.deleteBook}>Delete</button>
-                  </torlify-bar>
+                  </inklify-bar>
                 </div>
               </div>
-            </torlify-modal>
+            </inklify-modal>
             <div class="secondary-surface">
               <h4 class="title">
                 Title
-                <torlify-book-title-modal></torlify-book-title-modal>
+                <inklify-book-title-modal></inklify-book-title-modal>
               </h4>
-              <torlify-field property="book.title" type="textarea" hideLabel></torlify-field>
+              <inklify-field property="book.title" type="textarea" hideLabel></inklify-field>
               <div class="stats">
                 <span>${checkCompletion(this.bookContext.book)}% complete</span>
                 <span>${formatNumber(this.tokens)} tokens</span>
@@ -307,13 +307,13 @@ export class TorlifyBookEditor extends LitElement {
             </div>
             <div class="secondary-surface">
               <h4>Overview</h4>
-              <torlify-field property="book.overview" type="textarea" hideLabel></torlify-field>
+              <inklify-field property="book.overview" type="textarea" hideLabel></inklify-field>
               <h4>Writing Instructions</h4>
-              <torlify-field property="book.instructions.writing" type="textarea" hideLabel></torlify-field>
+              <inklify-field property="book.instructions.writing" type="textarea" hideLabel></inklify-field>
               <h4>Edit Instructions</h4>
-              <torlify-field property="book.instructions.edit" type="textarea" hideLabel></torlify-field>
+              <inklify-field property="book.instructions.edit" type="textarea" hideLabel></inklify-field>
               <h4>Audio Instructions</h4>
-              <torlify-field property="book.instructions.audio" type="textarea" hideLabel></torlify-field>
+              <inklify-field property="book.instructions.audio" type="textarea" hideLabel></inklify-field>
             </div>
           `
         : html`
@@ -359,14 +359,14 @@ export class TorlifyBookEditor extends LitElement {
 
   openModal(name: Modal): () => void {
     return (): void => {
-      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as InklifyModal;
       modal.open();
     };
   }
 
   closeModal(name: Modal): () => void {
     return (): void => {
-      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as InklifyModal;
       modal.close();
     };
   }

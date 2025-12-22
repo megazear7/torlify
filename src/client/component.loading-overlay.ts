@@ -28,8 +28,8 @@ export const Step = z.object({
 });
 export type Step = z.infer<typeof Step>;
 
-@customElement("torlify-loading-overlay")
-export class TorlifyLoadingOverlay extends LitElement {
+@customElement("inklify-loading-overlay")
+export class InklifyLoadingOverlay extends LitElement {
   static override styles = [
     globalStyles,
     overlayStyles,
@@ -226,7 +226,7 @@ export class TorlifyLoadingOverlay extends LitElement {
                     : ""}
                   ${step.status === StepStatus.enum.progress
                     ? html`
-                        <torlify-spinner size="20"></torlify-spinner>
+                        <inklify-spinner size="20"></inklify-spinner>
                       `
                     : ""}
                   ${step.status === StepStatus.enum.pending

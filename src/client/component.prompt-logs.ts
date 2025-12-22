@@ -5,8 +5,8 @@ import { overlayStyles } from "./styles.overlay.js";
 import { xIcon } from "./icons.js";
 import { PromptLog } from "../shared/type.prompt-log.js";
 
-@customElement("torlify-prompt-logs")
-export class TorlifyPromptLogs extends LitElement {
+@customElement("inklify-prompt-logs")
+export class InklifyPromptLogs extends LitElement {
   static override styles = [
     globalStyles,
     overlayStyles,

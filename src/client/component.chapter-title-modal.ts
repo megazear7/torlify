@@ -5,7 +5,7 @@ import { consume } from "@lit/context";
 import { ChapterContext, chapterContext } from "./context.js";
 import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { aiIcon, audioIcon, gearIcon, trashIcon } from "./icons.js";
 import { WarningEvent } from "./event.warning.js";
 import { dispatch } from "./util.events.js";
@@ -17,8 +17,8 @@ import "./component.field.js";
 import "./component.spinner.js";
 import "./component.bar.js";
 
-@customElement("torlify-chapter-title-modal")
-export class TorlifyChapterTitleModal extends LitElement {
+@customElement("inklify-chapter-title-modal")
+export class InklifyChapterTitleModal extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -55,8 +55,8 @@ export class TorlifyChapterTitleModal extends LitElement {
     status: LoadingStatus.enum.idle,
   };
 
-  @query("torlify-modal")
-  public modal!: TorlifyModal;
+  @query("inklify-modal")
+  public modal!: InklifyModal;
 
   @query("audio")
   public audioElement!: HTMLAudioElement;
@@ -70,25 +70,25 @@ export class TorlifyChapterTitleModal extends LitElement {
   override render(): TemplateResult {
     return html`
       <button class="open" @click=${this.open()}>${gearIcon}</button>
-      <torlify-modal id="config">
+      <inklify-modal id="config">
         <div slot="body">
           <h2>Title</h2>
-          <torlify-field property="chapter.title" type="textarea" heading="h2"></torlify-field>
-          <torlify-bar label="Audio Actions">
+          <inklify-field property="chapter.title" type="textarea" heading="h2"></inklify-field>
+          <inklify-bar label="Audio Actions">
             <button class="standard-button" @click=${this.generate()} ?disabled=${this.loading}>
               ${this.loading
                 ? html`
-                    <torlify-spinner></torlify-spinner>
+                    <inklify-spinner></inklify-spinner>
                   `
                 : aiIcon}
               Generate
             </button>
             <button class="standard-button" @click=${this.listen()}>${audioIcon} Listen</button>
             <button class="standard-button" @click=${this.delete()}>${trashIcon} Delete</button>
-          </torlify-bar>
+          </inklify-bar>
           <audio src="${this.audioUrl}" controls></audio>
         </div>
-      </torlify-modal>
+      </inklify-modal>
     `;
   }
 

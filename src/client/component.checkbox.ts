@@ -3,10 +3,10 @@ import { customElement, property } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { checkIcon, xIcon } from "./icons.js";
 
-export const CHECKBOX_TAG_NAME = "torlify-checkbox";
+export const CHECKBOX_TAG_NAME = "inklify-checkbox";
 
 @customElement(CHECKBOX_TAG_NAME)
-export class TorlifyCheckbox extends LitElement {
+export class InklifyCheckbox extends LitElement {
   static override styles = [
     globalStyles,
     css`

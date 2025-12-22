@@ -1,7 +1,7 @@
 import { css, html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
-import { TorlifyPartProvider } from "./provider.part.js";
+import { InklifyPartProvider } from "./provider.part.js";
 import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
@@ -14,14 +14,14 @@ import "./component.references.js";
 import "./component.characters.js";
 import "./component.chapter-list.js";
 
-@customElement("torlify-part-page")
-export class TorlifyPartPage extends TorlifyPartProvider {
+@customElement("inklify-part-page")
+export class InklifyPartPage extends InklifyPartProvider {
   params = parseRouteParams("/book/:bookId/chapter/:chapterId/part/:partId", window.location.pathname);
 
   static override styles = [
     globalStyles,
     css`
-      torlify-part-list {
+      inklify-part-list {
         scroll-margin-top: var(--size-xl);
       }
     `,
@@ -29,18 +29,18 @@ export class TorlifyPartPage extends TorlifyPartProvider {
 
   override render(): TemplateResult {
     return html`
-      <torlify-bookmark-tabs></torlify-bookmark-tabs>
+      <inklify-bookmark-tabs></inklify-bookmark-tabs>
       <div class="container">
-        <torlify-book-list></torlify-book-list>
-        <torlify-book-summary></torlify-book-summary>
-        <torlify-book-editor></torlify-book-editor>
-        <torlify-pronunciations></torlify-pronunciations>
-        <torlify-references></torlify-references>
-        <torlify-characters></torlify-characters>
-        <torlify-chapter-list></torlify-chapter-list>
-        <torlify-chapter-editor></torlify-chapter-editor>
-        <torlify-part-list></torlify-part-list>
-        <torlify-part-editor></torlify-part-editor>
+        <inklify-book-list></inklify-book-list>
+        <inklify-book-summary></inklify-book-summary>
+        <inklify-book-editor></inklify-book-editor>
+        <inklify-pronunciations></inklify-pronunciations>
+        <inklify-references></inklify-references>
+        <inklify-characters></inklify-characters>
+        <inklify-chapter-list></inklify-chapter-list>
+        <inklify-chapter-editor></inklify-chapter-editor>
+        <inklify-part-list></inklify-part-list>
+        <inklify-part-editor></inklify-part-editor>
       </div>
     `;
   }

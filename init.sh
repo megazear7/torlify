@@ -1,6 +1,6 @@
-git clone https://github.com/megazear7/torlify.git
-cd torlify
+git clone https://github.com/megazear7/inklify.git
+cd inklify
 nvm use 22
 npm install
 npm run init
-echo "You will need run 'cd torlify'"
+echo "You will need run 'cd inklify'"

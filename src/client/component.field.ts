@@ -17,16 +17,16 @@ import { updateAppService } from "../shared/service.update-app.js";
 import { aiIcon, infoIcon } from "./icons.js";
 import { WarningEvent } from "./event.warning.js";
 import { updateChapterService } from "../shared/service.update-chapter.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { generateBookFieldService } from "../shared/service.generate-book-field.js";
 import z from "zod";
-import { TorlifyAutoTextarea } from "./component.auto-textarea.js";
+import { InklifyAutoTextarea } from "./component.auto-textarea.js";
 
 export const FieldType = z.enum(["input", "textarea", "number", "boolean"]);
 export type FieldType = z.infer<typeof FieldType>;
 
-@customElement("torlify-field")
-export class TorlifyField extends LitElement {
+@customElement("inklify-field")
+export class InklifyField extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -84,7 +84,7 @@ export class TorlifyField extends LitElement {
       }
 
       .invalid input,
-      .invalid torlify-auto-textarea {
+      .invalid inklify-auto-textarea {
         border: none !important;
         box-shadow: 0 0 0 1px var(--color-danger) !important;
       }
@@ -145,8 +145,8 @@ export class TorlifyField extends LitElement {
   @state()
   public invalid: boolean = false;
 
-  @query("torlify-modal")
-  private modal!: TorlifyModal;
+  @query("inklify-modal")
+  private modal!: InklifyModal;
 
   @query("#generation-instructions")
   private generationInstructions!: HTMLTextAreaElement;
@@ -210,10 +210,10 @@ export class TorlifyField extends LitElement {
             <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
           `}
       <div class="field ${this.invalid ? "invalid" : ""}">
-        <torlify-auto-textarea
+        <inklify-auto-textarea
           heading=${this.heading}
           .value=${this.value}
-          @input=${this.save()}></torlify-auto-textarea>
+          @input=${this.save()}></inklify-auto-textarea>
         ${this.renderGenerate()}
       </div>
     `;
@@ -227,10 +227,10 @@ export class TorlifyField extends LitElement {
             <label for="${this.propertyId}">${this.labelWithFallbackTemplate()}${this.renderHelp()}</label>
           `}
       <div class="field ${this.invalid ? "invalid" : ""}">
-        <torlify-checkbox
+        <inklify-checkbox
           .checked="${!!this.value}"
           text=${this.labelWithFallback()}
-          @change=${this.save()}></torlify-checkbox>
+          @change=${this.save()}></inklify-checkbox>
       </div>
     `;
   }
@@ -239,33 +239,33 @@ export class TorlifyField extends LitElement {
     if (!this.generation) return html``;
     return html`
       <button class="generate" @click=${this.openGenerationModal()}>${aiIcon}</button>
-      <torlify-modal>
+      <inklify-modal>
         <div slot="body">
           <h3>Generate Field Content</h3>
           <p>Generate for the ${this.labelWithFallback()} Field</p>
           <h6>Additional Instructions (optional)</h6>
-          <torlify-auto-textarea id="generation-instructions"></torlify-auto-textarea>
-          <torlify-bar>
+          <inklify-auto-textarea id="generation-instructions"></inklify-auto-textarea>
+          <inklify-bar>
             <button
               class="standard-button generate-button ${this.generationLoading ? "loading" : ""}"
               @click=${this.generate()}>
               ${this.generationLoading
                 ? html`
-                    <torlify-spinner></torlify-spinner>
+                    <inklify-spinner></inklify-spinner>
                   `
                 : ""}
               ${this.value ? "Regenerate" : "Generate"}
             </button>
-          </torlify-bar>
+          </inklify-bar>
         </div>
-      </torlify-modal>
+      </inklify-modal>
     `;
   }
 
   renderHelp(): TemplateResult {
     if (this.help) {
       return html`
-        <torlify-tooltip content=${this.help} offsetY="90">${infoIcon}</torlify-tooltip>
+        <inklify-tooltip content=${this.help} offsetY="90">${infoIcon}</inklify-tooltip>
       `;
     }
     return html``;
@@ -438,7 +438,7 @@ export class TorlifyField extends LitElement {
   resize(): void {
     const shadow = this.shadowRoot;
     if (!shadow) return;
-    const textarea = shadow.querySelector<TorlifyAutoTextarea>(".field torlify-auto-textarea");
+    const textarea = shadow.querySelector<InklifyAutoTextarea>(".field inklify-auto-textarea");
     if (textarea) {
       textarea.adjustHeight();
     }

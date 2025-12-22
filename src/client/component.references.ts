@@ -7,15 +7,15 @@ import { globalStyles } from "./styles.global.js";
 import { ReferenceUse } from "../shared/type.book.js";
 import { dispatch } from "./util.events.js";
 import { plusIcon, trashIcon, editIcon, upArrowIcon, downArrowIcon } from "./icons.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { uploadReferenceService } from "../shared/service.upload-reference.js";
 import { WarningEvent } from "./event.warning.js";
 import { DebounceHandler } from "./util.debounce.js";
 import { updateBookService } from "../shared/service.update-book.js";
 import { SaveEvent } from "./event.save.js";
 
-@customElement("torlify-references")
-export class TorlifyReferences extends LitElement {
+@customElement("inklify-references")
+export class InklifyReferences extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -255,7 +255,7 @@ export class TorlifyReferences extends LitElement {
         width: 100%;
       }
 
-      torlify-checkbox {
+      inklify-checkbox {
         display: inline-block;
       }
 
@@ -289,7 +289,7 @@ export class TorlifyReferences extends LitElement {
   @property({ attribute: false })
   public whenToUse: ReferenceUse[] = [];
 
-  @query("torlify-modal") modal!: TorlifyModal;
+  @query("inklify-modal") modal!: InklifyModal;
   @query('input[type="file"]') fileInput!: HTMLInputElement;
   @query(".file-upload-area") uploadArea!: HTMLElement;
 
@@ -366,9 +366,9 @@ export class TorlifyReferences extends LitElement {
             `}
       </div>
 
-      <torlify-modal>
+      <inklify-modal>
         <div slot="body">${this.renderModalContent()}</div>
-      </torlify-modal>
+      </inklify-modal>
     `;
   }
 
@@ -419,10 +419,10 @@ export class TorlifyReferences extends LitElement {
           <div class="checkbox-group">
             ${ReferenceUse.options.map(
               (option) => html`
-                <torlify-checkbox
+                <inklify-checkbox
                   text=${option}
                   .checked="${this.whenToUse.includes(option)}"
-                  @change=${this.toggleWhenToUse(option)}></torlify-checkbox>
+                  @change=${this.toggleWhenToUse(option)}></inklify-checkbox>
               `,
             )}
           </div>

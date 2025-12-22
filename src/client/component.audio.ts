@@ -3,8 +3,8 @@ import { customElement, property } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 import { pauseIcon, playIcon } from "./icons.js";
 
-@customElement("torlify-audio")
-export class TorlifyAudio extends LitElement {
+@customElement("inklify-audio")
+export class InklifyAudio extends LitElement {
   static override styles = [
     globalStyles,
     css`

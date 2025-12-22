@@ -6,8 +6,8 @@ import { consume } from "@lit/context";
 import { globalStyles } from "./styles.global.js";
 import { pillStyles } from "./styles.pill.js";
 
-@customElement("torlify-part-list")
-export class TorlifyPartList extends LitElement {
+@customElement("inklify-part-list")
+export class InklifyPartList extends LitElement {
   static override styles = [globalStyles, pillStyles];
 
   @consume({ context: bookContext, subscribe: true })

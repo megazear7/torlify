@@ -14,9 +14,9 @@ import { generateBookService } from "../shared/service.generate-book.js";
 import { pillStyles } from "./styles.pill.js";
 import { NavigationEvent } from "./event.navigation.js";
 import { WarningEvent } from "./event.warning.js";
-import { TorlifyAutoTextarea } from "./component.auto-textarea.js";
+import { InklifyAutoTextarea } from "./component.auto-textarea.js";
 import { wait } from "../shared/util.wait.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { createBookService } from "../shared/service.create-book.js";
 import {
   MAXIMUM_NUMBER_OF_CHAPTERS,
@@ -25,8 +25,8 @@ import {
   MINIMUM_PART_LENGTH,
 } from "../shared/type.book.js";
 
-@customElement("torlify-book-list")
-export class TorlifyBookList extends LitElement {
+@customElement("inklify-book-list")
+export class InklifyBookList extends LitElement {
   static override styles = [
     globalStyles,
     pillStyles,
@@ -135,11 +135,11 @@ export class TorlifyBookList extends LitElement {
     "A mermaid exploring the human world while protecting her underwater kingdom from threats.",
   ];
 
-  @queryAll("torlify-modal torlify-auto-textarea")
-  private modalTextAreas!: NodeListOf<TorlifyAutoTextarea>;
+  @queryAll("inklify-modal inklify-auto-textarea")
+  private modalTextAreas!: NodeListOf<InklifyAutoTextarea>;
 
   @query("#create-book-modal")
-  private createBookModal!: TorlifyModal;
+  private createBookModal!: InklifyModal;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -151,36 +151,36 @@ export class TorlifyBookList extends LitElement {
       <ul class="pill">
         <li><a href="/">${homeIcon}&nbsp;Home</a></li>
         <li>
-          <torlify-modal
+          <inklify-modal
             id="create-book-modal"
             @ModelSubmit=${this.handleGenerateBook}
             @ModelOpening=${this.handleOpenModal}>
             <button slot="open-button">${aiIcon} Create</button>
             <div slot="body">
               <h2>Create Book</h2>
-              <torlify-auto-textarea
+              <inklify-auto-textarea
                 .value="${this.generateBookInstructions}"
                 @input=${this.handleGenerateBookInstructions}
-                placeholder="${this.sampleDescription}"></torlify-auto-textarea>
-              <torlify-number-slider
+                placeholder="${this.sampleDescription}"></inklify-auto-textarea>
+              <inklify-number-slider
                 min="${MINIMUM_NUMBER_OF_CHAPTERS}"
                 max="${MAXIMUM_NUMBER_OF_CHAPTERS}"
                 label="Number of Chapters"
                 .value=${this.generateBookNumberOfChapters}
-                @input=${this.handleGenerateBookNumberOfChapters}></torlify-number-slider>
-              <torlify-number-slider
+                @input=${this.handleGenerateBookNumberOfChapters}></inklify-number-slider>
+              <inklify-number-slider
                 min="${MINIMUM_PART_LENGTH}"
                 max="${MAXIMUM_PART_LENGTH}"
                 step="10"
                 label="Part Length"
                 .value=${this.generateBookPartLength}
-                @input=${this.handleGenerateBookPartLength}></torlify-number-slider>
-              <torlify-bar>
+                @input=${this.handleGenerateBookPartLength}></inklify-number-slider>
+              <inklify-bar>
                 <button class="standard-button" @click=${this.handleGenerateBook}>${aiIcon} Generate</button>
                 <button class="standard-button" @click=${this.handleCreateBook}>Create Empty</button>
-              </torlify-bar>
+              </inklify-bar>
             </div>
-          </torlify-modal>
+          </inklify-modal>
         </li>
         ${this.booksContext.books?.map(
           (book) => html`
@@ -194,7 +194,7 @@ export class TorlifyBookList extends LitElement {
         `}
       </ul>
 
-      <torlify-loading-overlay .visible="${this.loading}" message="${this.loadingMessage}"></torlify-loading-overlay>
+      <inklify-loading-overlay .visible="${this.loading}" message="${this.loadingMessage}"></inklify-loading-overlay>
     `;
   }
 

@@ -4,9 +4,9 @@ import { BookContext, bookContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { getBookService } from "../shared/service.get-book.js";
-import { TorlifyBookListProvider } from "./provider.book-list.js";
+import { InklifyBookListProvider } from "./provider.book-list.js";
 
-export abstract class TorlifyBookProvider extends TorlifyBookListProvider {
+export abstract class InklifyBookProvider extends InklifyBookListProvider {
   @provide({ context: bookContext })
   @property({ attribute: false })
   bookContext: BookContext = {

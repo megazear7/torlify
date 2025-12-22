@@ -1,22 +1,22 @@
 import { LitElement } from "lit";
 import "./component.book-editor.js";
 import { query } from "lit/decorators.js";
-import { TorlifyBookList } from "./component.book-list.js";
+import { InklifyBookList } from "./component.book-list.js";
 import { ScrollToEventDetail, ScrollToEventTarget } from "./event.scroll-to.js";
-import { TorlifyPartList } from "./component.part-list.js";
-import { TorlifyChapterList } from "./component.chapter-list.js";
+import { InklifyPartList } from "./component.part-list.js";
+import { InklifyChapterList } from "./component.chapter-list.js";
 
-export abstract class TorlifyAbstractProvider extends LitElement {
+export abstract class InklifyAbstractProvider extends LitElement {
   abstract load(): Promise<void>;
 
-  @query("torlify-book-list")
-  bookListElement!: TorlifyBookList;
+  @query("inklify-book-list")
+  bookListElement!: InklifyBookList;
 
-  @query("torlify-chapter-list")
-  chapterListElement!: TorlifyChapterList;
+  @query("inklify-chapter-list")
+  chapterListElement!: InklifyChapterList;
 
-  @query("torlify-part-list")
-  partListElement!: TorlifyPartList;
+  @query("inklify-part-list")
+  partListElement!: InklifyPartList;
 
   override async connectedCallback(): Promise<void> {
     super.connectedCallback();

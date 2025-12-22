@@ -1,7 +1,7 @@
 import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import { TorlifyBookProvider } from "./provider.book.js";
+import { InklifyBookProvider } from "./provider.book.js";
 import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
@@ -12,8 +12,8 @@ import "./component.references.js";
 import "./component.characters.js";
 import "./component.chapter-list.js";
 
-@customElement("torlify-book-page")
-export class TorlifyBookPage extends TorlifyBookProvider {
+@customElement("inklify-book-page")
+export class InklifyBookPage extends InklifyBookProvider {
   static override styles = [globalStyles];
 
   override render(): TemplateResult {
@@ -24,15 +24,15 @@ export class TorlifyBookPage extends TorlifyBookProvider {
     }
 
     return html`
-      <torlify-bookmark-tabs></torlify-bookmark-tabs>
+      <inklify-bookmark-tabs></inklify-bookmark-tabs>
       <div class="container">
-        <torlify-book-list></torlify-book-list>
-        <torlify-book-summary></torlify-book-summary>
-        <torlify-book-editor></torlify-book-editor>
-        <torlify-pronunciations></torlify-pronunciations>
-        <torlify-references></torlify-references>
-        <torlify-characters></torlify-characters>
-        <torlify-chapter-list></torlify-chapter-list>
+        <inklify-book-list></inklify-book-list>
+        <inklify-book-summary></inklify-book-summary>
+        <inklify-book-editor></inklify-book-editor>
+        <inklify-pronunciations></inklify-pronunciations>
+        <inklify-references></inklify-references>
+        <inklify-characters></inklify-characters>
+        <inklify-chapter-list></inklify-chapter-list>
       </div>
     `;
   }

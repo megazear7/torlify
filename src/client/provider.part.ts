@@ -2,10 +2,10 @@ import { provide } from "@lit/context";
 import { property } from "lit/decorators.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
-import { TorlifyChapterProvider } from "./provider.chapter.js";
+import { InklifyChapterProvider } from "./provider.chapter.js";
 import { PartContext, partContext } from "./context.js";
 
-export abstract class TorlifyPartProvider extends TorlifyChapterProvider {
+export abstract class InklifyPartProvider extends InklifyChapterProvider {
   @provide({ context: partContext })
   @property({ attribute: false })
   partContext: PartContext = {

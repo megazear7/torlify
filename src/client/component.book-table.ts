@@ -9,8 +9,8 @@ import { formatNumber } from "../shared/util.number.js";
 import { infoIcon } from "./icons.js";
 import "./component.tooltip.js";
 
-@customElement("torlify-book-table")
-export class TorlifyBookTable extends LitElement {
+@customElement("inklify-book-table")
+export class InklifyBookTable extends LitElement {
   static override styles = [
     globalStyles,
     pillStyles,
@@ -105,7 +105,7 @@ export class TorlifyBookTable extends LitElement {
         box-shadow: var(--shadow-hover);
       }
 
-      torlify-tooltip {
+      inklify-tooltip {
         margin-left: var(--size-small);
         width: 1rem;
         height: 1rem;
@@ -188,9 +188,9 @@ export class TorlifyBookTable extends LitElement {
             <th @click=${this.handleSort("efficiency")}>
               <div style="display: flex; align-items: center;">
                 <span>Efficiency${this.getSortIndicator("efficiency")}</span>
-                <torlify-tooltip content="Cost per 10,000 Words" offsetY="50">
+                <inklify-tooltip content="Cost per 10,000 Words" offsetY="50">
                   <span class="info-icon">${infoIcon}</span>
-                </torlify-tooltip>
+                </inklify-tooltip>
               </div>
             </th>
             <th @click=${this.handleSort("cost")}>Cost ${this.getSortIndicator("cost")}</th>

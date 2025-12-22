@@ -23,8 +23,8 @@ export interface Notification {
 export const NotificationFilter = z.enum(["all", "success", "warning"]);
 export type NotificationFilter = z.infer<typeof NotificationFilter>;
 
-@customElement("torlify-notification-manager")
-export class TorlifyNotificationManager extends LitElement {
+@customElement("inklify-notification-manager")
+export class InklifyNotificationManager extends LitElement {
   static override styles = [
     globalStyles,
     overlayStyles,
@@ -198,7 +198,7 @@ export class TorlifyNotificationManager extends LitElement {
         <div class="notification-content">
           <div class="notification-header">
             <button class="standard-button small" @click=${this.clearAllNotifications}>Clear All</button>
-            <torlify-bar>
+            <inklify-bar>
               <button
                 class="standard-button ${this.filter === NotificationFilter.enum.all ? "active" : ""}"
                 @click=${this.setFilter(NotificationFilter.enum.all)}>
@@ -214,7 +214,7 @@ export class TorlifyNotificationManager extends LitElement {
                 @click=${this.setFilter(NotificationFilter.enum.warning)}>
                 Warning
               </button>
-            </torlify-bar>
+            </inklify-bar>
           </div>
           <div class="notification-list">
             ${visibleNotifications.length === 0
@@ -242,7 +242,7 @@ export class TorlifyNotificationManager extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.notifications = JSON.parse(window.localStorage.getItem("torlify-notifications") || "[]");
+    this.notifications = JSON.parse(window.localStorage.getItem("inklify-notifications") || "[]");
     document.addEventListener("Success", this.handleSuccessEvent);
     document.addEventListener("Warning", this.handleWarningEvent);
     document.addEventListener("keydown", this.handleKeyDown);
@@ -257,7 +257,7 @@ export class TorlifyNotificationManager extends LitElement {
 
   private clearAllNotifications = (): void => {
     this.notifications = [];
-    window.localStorage.setItem("torlify-notifications", JSON.stringify(this.notifications));
+    window.localStorage.setItem("inklify-notifications", JSON.stringify(this.notifications));
     this.requestUpdate();
   };
 
@@ -285,7 +285,7 @@ export class TorlifyNotificationManager extends LitElement {
       this.requestUpdate();
       setTimeout(() => {
         this.notifications = this.notifications.filter((n) => n.id !== notification.id);
-        window.localStorage.setItem("torlify-notifications", JSON.stringify(this.notifications));
+        window.localStorage.setItem("inklify-notifications", JSON.stringify(this.notifications));
         this.requestUpdate();
       }, ANIMATION_SPEED_IN_MS);
     };
@@ -315,7 +315,7 @@ export class TorlifyNotificationManager extends LitElement {
     };
 
     this.notifications = [notification, ...this.notifications].slice(0, this.maxNotifications);
-    window.localStorage.setItem("torlify-notifications", JSON.stringify(this.notifications));
+    window.localStorage.setItem("inklify-notifications", JSON.stringify(this.notifications));
     this.requestUpdate();
   }
 

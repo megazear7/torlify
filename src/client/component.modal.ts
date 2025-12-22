@@ -8,12 +8,12 @@ import { ModelOpeningEvent } from "./event.modal-opening.js";
 import { wait } from "../shared/util.wait";
 import { ModelClosingEvent } from "./event.modal-closing";
 import { xIcon } from "./icons.js";
-import { TorlifyField } from "./component.field";
+import { InklifyField } from "./component.field";
 
 const ANIMATION_SPEED = 300;
 
-@customElement("torlify-modal")
-export class TorlifyModal extends LitElement {
+@customElement("inklify-modal")
+export class InklifyModal extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -174,7 +174,7 @@ export class TorlifyModal extends LitElement {
     await wait(ANIMATION_SPEED);
     this.opening = false;
     this.visible = true;
-    for (const field of this.querySelectorAll<TorlifyField>("torlify-field")) {
+    for (const field of this.querySelectorAll<InklifyField>("inklify-field")) {
       field.resize();
     }
     window.document.body.style.overflow = "hidden";

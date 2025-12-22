@@ -4,7 +4,7 @@ import { globalStyles } from "./styles.global.js";
 import { consume } from "@lit/context";
 import { AppContext, appContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import "./component.field.js";
 import "./component.spinner.js";
 import { appPingModelService } from "../shared/service.app-ping-model.js";
@@ -12,8 +12,8 @@ import { dispatch } from "./util.events.js";
 import { SuccessEvent } from "./event.success.js";
 import { WarningEvent } from "./event.warning.js";
 
-@customElement("torlify-app-config")
-export class TorlifyAppConfig extends LitElement {
+@customElement("inklify-app-config")
+export class InklifyAppConfig extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -38,7 +38,7 @@ export class TorlifyAppConfig extends LitElement {
   };
 
   @query("#config")
-  public configElement!: TorlifyModal;
+  public configElement!: InklifyModal;
 
   @property({ type: Boolean })
   public testConnectivityLoading = false;
@@ -46,7 +46,7 @@ export class TorlifyAppConfig extends LitElement {
   override render(): TemplateResult {
     return html`
       <button class="standard-button" @click=${this.openConfig()}>Configure</button>
-      <torlify-modal id="config">
+      <inklify-modal id="config">
         <div slot="body">
           <h2>App Configuration</h2>
           <h3>Text Model Configuration</h3>
@@ -57,40 +57,40 @@ export class TorlifyAppConfig extends LitElement {
             <span>Test Connectivity</span>
             ${this.testConnectivityLoading
               ? html`
-                  <torlify-spinner size="18"></torlify-spinner>
+                  <inklify-spinner size="18"></inklify-spinner>
                 `
               : ""}
           </button>
           <br />
-          <torlify-field .generation=${false} property="app.model.text.name"></torlify-field>
-          <torlify-field .generation=${false} property="app.model.text.modelName"></torlify-field>
-          <torlify-field .generation=${false} property="app.model.text.endpoint"></torlify-field>
-          <torlify-field
+          <inklify-field .generation=${false} property="app.model.text.name"></inklify-field>
+          <inklify-field .generation=${false} property="app.model.text.modelName"></inklify-field>
+          <inklify-field .generation=${false} property="app.model.text.endpoint"></inklify-field>
+          <inklify-field
             property="app.model.text.cost.inputTokenCost"
             help="dollars per million tokens"
-            type="number"></torlify-field>
-          <torlify-field
+            type="number"></inklify-field>
+          <inklify-field
             property="app.model.text.cost.outputTokenCost"
             help="dollars per million tokens"
-            type="number"></torlify-field>
+            type="number"></inklify-field>
           <h3>Audio Model Configuration</h3>
-          <torlify-field .generation=${false} property="app.model.audio.name"></torlify-field>
-          <torlify-field .generation=${false} property="app.model.audio.modelName"></torlify-field>
+          <inklify-field .generation=${false} property="app.model.audio.name"></inklify-field>
+          <inklify-field .generation=${false} property="app.model.audio.modelName"></inklify-field>
           <p>
             <a href="https://www.openai.fm/">OpenAI Voice options</a>
           </p>
-          <torlify-field .generation=${false} property="app.model.audio.voice"></torlify-field>
-          <torlify-field .generation=${false} property="app.model.audio.endpoint"></torlify-field>
-          <torlify-field
+          <inklify-field .generation=${false} property="app.model.audio.voice"></inklify-field>
+          <inklify-field .generation=${false} property="app.model.audio.endpoint"></inklify-field>
+          <inklify-field
             property="app.model.audio.cost.inputTokenCost"
             help="dollars per million tokens"
-            type="number"></torlify-field>
-          <torlify-field
+            type="number"></inklify-field>
+          <inklify-field
             property="app.model.audio.cost.outputTokenCost"
             help="dollars per million tokens"
-            type="number"></torlify-field>
+            type="number"></inklify-field>
         </div>
-      </torlify-modal>
+      </inklify-modal>
     `;
   }
 

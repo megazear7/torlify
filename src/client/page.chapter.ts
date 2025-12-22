@@ -1,7 +1,7 @@
 import { html, TemplateResult } from "lit";
 import { customElement } from "lit/decorators.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
-import { TorlifyChapterProvider } from "./provider.chapter.js";
+import { InklifyChapterProvider } from "./provider.chapter.js";
 import { globalStyles } from "./styles.global.js";
 import "./component.book-list.js";
 import "./component.book-editor.js";
@@ -13,25 +13,25 @@ import "./component.references.js";
 import "./component.characters.js";
 import "./component.chapter-list.js";
 
-@customElement("torlify-chapter-page")
-export class TorlifyChapterPage extends TorlifyChapterProvider {
+@customElement("inklify-chapter-page")
+export class InklifyChapterPage extends InklifyChapterProvider {
   params = parseRouteParams("/book/:bookId/chapter/:chapterId", window.location.pathname);
 
   static override styles = [globalStyles];
 
   override render(): TemplateResult {
     return html`
-      <torlify-bookmark-tabs></torlify-bookmark-tabs>
+      <inklify-bookmark-tabs></inklify-bookmark-tabs>
       <div class="container">
-        <torlify-book-list></torlify-book-list>
-        <torlify-book-summary></torlify-book-summary>
-        <torlify-book-editor></torlify-book-editor>
-        <torlify-pronunciations></torlify-pronunciations>
-        <torlify-references></torlify-references>
-        <torlify-characters></torlify-characters>
-        <torlify-chapter-list></torlify-chapter-list>
-        <torlify-chapter-editor></torlify-chapter-editor>
-        <torlify-part-list></torlify-part-list>
+        <inklify-book-list></inklify-book-list>
+        <inklify-book-summary></inklify-book-summary>
+        <inklify-book-editor></inklify-book-editor>
+        <inklify-pronunciations></inklify-pronunciations>
+        <inklify-references></inklify-references>
+        <inklify-characters></inklify-characters>
+        <inklify-chapter-list></inklify-chapter-list>
+        <inklify-chapter-editor></inklify-chapter-editor>
+        <inklify-part-list></inklify-part-list>
       </div>
     `;
   }

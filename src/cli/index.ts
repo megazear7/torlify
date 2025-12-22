@@ -10,9 +10,9 @@ const program = new Command();
 
 program
   .command("init")
-  .description("Initialize the Torlify app")
+  .description("Initialize the Inklify app")
   .action(async () => {
-    console.log("Initializing the Torlify app...");
+    console.log("Initializing the Inklify app...");
     console.log("\nAll models must be compatible with the OpenAI API schema.");
     const appConfig = { ...standardAppConfig };
     console.log(`The following models have provided default configurations:\n${Object.keys(defaults).join(", ")}`);

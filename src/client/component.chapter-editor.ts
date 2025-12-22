@@ -23,7 +23,7 @@ import { AUTO_TEXTAREA_TAG_NAME } from "./component.auto-textarea.js";
 import { generatePartService } from "../shared/service.generate-part.js";
 import { generateChapterOutlineService } from "../shared/service.generate-chapter-outline.js";
 import z from "zod";
-import { TorlifyModal } from "./component.modal.js";
+import { InklifyModal } from "./component.modal.js";
 import { aiIcon, leftArrowIcon, replaceIcon, rightArrowIcon } from "./icons.js";
 import { generatePartAudioService } from "../shared/service.generate-part-audio.js";
 import { createOutlineForChapter } from "../shared/util.book.js";
@@ -31,7 +31,7 @@ import { downloadTextFile } from "./util.download.js";
 import { downloadChapterService } from "../shared/service.download-chapter.js";
 import { handleError } from "./util.error.js";
 import { downloadChapterAudioService } from "../shared/service.download-chapter-audio.js";
-import { Step, StepStatus, TorlifyLoadingOverlay } from "./component.loading-overlay.js";
+import { Step, StepStatus, InklifyLoadingOverlay } from "./component.loading-overlay.js";
 import { NavigationEvent } from "./event.navigation.js";
 import "./component.chapter-title-modal.js";
 import "./component.auto-textarea.js";
@@ -40,8 +40,8 @@ import "./component.bar.js";
 export const Modal = z.enum(["generate", "edit", "download", "move", "add", "delete"]);
 export type Modal = z.infer<typeof Modal>;
 
-@customElement("torlify-chapter-editor")
-export class TorlifyChapterEditor extends LitElement {
+@customElement("inklify-chapter-editor")
+export class InklifyChapterEditor extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -54,7 +54,7 @@ export class TorlifyChapterEditor extends LitElement {
         align-items: center;
       }
 
-      torlify-chapter-title-modal {
+      inklify-chapter-title-modal {
         margin-left: auto;
       }
 
@@ -187,8 +187,8 @@ export class TorlifyChapterEditor extends LitElement {
   @property({ type: Array, attribute: false })
   public steps: Step[] = [];
 
-  @query("torlify-loading-overlay")
-  private loadingOverlay!: TorlifyLoadingOverlay;
+  @query("inklify-loading-overlay")
+  private loadingOverlay!: InklifyLoadingOverlay;
 
   private debounceHandler = new DebounceHandler();
 
@@ -196,37 +196,37 @@ export class TorlifyChapterEditor extends LitElement {
     return html`
       ${this.chapterContext.chapter
         ? html`
-            <torlify-loading-overlay
+            <inklify-loading-overlay
               .visible="${this.loading}"
               message="${this.loadingMessage}"
-              .steps="${this.steps}"></torlify-loading-overlay>
+              .steps="${this.steps}"></inklify-loading-overlay>
             <div class="secondary-surface">
               <h4 class="title">
                 Chapter ${this.chapterContext.chapter.number}
-                <torlify-chapter-title-modal></torlify-chapter-title-modal>
+                <inklify-chapter-title-modal></inklify-chapter-title-modal>
               </h4>
-              <torlify-field property="chapter.title" type="textarea" heading="h2" hideLabel></torlify-field>
+              <inklify-field property="chapter.title" type="textarea" heading="h2" hideLabel></inklify-field>
             </div>
-            <torlify-bar>
+            <inklify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.generate)}>Generate</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.edit)}>Edit</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.download)}>Download</button>
-            </torlify-bar>
-            <torlify-bar>
+            </inklify-bar>
+            <inklify-bar>
               <button class="standard-button" @click=${this.openModal(Modal.enum.move)}>Move</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.add)}>Add</button>
               <button class="standard-button" @click=${this.openModal(Modal.enum.delete)}>Delete</button>
-            </torlify-bar>
-            <torlify-modal id="${Modal.enum.generate}-modal">
+            </inklify-bar>
+            <inklify-modal id="${Modal.enum.generate}-modal">
               <div slot="body">
                 <h3>Generate Chapter</h3>
-                <torlify-checkbox
+                <inklify-checkbox
                   off="Generate Missing Content"
                   on="Regenerate All Content"
                   .offIcon="${aiIcon}"
                   .onIcon="${replaceIcon}"
                   .checked="${this.regenerateChecked}"
-                  @change=${this.handleRegenerateCheckedChange}></torlify-checkbox>
+                  @change=${this.handleRegenerateCheckedChange}></inklify-checkbox>
                 ${this.regenerateChecked
                   ? html`
                       <p>All content for the entire chapter will be generated, replacing any existing content.</p>
@@ -237,45 +237,45 @@ export class TorlifyChapterEditor extends LitElement {
                         replaced.
                       </p>
                     `}
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.generateOutline()}>Outline</button>
                   <button class="standard-button" @click=${this.generateParts()}>Text</button>
                   <button class="standard-button" @click=${this.generateAudio()}>Audio</button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.edit}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.edit}-modal">
               <div slot="body">
                 <h3>Edit Chapter</h3>
                 <p>Edit the entire chapter based on your instructions</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.edit()}>Edit</button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.download}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.download}-modal">
               <div slot="body">
                 <h3>Download Chapter</h3>
                 <p>Download the complete chapter outline, text, or audio.</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button class="standard-button" @click=${this.downloadOutline()}>Outline</button>
                   <button class="standard-button" @click=${this.downloadText()}>Text</button>
                   <button class="standard-button" @click=${this.downloadAudio()}>
                     Audio
                     ${this.downloadingAudio
                       ? html`
-                          <torlify-spinner></torlify-spinner>
+                          <inklify-spinner></inklify-spinner>
                         `
                       : ""}
                   </button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.move}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.move}-modal">
               <div slot="body">
                 <h3>Move Chapter</h3>
                 <p>Move this chapter before the previous chapter or after the next chapter?</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button
                     class="standard-button"
                     ?disabled="${this.chapterContext.chapter.number === 1}"
@@ -294,14 +294,14 @@ export class TorlifyChapterEditor extends LitElement {
                     @click=${this.moveAfterNext()}>
                     After next
                   </button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.add}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.add}-modal">
               <div slot="body">
                 <h3>Add Chapter</h3>
                 <p>Add a new chapter before the previous chapter or after the next chapter?</p>
-                <torlify-bar>
+                <inklify-bar>
                   <button
                     class="standard-button"
                     title="Add a new chapter before chapter ${this.chapterContext.chapter.number}"
@@ -314,52 +314,52 @@ export class TorlifyChapterEditor extends LitElement {
                     @click=${this.addAfter()}>
                     After
                   </button>
-                </torlify-bar>
+                </inklify-bar>
               </div>
-            </torlify-modal>
-            <torlify-modal id="${Modal.enum.delete}-modal">
+            </inklify-modal>
+            <inklify-modal id="${Modal.enum.delete}-modal">
               <div slot="body">
                 <h3>Delete Chapter</h3>
                 <p>Are you sure you want to delete this chapter?</p>
                 <div class="delete-options">
-                  <torlify-bar>
+                  <inklify-bar>
                     <button class="standard-button" @click=${this.deleteOutline()}>Outline</button>
                     <button class="standard-button" @click=${this.deleteText()}>Text</button>
                     <button class="standard-button" @click=${this.deleteAudio()}>Audio</button>
-                  </torlify-bar>
-                  <torlify-bar>
+                  </inklify-bar>
+                  <inklify-bar>
                     <button class="standard-button delete" @click=${this.deleteChapter()}>Delete</button>
-                  </torlify-bar>
+                  </inklify-bar>
                 </div>
               </div>
-            </torlify-modal>
+            </inklify-modal>
             <div class="secondary-surface">
-              <torlify-field property="chapter.when"></torlify-field>
-              <torlify-field property="chapter.where"></torlify-field>
-              <torlify-field property="chapter.what"></torlify-field>
-              <torlify-field property="chapter.why"></torlify-field>
-              <torlify-field property="chapter.how"></torlify-field>
-              <torlify-field property="chapter.who"></torlify-field>
+              <inklify-field property="chapter.when"></inklify-field>
+              <inklify-field property="chapter.where"></inklify-field>
+              <inklify-field property="chapter.what"></inklify-field>
+              <inklify-field property="chapter.why"></inklify-field>
+              <inklify-field property="chapter.how"></inklify-field>
+              <inklify-field property="chapter.who"></inklify-field>
             </div>
             <div class="secondary-surface">
-              <torlify-field property="chapter.minParts" .generation=${false} type="number" min="1"></torlify-field>
-              <torlify-field property="chapter.maxParts" .generation=${false} type="number" min="1"></torlify-field>
-              <torlify-field
+              <inklify-field property="chapter.minParts" .generation=${false} type="number" min="1"></inklify-field>
+              <inklify-field property="chapter.maxParts" .generation=${false} type="number" min="1"></inklify-field>
+              <inklify-field
                 property="chapter.partLength"
                 help="Suggested length for each part in number of words. The minimum is ${MINIMUM_PART_LENGTH}, the maximum is ${MAXIMUM_PART_LENGTH}."
                 .generation=${false}
                 type="number"
                 min=${MINIMUM_PART_LENGTH}
                 max=${MAXIMUM_PART_LENGTH}
-                step=${PART_LENGTH_STEP}></torlify-field>
+                step=${PART_LENGTH_STEP}></inklify-field>
             </div>
             <div class="secondary-surface">
               <h4>Outline</h4>
               ${this.chapterContext.chapter.outline.map(
                 (item, index) => html`
-                  <torlify-auto-textarea
+                  <inklify-auto-textarea
                     .value="${item}"
-                    @input=${this.updateProperty("outline", index)}></torlify-auto-textarea>
+                    @input=${this.updateProperty("outline", index)}></inklify-auto-textarea>
                 `,
               )}
             </div>
@@ -655,14 +655,14 @@ export class TorlifyChapterEditor extends LitElement {
 
   openModal(name: Modal): () => void {
     return (): void => {
-      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as InklifyModal;
       modal.open();
     };
   }
 
   closeModal(name: Modal): () => void {
     return (): void => {
-      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as TorlifyModal;
+      const modal = this.shadowRoot?.querySelector(`#${name}-modal`) as InklifyModal;
       modal.close();
     };
   }

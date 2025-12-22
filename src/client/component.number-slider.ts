@@ -2,8 +2,8 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 
-@customElement("torlify-number-slider")
-export class TorlifyNumberSlider extends LitElement {
+@customElement("inklify-number-slider")
+export class InklifyNumberSlider extends LitElement {
   static override styles = [
     globalStyles,
     css`

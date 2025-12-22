@@ -1,4 +1,4 @@
-# Torlify Project Coding Standards
+# Inklify Project Coding Standards
 
 ## General
 
@@ -69,7 +69,7 @@
 ### Client Events
  - Events must have a corresponding types and function defined in `src/client/event.<event-name>.ts`.
  - When creating a new event, refer to other event files for structure.
- - Event must be imported by `src/client/util.events.ts` and added to the `TorlifyEvent` type.
+ - Event must be imported by `src/client/util.events.ts` and added to the `InklifyEvent` type.
  - Events must be dispatched with `dispatch(this, ExampleEvent());`
 
 ## Server

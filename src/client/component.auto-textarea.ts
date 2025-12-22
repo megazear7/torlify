@@ -2,10 +2,10 @@ import { html, css, LitElement, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { globalStyles } from "./styles.global.js";
 
-export const AUTO_TEXTAREA_TAG_NAME = "torlify-auto-textarea";
+export const AUTO_TEXTAREA_TAG_NAME = "inklify-auto-textarea";
 
 @customElement(AUTO_TEXTAREA_TAG_NAME)
-export class TorlifyAutoTextarea extends LitElement {
+export class InklifyAutoTextarea extends LitElement {
   static override styles = [
     globalStyles,
     css`

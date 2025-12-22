@@ -3,9 +3,9 @@ import { property } from "lit/decorators.js";
 import { AppContext, appContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { getAppConfigService } from "../shared/service.get-app-config.js";
-import { TorlifyAbstractProvider } from "./provider.abstract.js";
+import { InklifyAbstractProvider } from "./provider.abstract.js";
 
-export abstract class TorlifyAppProvider extends TorlifyAbstractProvider {
+export abstract class InklifyAppProvider extends InklifyAbstractProvider {
   @provide({ context: appContext })
   @property({ attribute: false })
   appContext: AppContext = {

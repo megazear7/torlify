@@ -12,8 +12,8 @@ import { updateBookService } from "../shared/service.update-book.js";
 import { SaveEvent } from "./event.save.js";
 import "./component.auto-textarea.js";
 
-@customElement("torlify-characters")
-export class TorlifyCharacters extends LitElement {
+@customElement("inklify-characters")
+export class InklifyCharacters extends LitElement {
   static override styles = [
     globalStyles,
     css`
@@ -222,9 +222,9 @@ export class TorlifyCharacters extends LitElement {
                         </div>
                         <div class="character-field">
                           <label class="character-label">Instructions</label>
-                          <torlify-auto-textarea
+                          <inklify-auto-textarea
                             .value="${character.instructions}"
-                            @input="${this.updateCharacter(index, "instructions")}"></torlify-auto-textarea>
+                            @input="${this.updateCharacter(index, "instructions")}"></inklify-auto-textarea>
                         </div>
                       </div>
                       <button

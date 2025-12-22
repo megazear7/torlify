@@ -34,7 +34,7 @@ export class GenerateBookController extends AbstractController<GenerateBookParam
       })),
       loadingMessages: await generateLoadingMessages(bookStub.overview),
       details: {
-        authorName: "Torlify",
+        authorName: "Inklify",
         includeChapterTitles: false,
         isbn: "",
         dedication: "",

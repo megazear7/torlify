@@ -3,9 +3,9 @@ import { property } from "lit/decorators.js";
 import { ChapterContext, chapterContext } from "./context.js";
 import { LoadingStatus } from "../shared/type.loading.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
-import { TorlifyBookProvider } from "./provider.book.js";
+import { InklifyBookProvider } from "./provider.book.js";
 
-export abstract class TorlifyChapterProvider extends TorlifyBookProvider {
+export abstract class InklifyChapterProvider extends InklifyBookProvider {
   @provide({ context: chapterContext })
   @property({ attribute: false })
   chapterContext: ChapterContext = {

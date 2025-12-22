@@ -105,21 +105,21 @@ export const globalStyles = css`
     background: var(--color-danger);
   }
 
-  torlify-bar > button.standard-button {
+  inklify-bar > button.standard-button {
     border-radius: 0;
     padding: var(--size-medium) var(--size-large);
     box-shadow: none;
   }
 
-  torlify-bar > button.standard-button:last-child {
+  inklify-bar > button.standard-button:last-child {
     border-radius: 0 var(--radius-large) var(--radius-large) 0;
   }
 
-  torlify-bar > button.standard-button:first-child {
+  inklify-bar > button.standard-button:first-child {
     border-radius: var(--radius-large) 0 0 var(--radius-large);
   }
 
-  torlify-bar > button.standard-button:only-child {
+  inklify-bar > button.standard-button:only-child {
     border-radius: var(--radius-large);
   }
 
@@ -156,7 +156,7 @@ export const globalStyles = css`
     color: var(--color-grey-transparent);
   }
 
-  torlify-modal button.standard-button {
+  inklify-modal button.standard-button {
     background: var(--color-secondary-bold);
   }
 
@@ -179,7 +179,7 @@ export const globalStyles = css`
     box-shadow: var(--shadow-hover);
   }
 
-  torlify-modal torylify-auto-textarea textarea {
+  inklify-modal torylify-auto-textarea textarea {
     max-height: 50vh;
     overflow-y: auto;
   }

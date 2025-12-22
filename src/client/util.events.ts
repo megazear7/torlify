@@ -9,7 +9,7 @@ import { ModelClosingEventData } from "./event.modal-closing.js";
 import { ModelOpeningEventData } from "./event.modal-opening.js";
 import { PronunciationUpdatedEventData } from "./event.pronunciation-updated.js";
 
-export const TorlifyEvent = z.union([
+export const InklifyEvent = z.union([
   ModelSubmitEventData,
   ModelOpeningEventData,
   ModelClosingEventData,
@@ -20,13 +20,13 @@ export const TorlifyEvent = z.union([
   SaveEventData,
   PronunciationUpdatedEventData,
 ]);
-export type TorlifyEvent = z.infer<typeof TorlifyEvent>;
+export type InklifyEvent = z.infer<typeof InklifyEvent>;
 
 export const stopProp = (event: Event): void => {
   event.stopPropagation();
 };
 
-export const dispatch = (element: HTMLElement, event: TorlifyEvent): void => {
+export const dispatch = (element: HTMLElement, event: InklifyEvent): void => {
   element.dispatchEvent(
     new CustomEvent(event.name, {
       detail: event.detail,

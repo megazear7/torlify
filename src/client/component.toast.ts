@@ -7,8 +7,8 @@ import z from "zod";
 export const ToastType = z.enum(["error", "warning", "success", "info"]);
 export type ToastType = z.infer<typeof ToastType>;
 
-@customElement("torlify-toast")
-export class TorlifyToast extends LitElement {
+@customElement("inklify-toast")
+export class InklifyToast extends LitElement {
   static override styles = [
     globalStyles,
     css`

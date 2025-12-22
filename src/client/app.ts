@@ -3,9 +3,9 @@ import { customElement, property, query } from "lit/decorators.js";
 import { RouteConfig, RouteName } from "../shared/type.routes.js";
 import { parseRouteParams } from "../shared/util.route-params.js";
 import { routes } from "../shared/service.client.js";
-import { TorlifyAbstractProvider } from "./provider.abstract.js";
-import { TorlifyToast } from "./component.toast.js";
-import { TorlifySaveIndicator } from "./component.save-indicator.js";
+import { InklifyAbstractProvider } from "./provider.abstract.js";
+import { InklifyToast } from "./component.toast.js";
+import { InklifySaveIndicator } from "./component.save-indicator.js";
 import { SaveEventName } from "./event.save.js";
 import { NavigationEventName } from "./event.navigation.js";
 import { SuccessEventName } from "./event.success.js";
@@ -19,8 +19,8 @@ import "./component.toast.js";
 import "./component.save-indicator.js";
 import "./component.notification-manager.js";
 
-@customElement("torlify-app")
-export class TorlifyApp extends LitElement {
+@customElement("inklify-app")
+export class InklifyApp extends LitElement {
   static override styles = [css`
     .app-bar {
       border-top: 3px solid transparent;
@@ -40,8 +40,8 @@ export class TorlifyApp extends LitElement {
   @property({ type: String }) toastMessage = "";
   @property({ type: String }) toastType: "error" | "warning" | "success" | "info" = "info";
   @property({ type: Boolean }) toastVisible = false;
-  @query("torlify-toast") toast!: TorlifyToast;
-  @query("torlify-save-indicator") saveIndicator!: TorlifySaveIndicator;
+  @query("inklify-toast") toast!: InklifyToast;
+  @query("inklify-save-indicator") saveIndicator!: InklifySaveIndicator;
 
   override connectedCallback(): void {
     super.connectedCallback();
@@ -76,43 +76,43 @@ export class TorlifyApp extends LitElement {
             case RouteName.enum.home:
               return html`
                 <div class="app-bar"></div>
-                <torlify-home-page></torlify-home-page>
+                <inklify-home-page></inklify-home-page>
               `;
             case RouteName.enum.book:
               return html`
                 <div class="app-bar"></div>
-                <torlify-book-page></torlify-book-page>
+                <inklify-book-page></inklify-book-page>
               `;
             case RouteName.enum.chapter:
               return html`
                 <div class="app-bar"></div>
-                <torlify-chapter-page></torlify-chapter-page>
+                <inklify-chapter-page></inklify-chapter-page>
               `;
             case RouteName.enum.part:
               return html`
                 <div class="app-bar"></div>
-                <torlify-part-page></torlify-part-page>
+                <inklify-part-page></inklify-part-page>
               `;
             default:
               return html`
                 <div class="app-bar"></div>
-                <torlify-not-found-page></torlify-not-found-page>
+                <inklify-not-found-page></inklify-not-found-page>
               `;
           }
         })()
       : html`
-          <torlify-not-found-page></torlify-not-found-page>
+          <inklify-not-found-page></inklify-not-found-page>
         `;
 
     return html`
       ${pageContent}
-      <torlify-toast
+      <inklify-toast
         .message="${this.toastMessage}"
         .type="${this.toastType}"
         .visible="${this.toastVisible}"
-        @close=${this.handleToastClose}></torlify-toast>
-      <torlify-save-indicator></torlify-save-indicator>
-      <torlify-notification-manager></torlify-notification-manager>
+        @close=${this.handleToastClose}></inklify-toast>
+      <inklify-save-indicator></inklify-save-indicator>
+      <inklify-notification-manager></inklify-notification-manager>
     `;
   }
 
@@ -155,9 +155,9 @@ export class TorlifyApp extends LitElement {
 
   protected override update(changedProperties: PropertyValues): void {
     super.update(changedProperties);
-    const tagName = `torlify-${this.currentRoute!.name.replace(/_/g, "-")}-page`;
+    const tagName = `inklify-${this.currentRoute!.name.replace(/_/g, "-")}-page`;
     const pageElement = this.shadowRoot?.querySelector(tagName);
-    const provider = pageElement as TorlifyAbstractProvider;
+    const provider = pageElement as InklifyAbstractProvider;
     if (provider && provider.load && typeof provider.load === "function") {
       provider.load().then(() => provider.requestUpdate());
     } else {
